@@ -1,0 +1,9 @@
+<h1>Editing file_info</h1>
+
+<% form_tag :action => 'update', :id => @file_info do %>
+  <%= render :partial => 'form' %>
+  <%= submit_tag 'Edit' %>
+<% end %>
+
+<%= link_to 'Show', :action => 'show', :id => @file_info %> |
+<%= link_to 'Back', :action => 'list' %>

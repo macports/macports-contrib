@@ -1,0 +1,22 @@
+<% @page_title = "all people" %>
+
+<h2>Listing people</h2>
+
+<table>
+  <tr>
+    <th>User Name</th>
+    <th>Last Name</th>
+    <th>First Name</th>
+  </tr>
+  <% for person in @people %>
+    <tr>
+      <td><%= link_to email_obfuscate(person.user_name), :action => 'show', :id => person %></td>
+      <td><%=h person.last_name%></td>
+      <td><%=h person.first_name%></td>
+    </tr>
+  <% end %>
+</table>
+<br />
+
+<%= link_to 'Previous page', { :page => @person_pages.current.previous } if @person_pages.current.previous %>
+<%= link_to 'Next page', { :page => @person_pages.current.next } if @person_pages.current.next %> 

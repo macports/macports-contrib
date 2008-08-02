@@ -1,0 +1,9 @@
+<h1>Editing file_blob</h1>
+
+<% form_tag :action => 'update', :id => @file_blob do %>
+  <%= render :partial => 'form' %>
+  <%= submit_tag 'Edit' %>
+<% end %>
+
+<%= link_to 'Show', :action => 'show', :id => @file_blob %> |
+<%= link_to 'Back', :action => 'list' %>

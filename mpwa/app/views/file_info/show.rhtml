@@ -1,0 +1,5 @@
+<% for column in FileInfo.content_columns %>
+<p>
+  <b><%= column.human_name %>:</b> <%=h @file_info.send(column.name) %>
+</p>
+<% end %>

@@ -1,0 +1,17 @@
+<h2>Search Results</h2>
+
+<p>Result of search for "<%=h @q %>"
+
+<table>
+	<% for row in columnize(@ports.sort, 4) %>
+		<tr>
+			<% for port in row %>
+				<td><%= link_to port.name, :controller => 'port', :action => 'show', :id => port if !port.nil? %></td>
+			<% end %>
+		</tr>
+	<% end %>
+</table>
+
+<br />
+<%= link_to 'Previous page', { :page => @port_pages.current.previous, :q => @q } if @port_pages.current.previous %>
+<%= link_to 'Next page', { :page => @port_pages.current.next, :q => @q } if @port_pages.current.next %> 

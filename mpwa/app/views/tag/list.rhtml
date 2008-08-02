@@ -1,0 +1,17 @@
+<% @page_title = "all tags" %>
+
+<h2>All tags</h2>
+
+<table>
+	<% for row in columnize(@tags, 6) %>
+		<tr>
+			<% for tag in row %>
+				<td><%= link_to tag.name, :controller => 'tag', :action => 'show', :id => tag if tag %></td>
+			<% end %>
+		</tr>
+	<% end %>
+</table>
+
+<br />
+<%= link_to 'Previous page', { :page => @tag_pages.current.previous } if @tag_pages.current.previous %>
+<%= link_to 'Next page', { :page => @tag_pages.current.next } if @tag_pages.current.next %> 

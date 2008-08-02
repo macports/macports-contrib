@@ -1,0 +1,90 @@
+This document contains some information about the internal structure of a portpkg.
+
+A portpkg is the unified container for information about a port, contained in an file produced
+by xar (http://code.google.com/p/xar/). xar files contains two types of elements: files and
+additional meta information. We break our discussion of portpkg format into these two areas.
+
+
+portpkg file naming, extension, and mime-type
+=============================================
+In order to facilite download and handling of portpkg's, their naming will be as follows:
+
+	- <portname>.portpkg
+	- file extension: .portpkg
+	- mime-type: application/vnd.macports.portpkg
+	
+The naming of a portpkg using the portname is not guaranteed in all cases, but it
+a suggestion. And in particular, certain characters in portnames may be omitted or
+changed to ensure valid and simple file names.
+
+The mime-type application/vnd.macports.portpkg has been registered with the IETF.
+
+portpkg files
+=============
+Files in a portpkg are mostly just the contents of the port directory, rooted at portpkg:
+
+    portpkg/
+        Portfile
+        files/
+            <additional files or directories>
+            
+We may also have a reason for additional files and/or manifest information: tbd.
+
+Notes:
+
+    * The contents of the port directory tree are always under the portpkg root in the xar file.
+    * At some point additional information may be stored in other top-level trees inside the xar file.
+    
+
+portpkg meta information
+========================
+The schema for meta information in the xar file is not yet finalized, but we anticipate
+the following information will be present:
+
+    (portpkg information)
+    * Portpkg version
+    * Creation Date (this may be implicit in the xar file)
+
+    (submitter information)
+    * Submitter Name
+    * Submitter Email address
+    * Submitter Notes (about the package)
+	* Submitter tags (tags the submitter would like to add on submit)
+    
+    (package information: automatically parsed from the Portfile)
+    * Port name
+    * Port homepage
+    * Port categories (tags to apply on submission)
+    
+    * Port epoch
+    * Port version
+    * Port revision
+    
+    * Description
+    * Long description
+    
+    * Direct Dependencies
+    * Variants
+        * Variant
+            * Dependencies
+    * Platforms
+        * Platform spec
+            * Dependencies
+            
+    Additionally, it's possible that the following additional meta information will be
+    appended on submission of the portpkg through mpwa. This is probably not a good
+	idea, as then there is not a verifiable correspondence between the package the submitter
+	submitted (and potentially signed) and the one that is stored.
+    
+    * Submitter Account UserName
+    * Submission Date
+    * PkgID
+    * PkgURL
+            
+Notes:
+    
+    * Note that much of this information is available in the Portfile, but it is presented
+      here in static form, and is available without parsing the portfile.
+    
+    
+    

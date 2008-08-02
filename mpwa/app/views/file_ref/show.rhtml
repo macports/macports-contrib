@@ -1,0 +1,5 @@
+<% for column in FileRef.content_columns %>
+<p>
+  <b><%= column.human_name %>:</b> <%=h @file_ref.send(column.name) %>
+</p>
+<% end %>

@@ -1,0 +1,53 @@
+<% @page_title = "user #{email_obfuscate(@person.user_name)}" %>
+
+<h2>User: <%=h email_obfuscate(@person.user_name) %></h2>
+
+<% if @person.first_name %>
+  <p><strong>First Name:</strong> <%=h @person.first_name %></p>
+<% end %>
+
+<% if @person.last_name %>
+  <p><strong>Last Name:</strong> <%=h @person.last_name %></p>
+<% end %>
+
+<% if @person.email %>
+  <p><strong>Email:</strong> <%=h email_obfuscate(@person.email) %></p>
+<% end %>
+
+<h4>Ports</h4>
+<table>
+	<% for row in columnize(@person.ports.sort, 4) %>
+		<tr>
+			<% for port in row %>
+				<td><%= link_to port.name, :controller => 'port', :action => 'show', :id => port if port %></td>
+			<% end %>
+		</tr>
+	<% end %>
+</table>
+
+
+<h4>Packages</h4>
+<table>
+	<% for row in columnize(@person.port_pkgs.sort, 16) %>
+		<tr>
+			<% for pkg in row %>
+				<td><%= link_to pkg.id, :controller => 'port_pkg', :action => 'show', :id => pkg if pkg %></td>
+			<% end %>
+		</tr>
+	<% end %>
+</table>
+
+<!--
+<h4>Validation</h4>
+<form action='/person/validation_request' method='post'>
+  <p>To request an email validation token, you must first pass this simple test:</p>
+  <p>What is the <tt>sum</tt> of <tt><%= a=rand(10)%></tt> and <tt><%= b=rand(10)%></tt>?
+    <input type='text' name='sum' size='4'></input>
+    <input type='hidden' name='id' value='<%=@person.id%>'></input>
+    <input type='hidden' name='a' value='<%=a%>'></input>
+    <input type='hidden' name='b' value='<%=b%>'></input>
+  </p>
+  <input type='submit' name='validation_request' value='Send Validation Email'>
+ 
+</form>
+-->

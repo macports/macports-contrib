@@ -1,0 +1,2 @@
+module FileInfosHelper
+end

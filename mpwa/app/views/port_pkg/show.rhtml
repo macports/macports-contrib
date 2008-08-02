@@ -1,0 +1,115 @@
+<% @page_title = "portpkg #{@port_pkg.id} for #{@port_pkg.port.name}" %>
+
+<h2>PortPkg <%= @port_pkg.id %></h2>
+
+<div class='tagbox'>
+  <h4>Tags</h4>
+  
+  <form action='/port_pkg/tag' method='post'>
+    <input type='hidden' name='id' value='<%=h @port_pkg.id %>'>
+    <p><input type='text' size='20' name='tags'></input>
+      <input type='submit' name='add_tags' value='Add'></input>
+      </p>
+  </form>
+  
+  <p>
+    <% for tag in @port_pkg.tags.sort %>
+  		<%= link_to tag.name, :controller => 'tag', :action => 'show', :id => tag %><br />
+  	<% end %>
+	</p>
+</div>
+
+<p><strong>Port:</strong>
+    <%= link_to @port_pkg.port.name,
+                :controller => 'port', :action => 'show',
+                :id => @port_pkg.port %>
+</p>
+
+<p class='short_desc'><%=h @port_pkg.short_desc if @port_pkg.short_desc %></p>
+<% if @port_pkg.long_desc && @port_pkg.long_desc != @port_pkg.short_desc %>
+    <div class='long_desc'><%= simple_format(@port_pkg.long_desc) %></div>
+<% end %>
+
+<p><strong>Home Page:</strong> <%= auto_link @port_pkg.home_page %></p>
+
+<p>
+	<strong>Version:</strong>
+    <%=h "(#{@port_pkg.epoch})" if @port_pkg.epoch.to_i != 0 %>
+    <%=h "#{@port_pkg.version}_#{@port_pkg.revision}" %>
+</p>
+
+<p>
+	<strong>Submitter:</strong>
+  	 <%= link_to email_obfuscate(@port_pkg.submitter.user_name),
+                     :controller => 'person', :action => 'show',
+                     :id => @port_pkg.submitter %>
+</p>
+
+<p>
+  <strong>Submission Date:</strong> <%= @port_pkg.submitted_at %>
+</p>
+
+<% if @port_pkg.submitter_notes %>
+<p>
+  <strong>Submitter notes:</strong>
+    <%= simple_format(word_wrap(@port_pkg.submitter_notes)) %>
+</p>
+<% end %>
+
+<p>
+  <strong>Variants:</strong>
+	<% for variant in @port_pkg.variants.sort %>
+		<%= link_to variant.name, :controller => 'variant', :action => 'show', :id => variant %>
+	<% end %>
+</p>
+
+<h4>Files</h4>
+<table>
+  <tr>
+    <th>Path</th>
+    <th>Length</th>
+    <th>MIME-type</th>
+    <th>Download</th>
+    <th>Downloads</th>
+  </tr>
+	<% for ref in @port_pkg.file_refs %>
+		<tr>
+		<td><%= link_to ref.file_info.file_path, :controller => 'file_info', :action => 'show', :id => ref.file_info %></td>
+		<td><%=h ref.file_info.length %></td>
+		<td><%=h ref.file_info.mime_type %></td>
+		<td>
+		  <%=
+		    if ref.is_port_pkg
+		      link_to 'download', :controller => 'port_pkg', :action => 'emit_portpkg', :id => ref.port_pkg
+		    else
+		      link_to 'download', :controller => 'file_ref', :action => 'emit', :id => ref
+		    end
+		  %>
+		</td>
+		<td><%= ref.download_count %></td>
+		</tr>
+	<% end %>
+</table>
+
+<!--
+<h4>Comments</h4>
+<p>
+	<% for comment in @port_pkg.comments.sort %>
+	  <div class='comment'>
+	    <div class='comment_header'>
+	      <span class='commenter'><%=h comment.commenter.user_name %><span>
+  	    <span class='comment_date'><%= comment.comment_at.to_formatted_s(:long) %><span>
+	    </div>
+  	  <%= simple_format(comment.comment) %>
+	  </div>
+	<% end %>
+</p>
+
+<form action='/port_pkg/add_comment' method='post'>
+  <input type='hidden' name='id' value='<%=h @port_pkg.id %>'>
+  <textarea rows='8' cols='80' name='text'></textarea><br />
+  <input type='submit' name='add_comment' value='Add Comment'></input>
+</form>
+-->
+
+

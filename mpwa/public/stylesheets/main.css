@@ -1,0 +1,37 @@
+/* Header */
+.mp_header {
+    width: 100%;
+}
+
+.header_left {
+    width: 60%;
+    float: left;
+}
+
+.header_right {
+    float: right;
+}
+
+.mp_body {
+    clear: both;
+    width: 100%;
+}
+
+/* General */
+
+.tagbox {
+  float: right;
+  width: 200px;
+  padding: 6px;
+  border: 1px solid;
+}
+
+/* Port */
+.short_desc {
+  font-style: italic;
+}
+
+.long_desc {
+  max-width: 600px;
+}
+
