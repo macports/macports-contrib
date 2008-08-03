@@ -1,0 +1,32 @@
+= MacPorts Contrib Area =
+
+== What is this? ==
+
+This directory contains projects which are related to MacPorts. But they are
+not being shipped with the base code itself, instead you are supposed to check
+them out from Subversion and build them yourself. Some of them are also
+available as ports in the tree or are used as a base to create multiple ports.
+
+mpaw
+    MacPorts Web Application
+
+    This will become a web application to access and manipulate ports.
+
+mpab
+    MacPorts Auto Build
+
+    This is an attempt to write an build server for MacPorts which tests ports
+    automatically.
+
+select
+    select tool
+
+    This is used as a base for the ports gcc_select and python_select. It
+    creates symlinks to switch between multiple versions of the same software.
+
+
+== Support ==
+
+In case of questions, to submit patches or if you want to add your software
+to the contrib area, send mail to <macports-dev@lists.macosforge.org>.
+
