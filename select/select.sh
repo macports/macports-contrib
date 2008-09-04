@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# $Id: portdestroot.tcl 27199 2007-07-24 09:09:43Z mww@macports.org $
+# $Id$
 #
 # Copyright (c) 2007 The MacPorts Project
 # Copyright (c) 2007 Markus W. Weissmann <mww@macports.org>
