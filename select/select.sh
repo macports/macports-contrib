@@ -53,17 +53,19 @@ DESTDIR=""
 
 # print the usage of this tool
 usage() {
-	echo "usage: ${TOOL} [-n] [-f] [-r] [-h] [-v] version"
-	echo ""
-	echo "-n        Show commands to do selection but do not execute them."
-	echo "-f        Ensure the links are correct for the specified version"
-	echo "          even if it maches the current default version."
-	echo "-h        Display this help info."
-	echo "-r        Skip test for necessary rights."
-	echo "-v        Display version of ${0}."
-	echo "-l        List available options for version."
-	echo "-i path   Install mode to perform an initial selection in path."
-	echo ""
+	cat <<EOD
+usage: ${TOOL} [-n] [-f] [-r] [-h] [-v] version
+
+-n        Show commands to do selection but do not execute them.
+-f        Ensure the links are correct for the specified version
+          even if it maches the current default version.
+-h        Display this help info.
+-r        Skip test for necessary rights.
+-v        Display version of ${TOOL}.
+-l        List available options for version.
+-i path   Install mode to perform an initial selection in path.
+
+EOD
 }
 
 # print the version of this tool
