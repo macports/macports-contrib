@@ -193,8 +193,9 @@ fi
 
 # execute selection
 select_version ${1}
-if [ 0 != ${?} ]; then
-	echo "there were ${?} errors selecting version \"${version}\"!"
+error_count=${?}
+if [ 0 != ${error_count} ]; then
+	echo "there were ${error_count} errors selecting version \"${version}\"!"
 	exit 5
 fi
 
