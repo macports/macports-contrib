@@ -82,7 +82,7 @@ list_version() {
 # test if a particular version is available
 version_is_valid() {
 	for version in $(ls -1 ${CONFPATH} | grep -v base); do
-		if [ ${1} == ${version} ]; then
+		if [ "${1}" == "${version}" ]; then
 			return 0
 		fi
 	done
@@ -91,14 +91,14 @@ version_is_valid() {
 
 # perform an action (command) or just display it
 action() {
-	if [ "rm" == ${1} ]; then
-		if [ 1 == ${noexec} ]; then
+	if [ "rm" == "${1}" ]; then
+		if [ 1 == "${noexec}" ]; then
 			echo "rm -f ${2}"
 		else
 			rm -f ${2}
 		fi
-	elif [ "ln" == ${1} ]; then
-		if [ 1 == ${noexec} ]; then
+	elif [ "ln" == "${1}" ]; then
+		if [ 1 == "${noexec}" ]; then
 			echo "ln -sf ${2} ${3}"
 		else
 			ln -sf ${2} ${3}
