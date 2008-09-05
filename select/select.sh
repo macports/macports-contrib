@@ -42,6 +42,8 @@ VERSION=__VERSION__
 ## GLOBALS
 # dont actually execute, just show what would have been done
 noexec=0
+# enable debug mode
+debug=0
 # enforce action
 force=0
 # skip check for required rights
@@ -54,9 +56,10 @@ DESTDIR=""
 # print the usage of this tool
 usage() {
 	cat <<EOD
-usage: ${TOOL} [-n] [-f] [-r] [-h] [-v] version
+usage: ${TOOL} [-n] [-d] [-f] [-r] [-h] [-v] version
 
 -n        Show commands to do selection but do not execute them.
+-d        Show debug messages during execution
 -f        Ensure the links are correct for the specified version
           even if it maches the current default version.
 -h        Display this help info.
@@ -143,7 +146,7 @@ if [ ${#} == 0 ]; then
 fi
 
 # parse command line args
-args=$(/usr/bin/getopt i:fhnlrv $*)
+args=$(/usr/bin/getopt i:fhndlrv $*)
 set -- ${args}
 for i; do
 	case "${i}" in
@@ -153,6 +156,8 @@ for i; do
 			noexec=1; shift;;
 		-f)
 			force=1; shift;;
+		-d)
+			debug=1; shift;;
 		-l)
 			list_version; exit 0;;
 		-r)
@@ -165,6 +170,11 @@ for i; do
 			shift; break;;
 	esac
 done
+
+# enable debug output if requested
+if [ "1" = "${debug}" ]; then
+    set -x
+fi
 
 # install mode - bypass all checks and add DESTDIR
 if [ "1" = "${inst_mode}" ]; then
