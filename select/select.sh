@@ -2,7 +2,7 @@
 #
 # $Id$
 #
-# Copyright (c) 2007 The MacPorts Project
+# Copyright (c) 2007-2008 The MacPorts Project
 # Copyright (c) 2007 Markus W. Weissmann <mww@macports.org>
 # All rights reserved.
 #
