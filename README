@@ -7,7 +7,7 @@ not being shipped with the base code itself, instead you are supposed to check
 them out from Subversion and build them yourself. Some of them are also
 available as ports in the tree or are used as a base to create multiple ports.
 
-mpaw
+mpwa
     MacPorts Web Application
 
     This will become a web application to access and manipulate ports.
@@ -23,6 +23,11 @@ select
 
     This is used as a base for the ports gcc_select and python_select. It
     creates symlinks to switch between multiple versions of the same software.
+
+MacPorts_Framework
+    MacPorts.Framework
+
+    This is an Objective-C Framework wrapper for the MacPorts Tcl API. 
 
 
 == Support ==
