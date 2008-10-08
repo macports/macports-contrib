@@ -37,6 +37,7 @@ NAME=__NAME__
 TOOL=${NAME}_select
 CONFPATH=${PREFIX}/etc/select/${NAME}
 VERSION=__VERSION__
+SELECTEDVERSION=${CONFPATH}/.current
 
 
 ## GLOBALS
@@ -67,6 +68,7 @@ usage: ${TOOL} [-n] [-d] [-f] [-r] [-h] [-v] version
 -v        Display version of ${TOOL}.
 -l        List available options for version.
 -i path   Install mode to perform an initial selection in path.
+-s        Show the currently selected version
 
 EOD
 }
@@ -80,6 +82,15 @@ version() {
 list_version() {
 	echo "Available versions:"
 	echo $(ls -1 ${CONFPATH} | grep -v base)
+}
+
+# list the currently selected version
+list_current_selection() {
+	if [ -e ${SELECTEDVERSION} ]; then
+		cat ${SELECTEDVERSION}
+	else
+		echo "none"
+	fi
 }
 
 # test if a particular version is available
@@ -118,6 +129,11 @@ select_version() {
 	local i=1
 	local empty=0
 	echo "Selecting version \"${1}\" for ${NAME}"
+	if [ 1 == ${noexec} ]; then
+		echo "echo ${1} >| ${SELECTEDVERSION}"
+	else
+		echo ${1} >| ${SELECTEDVERSION}
+	fi
 	for target in $(cat ${CONFPATH}/base); do
 		src=$(head -n ${i} ${CONFPATH}/${1} | tail -n 1)
 
@@ -146,7 +162,7 @@ if [ ${#} == 0 ]; then
 fi
 
 # parse command line args
-args=$(/usr/bin/getopt i:fhndlrv $*)
+args=$(/usr/bin/getopt i:fhndlrsv $*)
 set -- ${args}
 for i; do
 	case "${i}" in
@@ -166,6 +182,8 @@ for i; do
 			version; exit 0;;
 		-i)
 			inst_mode=1; DESTDIR=${2}; shift; shift;;
+		-s)
+			list_current_selection; exit 0;;
 		--)
 			shift; break;;
 	esac
@@ -180,6 +198,7 @@ fi
 if [ "1" = "${inst_mode}" ]; then
 	echo "install mode: destroot: \"${DESTDIR}\""
 	CONFPATH=${DESTDIR}${CONFPATH}
+	SELECTEDVERSION=${CONFPATH}/.current
 	select_version ${1}
 	exit ${?}
 fi
