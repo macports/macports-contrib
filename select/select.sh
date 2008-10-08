@@ -134,7 +134,11 @@ select_version() {
 		echo ${1} >| ${SELECTEDVERSION}
 	fi
 	for target in $(cat ${CONFPATH}/base); do
-		src=$(head -n ${i} ${CONFPATH}/${1} | tail -n 1)
+		if [ "${1}" == "none" ]; then
+			src="-"
+		else
+			src=$(head -n ${i} ${CONFPATH}/${1} | tail -n 1)
+		fi
 
 		# test if line starts with '-' -> dont link, just rm original
 		if [ "-" == $(echo ${src} | colrm 2) ]; then
