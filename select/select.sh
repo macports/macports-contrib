@@ -127,7 +127,6 @@ select_version() {
 	# count the number of errors
 	local error=0
 	local i=1
-	local empty=0
 	echo "Selecting version \"${1}\" for ${NAME}"
 	if [ 1 == ${noexec} ]; then
 		echo "echo ${1} >| ${SELECTEDVERSION}"
@@ -137,7 +136,6 @@ select_version() {
 	for target in $(cat ${CONFPATH}/base); do
 		src=$(head -n ${i} ${CONFPATH}/${1} | tail -n 1)
 
-		empty=0
 		# test if line starts with '-' -> dont link, just rm original
 		if [ "-" == $(echo ${src} | colrm 2) ]; then
 			# source is unavailable for this file
