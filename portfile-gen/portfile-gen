@@ -112,7 +112,7 @@ switch ${groupCode} {
    python25 {
       puts "post-destroot {"
       puts {   xinstall -m 755 -d ${destroot}${prefix}/share/doc/${name}}
-      puts "   xinstall -m 644 -W $\{worksrcpath\} ??? \\"
+      puts "   xinstall -m 644 -W $\{worksrcpath\} replaceme \\"
       puts {      ${destroot}${prefix}/share/doc/${name}}
       puts "}"
    }
