@@ -1,0 +1,120 @@
+#!/usr/bin/tclsh
+#
+# Generate a basic template Portfile given a few bits of information
+#
+# Todo:
+# Add remaining portgroup bits
+# Add more fields with comments perhaps, so the template is more fully
+#    ready for various uses
+#
+
+set MY_VERSION 0.1
+
+set supportedGroups [list perl5 python25 ruby]
+
+
+proc printUsage {} {
+   puts "Usage: $::argv0 \[-h\] \[-g portgroup\] <portname> <portversion>"
+   puts "   -g   Specify a port group to use (perl5, python25, etc)"
+   puts "   -h   This help"
+   puts ""
+   puts "portname      name to use for the port; for group-based ports, don't"
+   puts "              use the prefix (py25-, p5-, etc) as this will add that"
+   puts "              for you when needed"
+   puts "portversion   version to use for the port"
+}
+
+
+set groupCode ""
+while {[string index [lindex $::argv 0] 0] == "-"} {
+   switch [string range [lindex $::argv 0] 1 end] {
+      g {
+         if {[llength $::argv] < 2} {
+            puts "-g needs a port group"
+            printUsage
+            exit 1
+         }
+         set groupCode [lindex $::argv 1]
+         if {[lsearch ${supportedGroups} ${groupCode}] == -1} {
+            puts "Sorry, port group ${groupCode} is currently not supported"
+            puts "Supported: [join ${supportedGroups}]"
+            exit 1
+         }
+         set ::argv [lrange $::argv 1 end]
+      }
+      h {
+         printUsage
+         exit 0
+      }
+      default {
+         puts "Unknown option [lindex $::argv 0]"
+         printUsage
+         exit 1
+      }
+   }
+   set ::argv [lrange $::argv 1 end]
+}
+
+if {[llength $::argv] != 2} {
+   puts "Error: missing portname or portversion"
+   printUsage
+   exit 1
+}
+
+set portname [lindex $::argv 0]
+set portversion [lindex $::argv 1]
+
+puts "# \$Id\$"
+puts ""
+puts "PortSystem          1.0"
+switch ${groupCode} {
+   perl5 {
+      puts "PortGroup           perl5 1.0"
+      puts "perl5.setup         ${portname} ${portversion}"
+      puts "categories-append   replaceme"
+   }
+   python25 {
+      puts "PortGroup           python25 1.0"
+      puts "name                py25-${portname}"
+      puts "version             ${portversion}"
+      puts "categories-append   replaceme"
+   }
+   default {
+      puts "name                ${portname}"
+      puts "version             ${portversion}"
+      puts "categories          replaceme"
+   }
+}
+puts "maintainers         replaceme"
+puts "description         replaceme"
+puts "long_description \\"
+puts "   replaceme"
+puts ""
+puts "platforms           darwin"
+puts ""
+puts "homepage            replaceme"
+switch ${groupCode} {
+   perl5 {
+   }
+   python25 {
+      puts "master_sites        replaceme"
+      puts {distname            ${portname}-${version}}
+   }
+   default {
+      puts "master_sites        replaceme"
+   }
+}
+puts ""
+puts "checksums           md5 12345 \\"
+puts "                    sha1 6789a \\"
+puts "                    rmd160 bcdef"
+switch ${groupCode} {
+   python25 {
+      puts "post-destroot {"
+      puts {   xinstall -m 755 -d ${destroot}${prefix}/share/doc/${name}}
+      puts "   xinstall -m 644 -W $\{worksrcpath\} ??? \\"
+      puts {      ${destroot}${prefix}/share/doc/${name}}
+      puts "}"
+   }
+}
+
