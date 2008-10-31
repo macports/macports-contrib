@@ -1,0 +1,179 @@
+#!/usr/bin/tclsh
+#
+# Run a recursive dependency listing against a given port, outputing
+# either a basic text display of the result, or dot language so a graph
+# can be created.
+# The dot functionality can be used by doing:
+# $ port-rdeps -d apache2 | dot -Tpng -o apache2.png
+#
+# Todo:
+# Does not differentiate, in output, between bin/lib/run type dependencies
+# Once "good enough", integrate into port
+#
+# http://trac.macports.org/ticket/11892
+
+
+set MY_VERSION 1.0
+
+
+set portsSeen [list]
+
+
+proc printUsage {} {
+   puts "Usage: $::argv0 \[-dhrV\] \[-t macports-tcl-path\] port-name \[variants...\]"
+   puts "   -d   Output dot-format instead of plain ASCII"
+   puts "   -h   This help"
+   puts "   -r   Reduce ASCII output, showing a given port only once"
+   puts "   -t   Give a different location for the base MacPorts Tcl"
+   puts "        file (defaults to /Library/Tcl)"
+   puts "   -V   show version and MacPorts version being used"
+   puts ""
+   puts "port-name is the name of a port to show dependencies"
+   puts "variants is the list of variants to enable/disable: +one -two..."
+}
+
+
+proc dependenciesForPort {portName variantInfo} {
+   set dependencyList [list]
+   set portSearchResult [mportsearch $portName no exact]
+   if {[llength $portSearchResult] < 1} {
+      puts "Warning: port \"$portName\" not found"
+      return [list]
+   }
+   array set portInfo [lindex $portSearchResult 1]
+   set mport [mportopen $portInfo(porturl) {} $variantInfo]
+   array unset portInfo
+   array set portInfo [mportinfo $mport]
+   mportclose $mport
+   array set dependencyDictionary {depends_build build depends_lib lib depends_run run}
+   foreach dependencyType [array names dependencyDictionary] {
+      if {[info exists portInfo($dependencyType)] && [string length $portInfo($dependencyType)] > 0} {
+         foreach dependency $portInfo($dependencyType) {
+            set afterColon [expr {[string last ":" $dependency] + 1}]
+            lappend dependencyList "[string range $dependency $afterColon end]"
+         }
+      }
+   }
+
+   return $dependencyList
+}
+
+
+proc print_dependencies {dependencyArray portName outputAscii reduceAscii} {
+   upvar $dependencyArray portDependencies
+   global portsSeen
+   if {$outputAscii} {
+      set spaces [string repeat " " [expr {$outputAscii * 2}]]
+      set outputAscii [expr {$outputAscii + 1}]
+   }
+   foreach aPort $portDependencies($portName) {
+      if {$outputAscii && $reduceAscii && [lsearch -exact $portsSeen $aPort] != -1} {
+         continue
+      } else {
+         lappend portsSeen $aPort
+      }
+      if {$outputAscii} {
+         puts "${spaces}${aPort}"
+      } else {
+         puts "\"$portName\" -> \"$aPort\""
+      }
+      print_dependencies portDependencies $aPort $outputAscii $reduceAscii
+   }
+}
+
+
+proc find_all_dependencies {portName variantInfo outputAscii reduceAscii} {
+   array set portDependencies {}
+   set portList [list $portName]
+   while {[llength $portList] > 0} {
+      set aPort [lindex $portList 0]
+      set portDependencies($aPort) [dependenciesForPort $aPort $variantInfo]
+      set portList [lreplace $portList 0 0]
+      foreach possiblyNewPort $portDependencies($aPort) {
+         if {![info exists portDependencies($possiblyNewPort)]} {
+            lappend portList $possiblyNewPort
+         }
+      }
+   }
+
+   if {$outputAscii} {
+      puts "Dependencies of $portName:"
+   } else {
+      puts "strict digraph \"$portName\" \{"
+   }
+
+   print_dependencies portDependencies $portName $outputAscii $reduceAscii
+
+   if {!$outputAscii} {
+      puts "\}"
+   }
+}
+
+
+# Begin
+
+set asciiOutput 1
+set reduceAsciiOutput 0
+set macportsTclPath /Library/Tcl
+set showVersion 0
+
+while {[string index [lindex $::argv 0] 0] == "-" } {
+   switch [string range [lindex $::argv 0] 1 end] {
+      d {
+         set asciiOutput 0
+      }
+      h {
+         printUsage
+         exit 0
+      }
+      r {
+         set reduceAsciiOutput 1
+      }
+      t {
+         if {[llength $::argv] < 2} {
+            puts "-t needs a path"
+            printUsage
+            exit 1
+         }
+         set macportsTclPath [lindex $::argv 1]
+         set ::argv [lrange $::argv 1 end]
+      }
+      V {
+         set showVersion 1
+      }
+      default {
+         puts "Unknown option [lindex $::argv 0]"
+         printUsage
+         exit 1
+      }
+   }
+   set ::argv [lrange $::argv 1 end]
+}
+
+source ${macportsTclPath}/macports1.0/macports_fastload.tcl
+package require macports
+mportinit
+
+if {$showVersion} {
+   puts "Version $MY_VERSION"
+   puts "MacPorts version [macports::version]"
+   exit 0
+}
+
+if {[llength $::argv] == 0} {
+   puts "Error: missing port-name"
+   printUsage
+   exit 1
+}
+set portName [lindex $::argv 0]
+set ::argv [lrange $::argv 1 end]
+
+array set variantInfo {}
+foreach variantSetting $::argv {
+   set flag [string index $variantSetting 0]
+   set variantName [string range $variantSetting 1 end]
+   set variantInfo($variantName) $flag
+}
+
+find_all_dependencies $portName [array get variantInfo] $asciiOutput $reduceAsciiOutput
+
