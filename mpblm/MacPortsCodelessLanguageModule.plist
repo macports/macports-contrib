@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>BBEditDocumentType</key>
+	<string>CodelessLanguageModule</string>
+	<key>BBLMColorsSyntax</key>
+	<true/>
+	<key>BBLMIsCaseSensitive</key>
+	<true/>
+	<key>BBLMKeywordList</key>
+	<array>
+		<string>append</string>
+		<string>args-append</string>
+		<string>args-delete</string>
+		<string>args</string>
+		<string>array</string>
+		<string>break</string>
+		<string>build</string>
+		<string>case</string>
+		<string>catch</string>
+		<string>categories</string>
+		<string>cd</string>
+		<string>check</string>
+		<string>checksums</string>
+		<string>close</string>
+		<string>concat</string>
+		<string>configure</string>
+		<string>conflicts</string>
+		<string>continue</string>
+		<string>cppflags-append</string>
+		<string>default_variants</string>
+		<string>depends_build</string>
+		<string>depends_lib-append</string>
+		<string>depends_lib-delete</string>
+		<string>depends_lib</string>
+		<string>depends_run</string>
+		<string>description</string>
+		<string>destdir</string>
+		<string>destroot</string>
+		<string>distname</string>
+		<string>else</string>
+		<string>elseif</string>
+		<string>eof</string>
+		<string>error</string>
+		<string>eval</string>
+		<string>exec</string>
+		<string>exit</string>
+		<string>expr</string>
+		<string>file</string>
+		<string>flush</string>
+		<string>for</string>
+		<string>foreach</string>
+		<string>format</string>
+		<string>gets</string>
+		<string>glob</string>
+		<string>global</string>
+		<string>history</string>
+		<string>homepage</string>
+		<string>if</string>
+		<string>incr</string>
+		<string>info</string>
+		<string>join</string>
+		<string>lappend</string>
+		<string>library</string>
+		<string>lindex</string>
+		<string>linsert</string>
+		<string>list</string>
+		<string>livecheck</string>
+		<string>llength</string>
+		<string>long_description</string>
+		<string>lrange</string>
+		<string>lreplace</string>
+		<string>lsearch</string>
+		<string>lsort</string>
+		<string>maintainers</string>
+		<string>master_sites</string>
+		<string>menu</string>
+		<string>name</string>
+		<string>open</string>
+		<string>patchfiles</string>
+		<string>path</string>
+		<string>pid</string>
+		<string>platform</string>
+		<string>platforms</string>
+		<string>port</string>
+		<string>PortSystem</string>
+		<string>post-activate</string>
+		<string>post-build</string>
+		<string>post-destroot</string>
+		<string>post-install</string>
+		<string>post-patch</string>
+		<string>pre-build</string>
+		<string>pre-fetch</string>
+		<string>prefix</string>
+		<string>proc_doc</string>
+		<string>proc</string>
+		<string>puts</string>
+		<string>pwd</string>
+		<string>read</string>
+		<string>regex</string>
+		<string>regexp</string>
+		<string>regsub</string>
+		<string>reinplace</string>
+		<string>rename</string>
+		<string>return</string>
+		<string>revision</string>
+		<string>run</string>
+		<string>scan</string>
+		<string>scancontext</string>
+		<string>seek</string>
+		<string>set</string>
+		<string>source</string>
+		<string>split</string>
+		<string>src_file</string>
+		<string>startupitem</string>
+		<string>string</string>
+		<string>switch</string>
+		<string>target</string>
+		<string>tell</string>
+		<string>test</string>
+		<string>then</string>
+		<string>time</string>
+		<string>trace</string>
+		<string>type</string>
+		<string>ui_msg</string>
+		<string>unknown</string>
+		<string>unset</string>
+		<string>uplevel</string>
+		<string>upvar</string>
+		<string>url</string>
+		<string>use_bzip2</string>
+		<string>use_parallel_build</string>
+		<string>variant</string>
+		<string>version</string>
+		<string>while</string>
+		<string>worksrcdir</string>
+		<string>worksrcpath</string>
+	</array>
+	<key>BBLMLanguageCode</key>
+	<string>CMPT</string>
+	<key>BBLMLanguageDisplayName</key>
+	<string>MacPorts</string>
+	<key>BBLMScansFunctions</key>
+	<true/>
+	<key>Language Features</key>
+	<dict>
+		<key>Close Block Comments</key>
+		<string></string>
+		<key>Close Parameter Lists</key>
+		<string>}</string>
+		<key>Close Statement Blocks</key>
+		<string>}</string>
+		<key>Close Strings 1</key>
+		<string>&apos;</string>
+		<key>Close Strings 2</key>
+		<string>&quot;</string>
+		<key>End-of-line Ends Strings 1</key>
+		<false/>
+		<key>End-of-line Ends Strings 2</key>
+		<false/>
+		<key>Escape Char in Strings 1</key>
+		<string>\</string>
+		<key>Escape Char in Strings 2</key>
+		<string>\</string>
+		<key>Identifier and Keyword Characters</key>
+		<string>0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_-abcdefghijklmnopqrstuvwxyz</string>
+		<key>Open Block Comments</key>
+		<string></string>
+		<key>Open Line Comments</key>
+		<string>#</string>
+		<key>Open Parameter Lists</key>
+		<string>{</string>
+		<key>Open Statement Blocks</key>
+		<string>{</string>
+		<key>Open Strings 1</key>
+		<string>&apos;</string>
+		<key>Open Strings 2</key>
+		<string>&quot;</string>
+		<key>Prefix for Functions</key>
+		<string>platform</string>
+		<key>Prefix for Procedures</key>
+		<string>variant</string>
+		<key>Terminator for Prototypes 1</key>
+		<string></string>
+		<key>Terminator for Prototypes 2</key>
+		<string></string>
+	</dict>
+</dict>
+</plist>

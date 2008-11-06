@@ -7,16 +7,24 @@ not being shipped with the base code itself, instead you are supposed to check
 them out from Subversion and build them yourself. Some of them are also
 available as ports in the tree or are used as a base to create multiple ports.
 
-mpwa
-    MacPorts Web Application
-
-    This will become a web application to access and manipulate ports.
-
 mpab
     MacPorts Auto Build
 
     This is an attempt to write an build server for MacPorts which tests ports
     automatically.
+
+mpblm
+    BBEdit/TextWrangler MacPorts Language Module
+    
+    This is a syntax coloring language module for BBEdit or TextWrangler for 
+    use when editting a MacPorts Portfile. See the Wiki page about it for more
+    information:
+    <http://trac.macports.org/wiki/BbeditLanguageModule>
+
+mpwa
+    MacPorts Web Application
+
+    This will become a web application to access and manipulate ports.
 
 select
     select tool
