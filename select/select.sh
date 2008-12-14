@@ -113,9 +113,9 @@ action() {
 		fi
 	elif [ "ln" == "${1}" ]; then
 		if [ 1 == "${noexec}" ]; then
-			echo "ln -sf ${2} ${3}"
+			echo "ln -shf ${2} ${3}"
 		else
-			ln -sf ${2} ${3}
+			ln -shf ${2} ${3}
 		fi
 	else
 		return 1
