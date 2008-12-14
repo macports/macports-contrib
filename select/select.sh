@@ -1,4 +1,5 @@
 #!/bin/bash
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 #
 # $Id$
 #
@@ -56,7 +57,7 @@ DESTDIR=""
 
 # print the usage of this tool
 usage() {
-	cat <<EOD
+    cat <<EOD
 usage: ${TOOL} [-n] [-d] [-f] [-r] [-h] [-v] version
 
 -n        Show commands to do selection but do not execute them.
@@ -75,122 +76,122 @@ EOD
 
 # print the version of this tool
 version() {
-	echo "${TOOL} v${VERSION}"
+    echo "${TOOL} v${VERSION}"
 }
 
 # list all (currently) available versions
 list_version() {
-	echo "Available versions:"
-	echo $(ls -1 ${CONFPATH} | grep -v base)
+    echo "Available versions:"
+    echo $(ls -1 ${CONFPATH} | grep -v base)
 }
 
 # list the currently selected version
 list_current_selection() {
-	if [ -e ${SELECTEDVERSION} ]; then
-		readlink ${SELECTEDVERSION}
-	else
-		echo "none"
-	fi
+    if [ -e ${SELECTEDVERSION} ]; then
+        readlink ${SELECTEDVERSION}
+    else
+        echo "none"
+    fi
 }
 
 # test if a particular version is available
 version_is_valid() {
-	for version in $(ls -1 ${CONFPATH} | grep -v base); do
-		if [ "${1}" == "${version}" ]; then
-			return 0
-		fi
-	done
-	return 1
+    for version in $(ls -1 ${CONFPATH} | grep -v base); do
+        if [ "${1}" == "${version}" ]; then
+            return 0
+        fi
+    done
+    return 1
 }
 
 # perform an action (command) or just display it
 action() {
-	if [ "rm" == "${1}" ]; then
-		if [ 1 == "${noexec}" ]; then
-			echo "rm -f ${2}"
-		else
-			rm -f ${2}
-		fi
-	elif [ "ln" == "${1}" ]; then
-		if [ 1 == "${noexec}" ]; then
-			echo "ln -shf ${2} ${3}"
-		else
-			ln -shf ${2} ${3}
-		fi
-	else
-		return 1
-	fi
+    if [ "rm" == "${1}" ]; then
+        if [ 1 == "${noexec}" ]; then
+            echo "rm -f ${2}"
+        else
+            rm -f ${2}
+        fi
+    elif [ "ln" == "${1}" ]; then
+        if [ 1 == "${noexec}" ]; then
+            echo "ln -shf ${2} ${3}"
+        else
+            ln -shf ${2} ${3}
+        fi
+    else
+        return 1
+    fi
 }
 
 # change symlinks
 select_version() {
-	# count the number of errors
-	local error=0
-	local i=1
-	echo "Selecting version \"${1}\" for ${NAME}"
-	if [ 1 == ${noexec} ]; then
-		echo "ln -sf ${1} ${SELECTEDVERSION}"
-	else
+    # count the number of errors
+    local error=0
+    local i=1
+    echo "Selecting version \"${1}\" for ${NAME}"
+    if [ 1 == ${noexec} ]; then
+        echo "ln -sf ${1} ${SELECTEDVERSION}"
+    else
             if [ "${1}" != "current" ]; then
-		ln -sf ${1} ${SELECTEDVERSION}
+        ln -sf ${1} ${SELECTEDVERSION}
             fi
-	fi
-	for target in $(cat ${CONFPATH}/base); do
-		if [ "${1}" == "none" ]; then
-			src="-"
-		else
-			src=$(head -n ${i} ${CONFPATH}/${1} | tail -n 1)
-		fi
+    fi
+    for target in $(cat ${CONFPATH}/base); do
+        if [ "${1}" == "none" ]; then
+            src="-"
+        else
+            src=$(head -n ${i} ${CONFPATH}/${1} | tail -n 1)
+        fi
 
-		# test if line starts with '-' -> dont link, just rm original
-		if [ "-" == $(echo ${src} | colrm 2) ]; then
-			# source is unavailable for this file
-			action "rm" "${DESTDIR}${PREFIX}/${target}"
-		elif [ "/" == $(echo ${src} | colrm 2) ]; then
-			# source has an absolute path
-			action "ln" "${src}" "${DESTDIR}${PREFIX}/${target}"
-		else
-			# source has relative path
-			action "ln" "${PREFIX}/${src}" "${DESTDIR}${PREFIX}/${target}"
-		fi
-		let "error = error + ${?}"
-		let "i = i + 1"
-	done
-	return ${error}
+        # test if line starts with '-' -> dont link, just rm original
+        if [ "-" == $(echo ${src} | colrm 2) ]; then
+            # source is unavailable for this file
+            action "rm" "${DESTDIR}${PREFIX}/${target}"
+        elif [ "/" == $(echo ${src} | colrm 2) ]; then
+            # source has an absolute path
+            action "ln" "${src}" "${DESTDIR}${PREFIX}/${target}"
+        else
+            # source has relative path
+            action "ln" "${PREFIX}/${src}" "${DESTDIR}${PREFIX}/${target}"
+        fi
+        let "error = error + ${?}"
+        let "i = i + 1"
+    done
+    return ${error}
 }
 
 
 if [ ${#} == 0 ]; then
-	usage
-	exit 2
+    usage
+    exit 2
 fi
 
 # parse command line args
 args=$(/usr/bin/getopt i:fhndlrsv $*)
 set -- ${args}
 for i; do
-	case "${i}" in
-		-h)
-			usage; exit 0;;
-		-n)
-			noexec=1; shift;;
-		-f)
-			force=1; shift;;
-		-d)
-			debug=1; shift;;
-		-l)
-			list_version; exit 0;;
-		-r)
-			isroot=1; shift;;
-		-v)
-			version; exit 0;;
-		-i)
-			inst_mode=1; DESTDIR=${2}; shift; shift;;
-		-s)
-			list_current_selection; exit 0;;
-		--)
-			shift; break;;
-	esac
+    case "${i}" in
+        -h)
+            usage; exit 0;;
+        -n)
+            noexec=1; shift;;
+        -f)
+            force=1; shift;;
+        -d)
+            debug=1; shift;;
+        -l)
+            list_version; exit 0;;
+        -r)
+            isroot=1; shift;;
+        -v)
+            version; exit 0;;
+        -i)
+            inst_mode=1; DESTDIR=${2}; shift; shift;;
+        -s)
+            list_current_selection; exit 0;;
+        --)
+            shift; break;;
+    esac
 done
 
 # enable debug output if requested
@@ -200,26 +201,26 @@ fi
 
 # install mode - bypass all checks and add DESTDIR
 if [ "1" = "${inst_mode}" ]; then
-	echo "install mode: destroot: \"${DESTDIR}\""
-	CONFPATH=${DESTDIR}${CONFPATH}
-	SELECTEDVERSION=${CONFPATH}/.current
-	select_version ${1}
-	exit ${?}
+    echo "install mode: destroot: \"${DESTDIR}\""
+    CONFPATH=${DESTDIR}${CONFPATH}
+    SELECTEDVERSION=${CONFPATH}/.current
+    select_version ${1}
+    exit ${?}
 fi
 
 # test if chosen version is available
 version_is_valid $1
 if [ 0 != ${?} ]; then
-	echo "version \"$1\" is invalid!"
-	exit 4
+    echo "version \"$1\" is invalid!"
+    exit 4
 fi
 
 # execute selection
 select_version ${1}
 error_count=${?}
 if [ 0 != ${error_count} ]; then
-	echo "there were ${error_count} errors selecting version \"${version}\"!"
-	exit 5
+    echo "there were ${error_count} errors selecting version \"${version}\"!"
+    exit 5
 fi
 
 exit 0
