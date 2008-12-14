@@ -37,7 +37,7 @@ NAME=__NAME__
 TOOL=${NAME}_select
 CONFPATH=${PREFIX}/etc/select/${NAME}
 VERSION=__VERSION__
-SELECTEDVERSION=${CONFPATH}/.current
+SELECTEDVERSION=${CONFPATH}/current
 
 
 ## GLOBALS
@@ -87,7 +87,7 @@ list_version() {
 # list the currently selected version
 list_current_selection() {
 	if [ -e ${SELECTEDVERSION} ]; then
-		cat ${SELECTEDVERSION}
+		readlink ${SELECTEDVERSION}
 	else
 		echo "none"
 	fi
@@ -129,9 +129,11 @@ select_version() {
 	local i=1
 	echo "Selecting version \"${1}\" for ${NAME}"
 	if [ 1 == ${noexec} ]; then
-		echo "echo ${1} >| ${SELECTEDVERSION}"
+		echo "ln -sf ${1} ${SELECTEDVERSION}"
 	else
-		echo ${1} >| ${SELECTEDVERSION}
+            if [ "${1}" != "current" ]; then
+		ln -sf ${1} ${SELECTEDVERSION}
+            fi
 	fi
 	for target in $(cat ${CONFPATH}/base); do
 		if [ "${1}" == "none" ]; then
