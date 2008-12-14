@@ -203,7 +203,7 @@ fi
 if [ "1" = "${inst_mode}" ]; then
     echo "install mode: destroot: \"${DESTDIR}\""
     CONFPATH=${DESTDIR}${CONFPATH}
-    SELECTEDVERSION=${CONFPATH}/.current
+    SELECTEDVERSION=${CONFPATH}/current
     select_version ${1}
     exit ${?}
 fi
