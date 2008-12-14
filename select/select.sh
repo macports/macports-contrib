@@ -132,9 +132,9 @@ select_version() {
     if [ 1 == ${noexec} ]; then
         echo "ln -sf ${1} ${SELECTEDVERSION}"
     else
-            if [ "${1}" != "current" ]; then
-        ln -sf ${1} ${SELECTEDVERSION}
-            fi
+        if [ "${1}" != "current" ]; then
+            ln -sf ${1} ${SELECTEDVERSION}
+        fi
     fi
     for target in $(cat ${CONFPATH}/base); do
         if [ "${1}" == "none" ]; then
