@@ -52,17 +52,14 @@ isroot=0
 # print the usage of this tool
 usage() {
     cat <<EOD
-usage: ${TOOL} [-n] [-d] [-f] [-r] [-h] [-v] version
+usage: ${TOOL} [-n] [-d] [-r] [-h] [-v] version
 
 -n        Show commands to do selection but do not execute them.
 -d        Show debug messages during execution
--f        Ensure the links are correct for the specified version
-          even if it maches the current default version.
 -h        Display this help info.
 -r        Skip test for necessary rights.
 -v        Display version of ${TOOL}.
 -l        List available options for version.
--i path   Install mode to perform an initial selection in path.
 -s        Show the currently selected version
 
 EOD
