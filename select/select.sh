@@ -46,8 +46,6 @@ SELECTEDVERSION=${CONFPATH}/current
 noexec=0
 # enable debug mode
 debug=0
-# enforce action
-force=0
 # skip check for required rights
 isroot=0
 # perform "install" mode (for initial destroot)
@@ -175,8 +173,6 @@ for i; do
             usage; exit 0;;
         -n)
             noexec=1; shift;;
-        -f)
-            force=1; shift;;
         -d)
             debug=1; shift;;
         -l)
