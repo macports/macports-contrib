@@ -48,10 +48,6 @@ noexec=0
 debug=0
 # skip check for required rights
 isroot=0
-# perform "install" mode (for initial destroot)
-inst_mode=0
-DESTDIR=""
-
 
 # print the usage of this tool
 usage() {
@@ -144,13 +140,13 @@ select_version() {
         # test if line starts with '-' -> dont link, just rm original
         if [ "-" == $(echo ${src} | colrm 2) ]; then
             # source is unavailable for this file
-            action "rm" "${DESTDIR}${PREFIX}/${target}"
+            action "rm" "${PREFIX}/${target}"
         elif [ "/" == $(echo ${src} | colrm 2) ]; then
             # source has an absolute path
-            action "ln" "${src}" "${DESTDIR}${PREFIX}/${target}"
+            action "ln" "${src}" "${PREFIX}/${target}"
         else
             # source has relative path
-            action "ln" "${PREFIX}/${src}" "${DESTDIR}${PREFIX}/${target}"
+            action "ln" "${PREFIX}/${src}" "${PREFIX}/${target}"
         fi
         let "error = error + ${?}"
         let "i = i + 1"
@@ -181,8 +177,6 @@ for i; do
             isroot=1; shift;;
         -v)
             version; exit 0;;
-        -i)
-            inst_mode=1; DESTDIR=${2}; shift; shift;;
         -s)
             list_current_selection; exit 0;;
         --)
@@ -193,15 +187,6 @@ done
 # enable debug output if requested
 if [ "1" = "${debug}" ]; then
     set -x
-fi
-
-# install mode - bypass all checks and add DESTDIR
-if [ "1" = "${inst_mode}" ]; then
-    echo "install mode: destroot: \"${DESTDIR}\""
-    CONFPATH=${DESTDIR}${CONFPATH}
-    SELECTEDVERSION=${CONFPATH}/current
-    select_version ${1}
-    exit ${?}
 fi
 
 # test if chosen version is available
