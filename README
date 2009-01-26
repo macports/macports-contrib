@@ -37,6 +37,12 @@ MacPorts_Framework
 
     This is an Objective-C Framework wrapper for the MacPorts Tcl API. 
 
+port_cutleaves
+    Uninstall "leaves" - ports that have no dependents.
+
+    Inspired by FreeBSD's pkg_cutleaves, port_cutleaves is an interactive
+    script that eases the uninstallation of "leaves" - ports that have no
+    dependents.
 
 == Support ==
 
