@@ -37,6 +37,7 @@ proc cut_leaves {{processed_leaves {}}} {
 
     set current_leaf    1
     set to_uninstall    {}
+    set flush_now 0
 
     foreach leaf $to_process {
         set composite_version   [composite_version $leaf]
@@ -48,25 +49,41 @@ proc cut_leaves {{processed_leaves {}}} {
             set status Inactive
         }
 
-        puts "\[Leaf $current_leaf of $total_leaves] $full_name ($status):"
-        puts -nonewline "  \[keep] / (u)ninstall / (f)lush / (a)bort: "
-        flush stdout
+        while {1} {
+            puts "\[Leaf $current_leaf of $total_leaves] $full_name ($status):"
+            puts -nonewline "  \[keep] / (u)ninstall / (f)lush / (a)bort: "
+            flush stdout
 
-        gets stdin action
-        switch -glob $action {
-            a* {
-                puts "\nAborting port_cutleaves..."
-                return $exit_status
+            gets stdin action
+            switch -glob $action {
+                a* {
+                    puts "\nAborting port_cutleaves..."
+                    return $exit_status
+                }
+                f* {
+                    puts "\nFlushing any uninstallation operations...\n"
+                    set flush_now 1
+                }
+                u* {
+                    puts "** $full_name will be uninstalled.\n"
+                    lappend to_uninstall $leaf
+                }
+                k* -
+                ""
+                {
+                    puts "** $full_name will be kept.\n"
+                }
+                default {
+                    puts "** Invalid answer.\n"
+                    continue
+                }
             }
-            f* {
-                puts "\nFlushing any uninstallation operations...\n"
-                break
-            }
-            u* {
-                puts "** $full_name will be uninstalled.\n"
-                lappend to_uninstall $leaf
-            }
-            default { puts "** $full_name will be kept.\n" }
+
+            break
+        }
+
+        if {$flush_now == 1} {
+            break
         }
 
         set current_leaf [expr $current_leaf + 1]
