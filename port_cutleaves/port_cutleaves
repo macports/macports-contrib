@@ -3,7 +3,7 @@
 exec /usr/bin/tclsh "$0" "$@"
 # $Id$
 
-set VERSION 0.1
+set VERSION 0.1.1
 
 # - Procedures ---------------------------------------------------------------
 
