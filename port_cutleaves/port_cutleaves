@@ -1,0 +1,246 @@
+#!/bin/sh
+# \
+exec /usr/bin/tclsh "$0" "$@"
+# $Id$
+
+set VERSION 0.1
+
+# - Procedures ---------------------------------------------------------------
+
+proc composite_version {port} {
+    return [version $port]_[revision $port][variants $port]
+}
+
+proc cut_leaves {{processed_leaves {}}} {
+    global exit_status option
+
+    if {[catch {set leaves [leaves]} result]} {
+        puts stderr "Error: $result"
+        return 1
+    }
+
+    set to_process {}
+    foreach leaf $leaves {
+        set full_name [full_name $leaf]
+        if {[lsearch -exact $processed_leaves $full_name] != -1} {
+            continue
+        }
+        lappend processed_leaves    $full_name
+        lappend to_process          $leaf
+    }
+
+    set total_leaves [llength $to_process]
+    if {$total_leaves < 1} {
+        puts "There are no new leaves to process."
+        return $exit_status
+    }
+
+    set current_leaf    1
+    set to_uninstall    {}
+
+    foreach leaf $to_process {
+        set composite_version   [composite_version $leaf]
+        set full_name           [full_name $leaf]
+        set name                [name $leaf]
+
+        set status Active
+        if {![is_active $leaf]} {
+            set status Inactive
+        }
+
+        puts "\[Leaf $current_leaf of $total_leaves] $full_name ($status):"
+        puts -nonewline "  \[keep] / (u)ninstall / (f)lush / (a)bort: "
+        flush stdout
+
+        gets stdin action
+        switch -glob $action {
+            a* {
+                puts "\nAborting port_cutleaves..."
+                return $exit_status
+            }
+            f* {
+                puts "\nFlushing any uninstallation operations...\n"
+                break
+            }
+            u* {
+                puts "** $full_name will be uninstalled.\n"
+                lappend to_uninstall $leaf
+            }
+            default { puts "** $full_name will be kept.\n" }
+        }
+
+        set current_leaf [expr $current_leaf + 1]
+    }
+
+    if {[llength $to_uninstall] < 1} {
+        puts "No leaves were marked for uninstallation."
+        return $exit_status
+    }
+
+    set uninstalled [uninstall $to_uninstall]
+    if {[llength $uninstalled] < 1} {
+        puts "\nNo leaves were uninstalled."
+        return 1
+    }
+
+    puts "\nThe following ports were uninstalled:"
+    foreach port $uninstalled {
+        puts "  $port"
+    }
+
+    puts "\nSearch for new leaves?"
+    puts -nonewline "  \[no] / (y)es: "
+    flush stdout
+
+    gets stdin choice
+    if {[regexp {^y} $choice]} {
+        puts {}
+        return [cut_leaves $processed_leaves]
+    }
+
+    return $exit_status
+}
+
+proc exclusions {file} {
+    if {![file exists $file]} {
+        return -code error "'$file' does not exist."
+    } elseif {[catch {set exclusions_file [open $file]} result]} {
+        return -code error $result
+    }
+
+    set exclusions {}
+    foreach line [split [read -nonewline $exclusions_file] \n] {
+        switch -regexp $line {
+            {^\s*#} -
+            {^$}    {}
+            default { lappend exclusions $line }
+        }
+    }
+
+    close $exclusions_file
+    return $exclusions
+}
+
+proc full_name {port} {
+    return "[name $port] @[composite_version $port]"
+}
+
+proc is_active {port} {
+    return [lindex $port 4]
+}
+
+proc leaves {} {
+    global option
+    registry::open_dep_map
+
+    if {[catch {set installed [registry::installed]} result]} {
+        return -code error $result
+    } elseif {[catch {set exclusions [exclusions $option(F)]} result]} {
+        if {![regexp {does not exist} $result]} {
+            return -code error $result
+        }
+        set exclusions {}
+    }
+
+    set leaves {}
+    foreach port $installed {
+        if {[llength [registry::list_dependents [name $port]]] < 1
+            && ![should_be_excluded $port $exclusions]} {
+            lappend leaves $port
+        }
+    }
+    return $leaves
+}
+
+proc list_leaves {} {
+    if {[catch {set leaves [leaves]} result]} {
+        puts stderr "Error: $result"
+        return 1
+    }
+
+    foreach leaf $leaves {
+        puts [full_name $leaf]
+    }
+    return 0
+}
+
+proc name {port} {
+    return [lindex $port 0]
+}
+
+proc revision {port} {
+    return [lindex $port 2]
+}
+
+proc should_be_excluded {port exclusions} {
+    foreach exclusion $exclusions {
+        set full_name [full_name $port]
+        if {$exclusion eq $full_name || [regexp $exclusion $full_name]} {
+            return 1
+        }
+    }
+    return 0
+}
+
+proc uninstall {ports} {
+    global exit_status
+
+    set uninstalled {}
+    foreach port $ports {
+        if {[catch {portuninstall::uninstall [name $port] \
+                                             [composite_version $port] {}} \
+                   result]} {
+            set exit_status 1
+            puts stderr "Error: $result"
+        } else {
+            lappend uninstalled [full_name $port]
+        }
+    }
+    return $uninstalled
+}
+
+proc variants {port} {
+    return [lindex $port 3]
+}
+
+proc version {port} {
+    return [lindex $port 1]
+}
+
+# - Main ---------------------------------------------------------------------
+
+package require cmdline
+set options {
+    { F.arg ~/.port_leaves.exclude \
+            "Specify a different file to read exclusions from" }
+    { l     "List leaves and exit"}
+    { t.arg /Library/Tcl \
+            "Specify a different location for the base MacPorts Tcl file" }
+    { V     "Display version information and exit" }
+}
+set usage "\[-F value] \[-l] \[-t value] \[-V] \[-help] \[-?]\n\nOptions:"
+if {[catch {array set option [::cmdline::getoptions argv $options]}]} {
+    puts [::cmdline::usage $options $usage]
+    exit 1
+}
+
+if {[catch {source $option(t)/macports1.0/macports_fastload.tcl} \
+           result]} {
+    puts stderr "Error: $result"
+    exit 1
+}
+package require macports
+if {[catch {mportinit} result]} {
+    puts stderr "Error: $result"
+    exit 1
+}
+
+set exit_status 0
+
+if {$option(V)} {
+    exit [puts port_cutleaves-$VERSION]
+} elseif {$option(l)} {
+    exit [list_leaves]
+} else {
+    exit [cut_leaves]
+}

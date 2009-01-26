@@ -1,0 +1,23 @@
+# $Id$
+
+prefix=@prefix@
+bindir=@bindir@
+mandir=@mandir@
+version=@version@
+
+all:
+
+install:
+	install -m 755 -d $(DESTDIR)$(bindir)
+	install -m 755 -d $(DESTDIR)$(mandir)/man8
+	install -m 755 port_cutleaves $(DESTDIR)$(bindir)
+	install -m 444 port_cutleaves.8 $(DESTDIR)$(mandir)/man8
+
+dist:
+	rm -rf port_cutleaves-$(version)
+	mkdir port_cutleaves-$(version)
+	cp configure Makefile.in port_cutleaves port_cutleaves.8 port_cutleaves-$(version)
+	tar -z -cf port_cutleaves-$(version).tar.gz port_cutleaves-$(version)
+
+clean:
+	rm -f Makefile
