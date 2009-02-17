@@ -91,6 +91,11 @@ proc print_dependencies {dependencyArray portName outputAscii reduceAscii verbos
          set style "dotted"
       }
 
+      set color "black"
+      if {$aBy != "port"} {
+         set color "#708090"
+      }
+
       if {$outputAscii && !$verbose} {
          puts "${spaces}${aPort}"
       } elseif {$outputAscii && $verbose} {
@@ -98,7 +103,7 @@ proc print_dependencies {dependencyArray portName outputAscii reduceAscii verbos
       } elseif {!$outputAscii && !$verbose} {
          puts [format {"%s" -> "%s" [ style=%s ] } $portName $aPort $style]
       } elseif {!$outputAscii && $verbose} {
-         puts [format {"%s" -> "%s" [ label="%s",style=%s ]} $portName $aPort $aBy $style]
+         puts [format {"%s" -> "%s" [ label="%s",style="%s",color="%s" ]} $portName $aPort $aBy $style $color]
       }
 
       print_dependencies portDependencies $aPort $outputAscii $reduceAscii $verbose
