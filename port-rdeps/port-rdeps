@@ -16,7 +16,7 @@
 set MY_VERSION 1.0
 
 
-set portsSeen [list]
+array set portsSeen {}
 
 
 proc printUsage {} {
@@ -71,16 +71,17 @@ proc print_dependencies {dependencyArray portName outputAscii reduceAscii verbos
    if {$outputAscii} {
       set spaces [string repeat " " [expr {$outputAscii * 2}]]
       set outputAscii [expr {$outputAscii + 1}]
+   } elseif {[info exists portsSeen($portName)]} {
+      return
    }
+   set portsSeen($portName) 1
    foreach aList $portDependencies($portName) {
       set aType [lindex $aList 0]
       set aBy   [lindex $aList 1]
       set aPort [lindex $aList 2]
 
-      if {$outputAscii && $reduceAscii && [lsearch -exact $portsSeen $aPort] != -1} {
+      if {$outputAscii && $reduceAscii && [info exists portsSeen($aPort)]} {
          continue
-      } else {
-         lappend portsSeen $aPort
       }
 
       set style "solid"
