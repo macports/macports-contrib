@@ -20,16 +20,22 @@ set portsSeen [list]
 
 
 proc printUsage {} {
-   puts "Usage: $::argv0 \[-dhrV\] \[-t macports-tcl-path\] port-name \[variants...\]"
+   puts "Usage: $::argv0 \[-dhrvV\] \[-t macports-tcl-path\] port-name \[variants...\]"
    puts "   -d   Output dot-format instead of plain ASCII"
    puts "   -h   This help"
    puts "   -r   Reduce ASCII output, showing a given port only once"
    puts "   -t   Give a different location for the base MacPorts Tcl"
    puts "        file (defaults to /Library/Tcl)"
+   puts "   -v   verbose output, includes dependency labels"
    puts "   -V   show version and MacPorts version being used"
    puts ""
    puts "port-name is the name of a port to show dependencies"
    puts "variants is the list of variants to enable/disable: +one -two..."
+   puts ""
+   puts "For dot output, dependency types are represented as follows:"
+   puts "   depends_run   is dashed"
+   puts "   depends_build is dotted"
+   puts "   depends_lib   is solid"
 }
 
 
@@ -50,7 +56,7 @@ proc dependenciesForPort {portName variantInfo} {
       if {[info exists portInfo($dependencyType)] && [string length $portInfo($dependencyType)] > 0} {
          foreach dependency $portInfo($dependencyType) {
             set afterColon [expr {[string last ":" $dependency] + 1}]
-            lappend dependencyList "[string range $dependency $afterColon end]"
+            lappend dependencyList [list $dependencyDictionary($dependencyType) [string range $dependency 0 [expr [string first ":" $dependency] - 1]] [string range $dependency $afterColon end]]
          }
       }
    }
@@ -59,30 +65,47 @@ proc dependenciesForPort {portName variantInfo} {
 }
 
 
-proc print_dependencies {dependencyArray portName outputAscii reduceAscii} {
+proc print_dependencies {dependencyArray portName outputAscii reduceAscii verbose} {
    upvar $dependencyArray portDependencies
    global portsSeen
    if {$outputAscii} {
       set spaces [string repeat " " [expr {$outputAscii * 2}]]
       set outputAscii [expr {$outputAscii + 1}]
    }
-   foreach aPort $portDependencies($portName) {
+   foreach aList $portDependencies($portName) {
+      set aType [lindex $aList 0]
+      set aBy   [lindex $aList 1]
+      set aPort [lindex $aList 2]
+
       if {$outputAscii && $reduceAscii && [lsearch -exact $portsSeen $aPort] != -1} {
          continue
       } else {
          lappend portsSeen $aPort
       }
-      if {$outputAscii} {
-         puts "${spaces}${aPort}"
-      } else {
-         puts "\"$portName\" -> \"$aPort\""
+
+      set style "solid"
+      if {$aType == "run"} {
+         set style "dashed"
+      } elseif {$aType == "build"} {
+         set style "dotted"
       }
-      print_dependencies portDependencies $aPort $outputAscii $reduceAscii
+
+      if {$outputAscii && !$verbose} {
+         puts "${spaces}${aPort}"
+      } elseif {$outputAscii && $verbose} {
+         puts "${spaces}${aPort} (depends_${aType}, ${aBy})"
+      } elseif {!$outputAscii && !$verbose} {
+         puts [format {"%s" -> "%s" [ style=%s ] } $portName $aPort $style]
+      } elseif {!$outputAscii && $verbose} {
+         puts [format {"%s" -> "%s" [ label="%s",style=%s ]} $portName $aPort $aBy $style]
+      }
+
+      print_dependencies portDependencies $aPort $outputAscii $reduceAscii $verbose
    }
 }
 
 
-proc find_all_dependencies {portName variantInfo outputAscii reduceAscii} {
+proc find_all_dependencies {portName variantInfo outputAscii reduceAscii verbose} {
    array set portDependencies {}
    set portList [list $portName]
    while {[llength $portList] > 0} {
@@ -90,8 +113,8 @@ proc find_all_dependencies {portName variantInfo outputAscii reduceAscii} {
       set portDependencies($aPort) [dependenciesForPort $aPort $variantInfo]
       set portList [lreplace $portList 0 0]
       foreach possiblyNewPort $portDependencies($aPort) {
-         if {![info exists portDependencies($possiblyNewPort)]} {
-            lappend portList $possiblyNewPort
+         if {![info exists portDependencies([lindex $possiblyNewPort 2])]} {
+            lappend portList [lindex $possiblyNewPort 2]
          }
       }
    }
@@ -102,7 +125,7 @@ proc find_all_dependencies {portName variantInfo outputAscii reduceAscii} {
       puts "strict digraph \"$portName\" \{"
    }
 
-   print_dependencies portDependencies $portName $outputAscii $reduceAscii
+   print_dependencies portDependencies $portName $outputAscii $reduceAscii $verbose
 
    if {!$outputAscii} {
       puts "\}"
@@ -115,6 +138,7 @@ proc find_all_dependencies {portName variantInfo outputAscii reduceAscii} {
 set asciiOutput 1
 set reduceAsciiOutput 0
 set macportsTclPath /Library/Tcl
+set verbose 0
 set showVersion 0
 
 while {[string index [lindex $::argv 0] 0] == "-" } {
@@ -137,6 +161,9 @@ while {[string index [lindex $::argv 0] 0] == "-" } {
          }
          set macportsTclPath [lindex $::argv 1]
          set ::argv [lrange $::argv 1 end]
+      }
+      v {
+          set verbose 1
       }
       V {
          set showVersion 1
@@ -175,5 +202,5 @@ foreach variantSetting $::argv {
    set variantInfo($variantName) $flag
 }
 
-find_all_dependencies $portName [array get variantInfo] $asciiOutput $reduceAsciiOutput
+find_all_dependencies $portName [array get variantInfo] $asciiOutput $reduceAsciiOutput $verbose
 
