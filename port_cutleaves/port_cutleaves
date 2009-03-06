@@ -74,7 +74,7 @@ proc cut_leaves {{processed_leaves {}}} {
                     puts "** $full_name will be kept.\n"
                 }
                 default {
-                    puts "** Invalid answer.\n"
+                    puts "** '$action' is an invalid answer.\n"
                     continue
                 }
             }
@@ -86,7 +86,7 @@ proc cut_leaves {{processed_leaves {}}} {
             break
         }
 
-        set current_leaf [expr $current_leaf + 1]
+        incr current_leaf
     }
 
     if {[llength $to_uninstall] < 1} {
