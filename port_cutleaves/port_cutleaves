@@ -36,8 +36,8 @@ proc cut_leaves {{processed_leaves {}}} {
     }
 
     set current_leaf    1
+    set flush_now       0
     set to_uninstall    {}
-    set flush_now 0
 
     foreach leaf $to_process {
         set composite_version   [composite_version $leaf]
@@ -119,23 +119,27 @@ proc cut_leaves {{processed_leaves {}}} {
 }
 
 proc exclusions {file} {
-    if {![file exists $file]} {
-        return -code error "'$file' does not exist."
-    } elseif {[catch {set exclusions_file [open $file]} result]} {
-        return -code error $result
-    }
+    global cached_exclusions
 
-    set exclusions {}
-    foreach line [split [read -nonewline $exclusions_file] \n] {
-        switch -regexp $line {
-            {^\s*#} -
-            {^$}    {}
-            default { lappend exclusions $line }
+    if {![info exists cached_exclusions]} {
+        if {![file exists $file]} {
+            return -code error "'$file' does not exist."
+        } elseif {[catch {set exclusions_file [open $file]} result]} {
+            return -code error $result
         }
+
+        set cached_exclusions {}
+        foreach line [split [read -nonewline $exclusions_file] \n] {
+            switch -regexp $line {
+                {^\s*#} -
+                {^$}    {}
+                default { lappend cached_exclusions $line }
+            }
+        }
+        close $exclusions_file
     }
 
-    close $exclusions_file
-    return $exclusions
+    return $cached_exclusions
 }
 
 proc full_name {port} {
