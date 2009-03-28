@@ -75,7 +75,7 @@ sub depends_on {
         DEBUG::warn("candidate $k");
         is_corelist($k) or $r{$k} = $v;
     }
-    DEBUG::warn("end compute depedances");
+    DEBUG::warn("end compute dependencies");
     \%r;
 }
 
@@ -310,11 +310,11 @@ __END__
 
 =head1 cpan2port 0.0
 
-some tools to generate macports.
+a tool to generate MacPorts portfiles
 
-=head2 usage
+=head2 Usage
 
-cpan2port uses at least one flag and a list of module names. module names can
+cpan2port uses at least one flag and a list of module names. Module names can
 also be read from stdin.
 
         cpan2port -r Net::LDAP Test::Harness
@@ -331,13 +331,13 @@ Flags tell to cpan2port what to do
 
 =item -v
 
-by defaut, cpan2port doesn't print useless cpan messages. use -v if you want to show them.
+By default, cpan2port doesn't print useless CPAN messages. Use -v if you want to show them.
 
 =item -t
 
-generate macport tree from a list of modules.
+Generate portfiles from a list of modules.
 
-goto your local macports repository and type
+Go to your local MacPorts repository and type
 
         cpan2port -r Net::LDAP Test::Harness
         find .
@@ -358,7 +358,7 @@ and the perl/p5-
 
 =item -f
 
-format output for all package names. for exemple
+Format output for all package names. For example
 
         cpan2port -f '#{port}' Net::LDAP
 
@@ -371,20 +371,20 @@ special format string YAML shows a yaml dump about packages
 
         cpan2port -f YAML Net::LDAP
 
-so it's easy to see what are the available informations
+so it's easy to see what information is available.
 
 =back
 
-=head2 known bugs and todolist 
+=head2 Known bugs and to-do list 
 
 =over
 
 =item *
 
-have to launch twice to generate packages ? -v flag mess the things up ? 
+Have to launch twice to generate packages? -v flag messes things up? 
 
 =item *
 
-adding a perl version support to have a better depencencies grabbing
+Add perl version support to have a better dependencies grabbing
 
 =back
