@@ -1,0 +1,390 @@
+#! /usr/bin/perl 
+
+# Copyright BibLibre 2009
+
+# Todo:
+# - redesign 
+#   - more output ? BSD, debian, rpm, macports ? 
+#   - manage build/libs requirement 
+#   - manage the versions of perl
+
+# package PackagingSystem;
+# 
+# package Macport;
+# use base 
+# our %versions = qw(
+#     5.8 5.008006
+#     5.10 unknown
+# );
+# 
+# 
+# 
+# # perl -le 'print $]'
+# sub perl_version {
+#     $ver{shift};
+# }
+# 
+# package Debian;
+# 
+# sub perl_version { 
+#     my %ver = qw(
+# 	lenny 5.10
+# 	hardy 5.008008
+#     );
+# }
+
+package MSG;
+
+sub warn { print STDERR join(' ',@_),"\n";  }
+sub say { print join(' ',@_),"\n";  }
+
+package DEBUG;
+
+sub DEBUG { 1 }
+
+sub warn { DEBUG and print STDERR join(' ',@_),"\n";  }
+sub say { DEBUG and print join(' ',@_),"\n";  }
+
+package STFU;
+sub myprint {}
+sub mywarn { warn @_ }
+sub mysleep { sleep @_ }
+
+package Huggy;
+use strict;
+use warnings;
+use CPAN;
+use Module::Depends;
+use Module::Depends::Intrusive;
+use List::MoreUtils qw(any);
+use Module::CoreList;
+
+sub is_corelist {
+    my $module = shift;
+    my $lc = lc $module;
+    $lc eq 'perl' and return 1;
+    any { exists $$_{$module} } values %Module::CoreList::version;
+}
+
+sub depends_on {
+    my $dep = (shift or return ())->{depends} or return ();
+    my %conf = @_;
+    my %r;
+    my $method = $conf{during} ? $conf{during} :  'requires';
+    while ( my ($k,$v) = each %{ $dep->$method or return ()} ) {
+	DEBUG::warn("candidate $k");
+	is_corelist($k) or $r{$k} = $v;
+    }
+    DEBUG::warn("end compute depedances");
+    \%r;
+}
+
+sub package_name {
+    my ( $name ) = shift;
+    $name = lc "p5-$name";
+    $name =~ y/+/x/;
+    return $name;
+}
+
+sub debian {
+    my ( $name ) = shift;
+    $name = lc "lib$name-perl";
+    $name =~ y/+/x/;
+    return $name;
+}
+
+sub find_dist {
+	for (@_) {
+		my $glob = "$_*";
+		print STDERR "trying to find dist in $glob\n";
+		if (my ( $dist ) = grep { -d } glob($glob) ) {
+			return $dist
+		}
+	}
+	undef;
+}
+
+sub module_depends {
+    my ($info) = @_ or return ();
+    DEBUG::warn("$$info{name} will show deps");
+    my $dist = find_dist( $info->{dist_dir}, $info->{module}->get )
+	or die "can't find dist";
+    $$info{depends} = (
+	-e "$dist/META.yml"
+	    ? 'Module::Depends'
+	    : 'Module::Depends::Intrusive'
+    ) ->new ->dist_dir($dist); 
+    $$info{depends}->find_modules ;
+    if ( my $errors = $$info{depends}->{errors} ) {
+	MSG::warn "can't parse $$info{name}: $errors";
+    }
+    $info;
+}
+
+sub from_port { (about(shift) or return () )->{port} }
+
+sub about {
+    my ( $module_name, $config ) = @_;
+    die 'no module' unless $module_name;
+    $config ||= {};
+
+    my $module = CPAN::Shell->expand('Module',$module_name) or die "can't expand $module_name";
+    my %info = ( name => $module_name );
+    my @info_fields = qw(file cpan_path prefix version suffix);
+    my $get_info = qr<
+	( # file
+	    (.*)/          # cpan_path
+	    ([^/]+)-          # prefix
+	    ((?:\d+\.?)+)     # version
+	    \.
+	    (tar\.gz|tgz)   # suffix
+	)
+	\s*$              # eol
+    >x;
+
+    $info{cpan_file} = $module->cpan_file; 
+
+    $info{cpan_file} =~ /perl5-porters\@perl\.org/ and return ();
+    DEBUG::warn "$module_name is not perl porter";
+
+    $info{tarball} = "$$CPAN::Config{keep_source_where}/authors/id/$info{cpan_file}";
+    @info{@info_fields} = $info{cpan_file} =~ /$get_info/;
+    for (@info_fields) {
+	defined $info{$_} or MSG::warn "$info{name}::$info{cpan_file}: $_ not matched";
+    }
+    if ( my $desc = $module->description ) {
+	$info{description}  = $desc;
+    } else {
+	$desc = "$module_name (no description available)";
+	$info{description}  = $desc;
+	MSG::warn $desc;
+    }
+    $info{port} = package_name($info{prefix}); 
+    $info{debian} = package_name($info{prefix}); 
+    $info{dist_dir} = "$$CPAN::Config{build_dir}/$info{prefix}-$info{version}";
+    $info{module} = $module;
+    \%info;
+}
+
+sub checksums {
+    my ($info) = shift;
+    my $tarball = $$info{tarball} or die;
+    my %check;
+    for my $k (qw( md5 sha1 rmd160)) {
+	my ($sum) = qx( openssl $k $tarball);
+	my ($v)   = $sum =~ / (.*)/;
+	$check{$k} = $v;
+    }
+    $$info{checksums} = \%check;
+    if ( DEBUG::DEBUG ) {
+	use YAML;
+	print STDERR Dump $$info{checksums};
+    }
+    $info;
+}
+
+sub all_on {
+	my $depends = module_depends( about(@_ ));
+	checksums( $depends );
+}
+
+package main;
+use strict;
+use warnings;
+use YAML;
+use Getopt::Std;
+use File::Path;
+use Carp;
+use Cwd;
+use Pod::Usage;
+
+my %opt;
+
+# my %info;
+# $info{maintainers} = $ENV{maintainers} || 'cpan2port';
+
+sub portfile {
+    my ($info) = @_ or return ();
+    $$info{maintainers} ||= 'cpan2port';
+    my $checksums = '';
+    my $depends = '';
+    my $build_depends = '';
+    if ( exists $$info{depends} ) {
+         if ( my $check =  $$info{checksums} ) {
+             $checksums = join (' ', 'checksums', %{ $check });
+         }
+
+	 if ( my $dep_ref = Huggy::depends_on($info) ) {
+	     my @depends = map {
+		 MSG::warn "$$info{name} requires $_";
+		 'port:'.Huggy::from_port $_
+	     } keys %{ $dep_ref };
+	     if (@depends) {
+		 $depends = join ' ','depends_lib-append',@depends;
+	     }
+
+	 }
+    }
+
+'# $Id$
+
+PortSystem      1.0
+PortGroup       perl5 1.0
+'."
+perl5.setup     $$info{prefix} $$info{version}
+platforms       darwin
+maintainers     $$info{maintainers}
+description     $$info{description}
+extract.suffix  .$$info{suffix}
+master_sites    http://search.cpan.org/CPAN/authors/id/$$info{cpan_path}
+$checksums
+$depends
+$build_depends
+
+# vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- (todo: fix the world and remove this noise)
+"
+}
+
+sub fmt {
+    my ( $format,$info ) = @_;
+    if ($format eq 'YAML' ) {
+	use YAML; print Dump $info;
+	return;
+    }
+    $format =~ s/#{(\w+)}/$$info{$1}/g;
+    $format;
+}
+
+sub next_arg {
+    shift @ARGV;
+}
+
+sub next_line {
+    my $line = <>;
+    $line or return undef;
+    chomp $line;
+    $line;
+}
+
+getopts('vtf:',\%opt) or die;
+
+exists $opt{v} or $CPAN::Frontend = 'STFU';
+
+my $next_package = @ARGV ? \&next_arg : \&next_line;
+
+sub foreach_pkg (&) {
+    my ($code) = @_;
+    local $_;
+    # return undef unless $code and $_;
+    while ( $_ = &$next_package ) {
+        eval { &$code };
+        if ($@) { croak "((($@)))" };
+    }
+}
+
+keys %opt or pod2usage {qw( -exitval 1 -verbose 2 )};
+
+my $wd = getcwd;
+
+if ( exists $opt{f} ) {
+    foreach_pkg {
+	my $info = Huggy::about $_;
+	print(fmt($opt{f},$info)); 
+    }
+} elsif ( exists $opt{t} ) {
+    foreach_pkg {
+	if (my $info = Huggy::all_on $_) {
+	    chdir $wd;
+	    my $dir = "perl/$$info{port}";
+	    -d $dir or mkpath $dir;
+	    my $portfile = "$dir/Portfile";
+	    print STDERR "creating $portfile";
+	    open PORTFILE,'>',$portfile or die "$! while creating $portfile";
+	    print PORTFILE portfile($info);
+	} else { die 'Huggy did not have clue' }
+    }
+}
+
+__END__
+
+=head1 cpan2port 0.0
+
+some tools to generate macports.
+
+=head2 usage
+
+cpan2port uses at least one flag and a list of module names. module names can
+also be read from stdin.
+
+	cpan2port -r Net::LDAP Test::Harness
+
+works.
+
+	cpan2port -r < packages_list 
+
+works too.
+
+Flags tell to cpan2port what to do
+
+=over
+
+=item -v
+
+by defaut, cpan2port doesn't print useless cpan messages. use -v if you want to show them.
+
+=item -t
+
+generate macport tree from a list of modules.
+
+goto your local macports repository and type
+
+	cpan2port -r Net::LDAP Test::Harness
+	find .
+
+and you'll see
+
+	./perl
+	./perl/p5-perl-ldap
+	./perl/p5-perl-ldap/Portfile
+	./perl/p5-test-harness
+	./perl/p5-test-harness/Portfile
+
+cpan
+
+	cpan2port -r Net::LDAP Test::Harness
+	find .
+and the perl/p5-
+
+=item -f
+
+format output for all package names. for exemple
+
+	cpan2port -f '#{port}' Net::LDAP
+
+will print
+
+	p5-perl-ldap
+
+
+special format string YAML shows a yaml dump about packages 
+
+	cpan2port -f YAML Net::LDAP
+
+so it's easy to see what are the available informations
+
+=back
+
+=head2 known bugs and todolist 
+
+=over
+
+=item *
+
+have to launch twice to generate packages ? -v flag mess the things up ? 
+
+=item *
+
+adding a perl version support to have a better depencencies grabbing
+
+=back
