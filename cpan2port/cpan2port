@@ -316,11 +316,11 @@ a tool to generate MacPorts portfiles
 cpan2port uses at least one flag and a list of module names. Module names can
 also be read from stdin.
 
-        cpan2port -r Net::LDAP Test::Harness
+        cpan2port -t Net::LDAP Test::Harness
 
 works.
 
-        cpan2port -r < packages_list 
+        cpan2port -t < packages_list 
 
 works too.
 
@@ -338,7 +338,7 @@ Generate portfiles from a list of modules.
 
 Go to your local MacPorts repository and type
 
-        cpan2port -r Net::LDAP Test::Harness
+        cpan2port -t Net::LDAP Test::Harness
         find .
 
 and you'll see
@@ -351,7 +351,7 @@ and you'll see
 
 cpan
 
-        cpan2port -r Net::LDAP Test::Harness
+        cpan2port -t Net::LDAP Test::Harness
         find .
 and the perl/p5-
 
