@@ -44,9 +44,9 @@ proc cut_leaves {{processed_leaves {}}} {
         set full_name           [full_name $leaf]
         set name                [name $leaf]
 
-        set status Active
+        set status active
         if {![is_active $leaf]} {
-            set status Inactive
+            set status inactive
         }
 
         while {1} {
