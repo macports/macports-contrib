@@ -56,15 +56,16 @@ syn match PortfilePhasesPatch 	"patchfiles\(\-\(append\|delete\)\)*"
 " Configure phase options
 syn keyword PortfilePhasesConf 	use_configure nextgroup=PortfileYesNo skipwhite
 syn match PortfilePhasesConf 	"configure\.\(env\|\(c\|ld\|cpp\|cxx\|objc\|f\|fc\|f90\)flags\)\(-\(append\|delete\)\)*"
-syn match PortfilePhasesConf 	"configure\.\(\(pre\|post\)\-\)*args\(-\(\append\|delete\)\)"
+syn match PortfilePhasesConf 	"configure\.\(\(pre\|post\)\-\)*args\(-\(\append\|delete\)\)" nextgroup=PortfileConfEntries skipwhite
+syn region PortfileConfEntries 	matchgroup=Normal start="" skip="\\$" end="$" contained
 syn match PortfilePhasesConf 	"configure\.\(cc\|cpp\|cxx\|objc\|fc\|f77\|f90\|javac\|compiler\)"
 syn match PortfilePhasesConf 	"configure\.\(perl\|python\|ruby\|install\|awk\|bison\)"
 syn match PortfilePhasesConf 	"configure\.\(pkg_config\(_path\)*\)"
 syn match PortfilePhasesConf 	"configure.universal_\(args\|\(c\|cpp\|cxx\|ld\)flags\)"
 
 " Automake and Autoconf
-syn match PortfilePhasesAA 		"use_\(automake\|autoconf\)" nextgroup=PortfileYesNo skipwhite
-syn match PortfilePhasesAA 		"auto\(make\|conf\).\(env\|args\|dir\)"
+syn match PortfilePhasesAA 		"use_auto\(make\|\(re\)*conf\)" nextgroup=PortfileYesNo skipwhite
+syn match PortfilePhasesAA 		"auto\(make\|\(re\)*conf\).\(env\|args\|dir\)"
 
 " Build phase options
 syn match PortfilePhasesBuild 	"build\.\(cmd\|type\)"
@@ -88,7 +89,7 @@ syn keyword PortfileVariantConflicts 	conflicts nextgroup=PortfileVariantName co
 syn keyword PortfileVariantDescription 	description nextgroup=PortfileGroup contained skipwhite
 syn match PortfileVariantName 			"[a-zA-Z0-9_]\+" contained
 syn keyword PortfileOptional 			universal_variant nextgroup=PortfileYesNo skipwhite
-syn keyword PortfileOptional			default_variants nextgroup=PortfileDefaultVariants skipwhite
+syn match PortfileOptional 				"default_variants\(-\(append\|delete\)\)*" nextgroup=PortfileDefaultVariants skipwhite
 syn match PortfileDefaultVariants 		"\([+|\-][a-zA-Z0-9_]\+\s*\)\+" contained
 
 " Dependencies
@@ -134,7 +135,7 @@ hi def link PortfileVariantConflicts 	Statement
 hi def link PortfileVariantDescription 	Statement
 hi def link PortfileVariantRequires 	Statement
 hi def link PortfileVariantName 		Identifier
-hi def link PortfileDefaultVariants 	String
+hi def link PortfileDefaultVariants 	Identifier
 hi def link PortfileDepends 			Keyword
 hi def link PortfileDependsEntry 		Special
 
