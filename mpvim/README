@@ -1,0 +1,16 @@
+=== About mpvim
+mpvim adds MacPorts support to vim. This currently includes syntax coloring for
+Portfiles and running lint from vim.
+
+=== Installation
+copy the files in this directory into ~/.vim
+
+=== Usage
+* :make runs 'port lint' on the Portfile in the current buffer
+* add 'let g:portfile_highlight_space_errors=1' to your .vimrc to highlight mixed
+  spaces and tabs in Portfiles as errors
+* mpvim supports snipMate (http://www.vim.org/scripts/script.php?script_id=2540)
+  snippets. "new<Tab>" in a new buffer named Portfile will create a new 
+  Portfile skeleton. Subsequent <Tab>'s will cycle through the variables.
+  More snippets are available for variants, build phases etc. Take a look
+  at snippets/portfile.vim for the complete list

@@ -1,0 +1,50 @@
+snippet new
+	# $Id$
+
+	PortSystem 			1.0
+
+	name 				${1:PortName}
+	version 			${2:PortVersion}
+	maintainers 		${3:MaintainerHandle}
+
+	categories 			${4:Categories}
+	description 		${5:Description}
+	long_description 	${6:LongDescription}
+
+	platforms 			${7:Platforms}
+
+	homepage 			${8:Homepage}
+snippet cargs
+	configure.args${1:-append/-delete} 		${2:args}
+snippet cenv
+	configure.env${1:-append/-delete} 		${2:args}
+snippet dlib
+	depends_lib${1:-append/-delete} 		${2:args}
+snippet drun
+	depends_run${1:-append/-delete} 		${2:args}
+snippet dbuild
+	depends_build${1:-append/-delete} 		${2:args}
+snippet var
+	variant ${1:name} description {${2:text}} {
+		${3}
+	}
+snippet fetch
+	${1:pre-/post-}fetch {
+		${2}
+	}
+snippet patch
+	${1:pre-/post-}patch {
+		${2}
+	}
+snippet conf
+	${1:pre-/post-}configure {
+		${2}
+	} 
+snippet build
+	${1:pre-/post-}build {
+		${2}
+	}
+snippet dest
+	${1:pre-/post-}destroot {
+		${2}
+	}
