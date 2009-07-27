@@ -98,11 +98,29 @@ syn region PortfileDependsEntries 	matchgroup=Normal start="" skip="\\$" end="$"
 syn match PortfileDependsEntry 		"\(port\|bin\):" contained
 
 " StartupItems
-syn match PortfileOptional 			"startupitem.\(start\|stop\|restart\|init\|pidfile\)"
+syn match PortfileOptional 			"startupitem\.\(start\|stop\|restart\|init\|pidfile\)"
 
 " Livecheck / Distcheck
-syn match PortfileOptional 			"livecheck.\(check\|name\|distname\|version\|url\|regex\|md5\)"
+syn match PortfileOptional 			"livecheck\.\(check\|name\|distname\|version\|url\|regex\|md5\)"
 syn keyword PortfileOptional 		distcheck.check
+
+" Port Groups
+" Gnustep
+syn match 	PortfileGroups 			"gnustep\.\(post_flags\|cc\)"
+syn keyword PortfileGroups 			variant_with_docs gnustep_layout
+syn match 	PortfileGroups 			"set_\(gnustep_\(make\|env\)\|\(system\|local\)_library\)"
+" Haskell
+syn keyword PortfileGroups 			haskell.setup
+" Perl5
+syn match 	PortfileGroups 			"perl5\.\(setup\|version\|bin\|lib\|archlib\)"
+" Python
+syn match 	PortfileGroups 			"python\.\(bin\|lib\|include\|pkgd\)"
+" Ruby
+syn match 	PortfileGroups 			"ruby\.\(version\|bin\|lib\|arch\|archlib\)"
+" Xcode
+syn match 	PortfileGroups 			"xcode\.\(project\|configuration\|target\|build\.settings\)"
+syn match 	PortfileGroups 			"xcode\.destroot\.\(type\|path\|settings\)"
+syn match 	PortfileGroups 			"xcode\.universal\.\(sdk\|settings\)"
 
 " check whitespace, copied from python.vim
 if exists("portfile_highlight_space_errors")
@@ -138,6 +156,7 @@ hi def link PortfileVariantName 		Identifier
 hi def link PortfileDefaultVariants 	Identifier
 hi def link PortfileDepends 			Keyword
 hi def link PortfileDependsEntry 		Special
+hi def link PortfileGroups 				Keyword
 
 if exists("portfile_highlight_space_errors")
 	hi def link PortFileSpaceError	Error
