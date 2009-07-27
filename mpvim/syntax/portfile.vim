@@ -1,8 +1,6 @@
 " Vim syntax file
 " Language: 	MacPorts Portfiles
 " Author: 		Maximilian Nickel <mnick@macports.org>
-" Copyright: 	Copyright (c) 2009 Maximilian Nickel
-" Licence: 		You may redistribute this under the same terms as Vim itself
 "
 
 if &compatible || v:version < 603
@@ -13,8 +11,12 @@ if exists("b:current_syntax")
 	finish
 endif
 
+" Disable whitespace error highlight if variable is not set
+if !exists("g:portfile_highlight_space_errors")
+	let g:portfile_highlight_space_errors=0
+endif
+
 let is_tcl=1
-let portfile_highlight_space_errors=1
 runtime! syntax/tcl.vim
 
 unlet b:current_syntax
@@ -56,7 +58,7 @@ syn match PortfilePhasesPatch 	"patchfiles\(\-\(append\|delete\)\)\?"
 " Configure phase options
 syn keyword PortfilePhasesConf 	use_configure nextgroup=PortfileYesNo skipwhite
 syn match PortfilePhasesConf 	"configure\.\(env\|\(c\|ld\|cpp\|cxx\|objc\|f\|fc\|f90\)flags\)\(-\(append\|delete\)\)\?"
-syn match PortfilePhasesConf 	"configure\.\(\(pre\|post\)\-\)\?args\(-\(\append\|delete\)\)" nextgroup=PortfileConfEntries skipwhite
+syn match PortfilePhasesConf 	"configure\.\(\(pre\|post\)\-\)\?args\(-\(\append\|delete\)\)\?" nextgroup=PortfileConfEntries skipwhite
 syn region PortfileConfEntries 	matchgroup=Normal start="" skip="\\$" end="$" contained
 syn match PortfilePhasesConf 	"configure\.\(cc\|cpp\|cxx\|objc\|fc\|f77\|f90\|javac\|compiler\)"
 syn match PortfilePhasesConf 	"configure\.\(perl\|python\|ruby\|install\|awk\|bison\)"
@@ -123,7 +125,7 @@ syn match 	PortfileGroups 			"xcode\.destroot\.\(type\|path\|settings\)"
 syn match 	PortfileGroups 			"xcode\.universal\.\(sdk\|settings\)"
 
 " check whitespace, copied from python.vim
-if exists("portfile_highlight_space_errors")
+if g:portfile_highlight_space_errors == 1
   " trailing whitespace
   syn match   PortfileSpaceError   display excludenl "\S\s\+$"ms=s+1
   " mixed tabs and spaces
@@ -158,7 +160,7 @@ hi def link PortfileDepends 			Keyword
 hi def link PortfileDependsEntry 		Special
 hi def link PortfileGroups 				Keyword
 
-if exists("portfile_highlight_space_errors")
+if g:portfile_highlight_space_errors == 1
 	hi def link PortFileSpaceError	Error
 endif
 
