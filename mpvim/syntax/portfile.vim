@@ -67,25 +67,25 @@ syn match PortfilePhasesAA 		"use_\(automake\|autoconf\)" nextgroup=PortfileYesN
 syn match PortfilePhasesAA 		"auto\(make\|conf\).\(env\|args\|dir\)"
 
 " Build phase options
-syn match PortfilePhasesBuild 	"build.\(cmd\|type\)"
-syn match PortfilePhasesBuild 	"build.\(\(pre\|post\)_\)*args"
-syn match PortfilePhasesBuild 	"build.\(target\|env\)\(-\(append\|delete\)\)*"
+syn match PortfilePhasesBuild 	"build\.\(cmd\|type\)"
+syn match PortfilePhasesBuild 	"build\.\(\(pre\|post\)_\)*args"
+syn match PortfilePhasesBuild 	"build\.\(target\|env\)\(-\(append\|delete\)\)*"
 syn keyword PortfilePhasesBuild use_parallel_build nextgroup=PortfileYesNo skipwhite
 
 " Test phase options
-syn match PortfilePhasesTest 	"test.\(run\|cmd\|target\)"
-syn match PortfilePhasesTest 	"test.env\(-\(append\|delete\)\)*"
+syn match PortfilePhasesTest 	"test\.\(run\|cmd\|target\)"
+syn match PortfilePhasesTest 	"test\.env\(-\(append\|delete\)\)*"
 
 " Test destroot options
-syn match PortfilePhasesDest 	"destroot.\(cmd\|type\|destdir\|umask\|keepdirs\|violate_mtree\)"
-syn match PortfilePhasesDest 	"destroot.\(\(pre\|post\)_\)*args"
-syn match PortfilePhasesDest 	"destroot.target\(-\(append\|delete\)\)*"
+syn match PortfilePhasesDest 	"destroot\.\(cmd\|type\|destdir\|umask\|keepdirs\|violate_mtree\)"
+syn match PortfilePhasesDest 	"destroot\.\(\(pre\|post\)_\)*args"
+syn match PortfilePhasesDest 	"destroot\.target\(-\(append\|delete\)\)*"
 
 " Variants
 syn region PortfileVariant 				matchgroup=Keyword start="^variant" skip="\\$" end="$" contains=PortfileVariantName,PortfileVariantRequires,PortfileVariantDescription,PortfileVariantConflicts skipwhite
 syn keyword PortfileVariantRequires 	requires nextgroup=PortfileVariantName contained
 syn keyword PortfileVariantConflicts 	conflicts nextgroup=PortfileVariantName contained
-syn keyword PortfileVariantDescription 	description nextgroup=PortfileGroup contained
+syn keyword PortfileVariantDescription 	description nextgroup=PortfileGroup contained skipwhite
 syn match PortfileVariantName 			"[a-zA-Z0-9_]\+" contained
 syn keyword PortfileOptional 			universal_variant nextgroup=PortfileYesNo skipwhite
 syn keyword PortfileOptional			default_variants nextgroup=PortfileDefaultVariants skipwhite
