@@ -106,6 +106,9 @@ syn match PortfileOptional 			"startupitem\.\(start\|stop\|restart\|init\|pidfil
 syn match PortfileOptional 			"livecheck\.\(check\|name\|distname\|version\|url\|regex\|md5\)"
 syn keyword PortfileOptional 		distcheck.check
 
+" Notes
+syn keyword PortfilePhases		notes
+
 " Port Groups
 " Gnustep
 syn match 	PortfileGroups 			"gnustep\.\(post_flags\|cc\)"
