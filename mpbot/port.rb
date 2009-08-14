@@ -51,12 +51,14 @@ class PortPlugin < Plugin
 		  when "remember"
 			return "remember <nick> email <address> => remember what port maintainer email <nick> belongs to; " +
 					"remember <nick> timezone <timezone> => remember the local timezone for <nick>; " +
-					"remember <nick> location <location> => remember the physical location for <nick>"
+					"remember <nick> location <location> => remember the physical location for <nick>; " +
+					"remember <nick> name <name> => remember the name for <nick>"
 		  when "forget"
 			return "forget <nick> => forget all information for <nick>; " +
 				"forget email <nick> => forget email correspondance for <nick>; " +
 				"forget timezone <nick> => forget local timezone for <nick>; " +
-				"forget location <nick> => forget physical location for <nick>"
+				"forget location <nick> => forget physical location for <nick>; " +
+				"forget name <nick> => forget name for <nick>"
 		  when "whois"
 		  	return "whois <nick> => give a summary of information for <nick>"
 		  when "whereis"
@@ -199,12 +201,20 @@ class PortPlugin < Plugin
 		@registry["location_#{nick}"] = location
 		m.reply "okay, #{nick} is in #{location}"
 	end
+
+	def rememberName(m, params)
+		nick = params[:nick]
+		name = params[:name].join(' ')
+		@registry["name_#{nick}"] = name
+		m.reply "okay, #{nick} is #{name}"
+	end
 	
 	def forget(m, params)
 		nick = params[:nick]
 		@registry.delete("email_#{nick}")
 		@registry.delete("timezone_#{nick}")
 		@registry.delete("location_#{nick}")
+		@registry.delete("name_#{nick}")
 		m.okay
 	end
 
@@ -223,6 +233,12 @@ class PortPlugin < Plugin
 	def forgetLocation(m, params)
 		nick = params[:nick]
 		@registry.delete("location_#{nick}")
+		m.okay
+	end
+
+	def forgetName(m, params)
+		nick = params[:nick]
+		@registry.delete("name_#{nick}")
 		m.okay
 	end
 
@@ -268,10 +284,15 @@ class PortPlugin < Plugin
 	
 	def whereis(m, params)
 		nick = params[:nick]
+		name = @registry["name_#{nick}"]
 		
 		where = whereisNick(nick)
-		if where
+		if where && name
+			m.reply "#{name} #{where}"
+		elsif where
 			m.reply "#{nick} #{where}"
+		elsif name
+			m.reply "I don't know where #{name} is"
 		else
 			m.reply "I don't know where #{nick} is"
 		end
@@ -295,6 +316,7 @@ class PortPlugin < Plugin
 		Thread.new do
 			email = @registry["email_#{nick}"]
 			if email
+				name = @registry["name_#{nick}"]
 				text = callPort("echo", "maintainer:#{email}")
 				ports = text.split(/\s+/)
 				portCount = ports.size
@@ -303,11 +325,20 @@ class PortPlugin < Plugin
 				
 				msg = nil;
 				
-				if (portCount == 0)
+				if (portCount == 0) && name
+					msg = "#{nick} is #{name} (#{email})"
+				elsif (portCount == 0)
 					msg = "#{nick} is #{email}"
+				elsif (portCount <= showMax) && name
+					msg = "#{nick} is #{name} (#{email}) and maintainer of " +
+						textEnumeration(somePorts)
 				elsif (portCount <= showMax)
 					msg = "#{nick} is #{email} and maintainer of " +
 						textEnumeration(somePorts)
+				elsif name
+					msg = "#{nick} is #{name} (#{email}) and maintainer of " +
+						textEnumeration(somePorts) +
+						" (of #{portCount} total)"
 				else
 					msg = "#{nick} is #{email} and maintainer of " +
 						textEnumeration(somePorts) +
@@ -318,7 +349,7 @@ class PortPlugin < Plugin
 				if whereis
 					msg = msg + " and #{whereis}"
 				end
-				
+
 				@bot.say where, msg
 			end
 		end
@@ -374,9 +405,11 @@ plugin.map 'port herald disable', :action => 'herald_disable'
 plugin.map 'port remember :nick timezone :timezone', :action => 'rememberTimeZone'
 plugin.map 'port remember :nick email :email', :action => 'rememberEmail'
 plugin.map 'port remember :nick location *location', :action => 'rememberLocation'
+plugin.map 'port remember :nick name *name', :action => 'rememberName'
 plugin.map 'port forget :nick', :action => 'forget'
 plugin.map 'port forget :nick email', :action => 'forgetEmail'
 plugin.map 'port forget :nick timezone', :action => 'forgetTimeZone'
 plugin.map 'port forget :nick location', :action => 'forgetLocation'
+plugin.map 'port forget :nick name', :action => 'forgetName'
 plugin.map 'port whois :nick', :action => 'whois'
 plugin.map 'port whereis :nick', :action => 'whereis'
