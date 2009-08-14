@@ -52,17 +52,17 @@ class PortPlugin < Plugin
 			return "remember <nick> email <address> => remember what port maintainer email <nick> belongs to; " +
 					"remember <nick> timezone <timezone> => remember the local timezone for <nick>; " +
 					"remember <nick> location <location> => remember the physical location for <nick>; " +
-					"remember <nick> name <name> => remember the name for <nick>"
+					"remember <nick> name <name> => remember the real name for <nick>"
 		  when "forget"
 			return "forget <nick> => forget all information for <nick>; " +
-				"forget email <nick> => forget email correspondance for <nick>; " +
+				"forget email <nick> => forget maintainer email for <nick>; " +
 				"forget timezone <nick> => forget local timezone for <nick>; " +
 				"forget location <nick> => forget physical location for <nick>; " +
-				"forget name <nick> => forget name for <nick>"
+				"forget name <nick> => forget real name for <nick>"
 		  when "whois"
 		  	return "whois <nick> => give a summary of information for <nick>"
 		  when "whereis"
-		  	return "whereis <nick> => tell what is know about timezone and location of <nick>"
+		  	return "whereis <nick> => tell what is known about timezone and location of <nick>"
 		  else
 			return "port (MacPorts) commands: info, maintainer, version, herald, remember, forget, whois, whereis"
 		end
@@ -284,15 +284,10 @@ class PortPlugin < Plugin
 	
 	def whereis(m, params)
 		nick = params[:nick]
-		name = @registry["name_#{nick}"]
 		
 		where = whereisNick(nick)
-		if where && name
-			m.reply "#{name} #{where}"
-		elsif where
+		if where
 			m.reply "#{nick} #{where}"
-		elsif name
-			m.reply "I don't know where #{name} is"
 		else
 			m.reply "I don't know where #{nick} is"
 		end
