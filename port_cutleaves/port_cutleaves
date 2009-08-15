@@ -150,8 +150,34 @@ proc is_active {port} {
     return [lindex $port 4]
 }
 
+proc collect_build_deps {installedvar} {
+    upvar $installedvar installed
+    global build_deps
+    array unset build_deps
+    foreach i $installed {
+        set iname [name $i]
+        if {[catch {set res [mportlookup $iname]} result]} {
+            puts stderr "lookup of portname $iname failed: $result"
+            exit 1
+        }
+        if {[llength $res] < 2} {
+            continue
+        } else {
+            array unset portinfo
+            array set portinfo [lindex $res 1]
+        }
+        foreach type {depends_fetch depends_extract depends_build} {
+            if {[info exists portinfo($type)]} {
+                foreach d $portinfo($type) {
+                    set build_deps([lindex [split $d :] end]) 1
+                }
+            }
+        }
+    }
+}
+
 proc leaves {} {
-    global option
+    global option build_deps
     registry::open_dep_map
 
     if {[catch {set installed [registry::installed]} result]} {
@@ -162,11 +188,15 @@ proc leaves {} {
         }
         set exclusions {}
     }
+    if {$option(b)} {
+        collect_build_deps installed
+    }
 
     set leaves {}
     foreach port $installed {
         if {[llength [registry::list_dependents [name $port]]] < 1
-            && ![should_be_excluded $port $exclusions]} {
+            && ![should_be_excluded $port $exclusions]
+            && (!$option(b) || ![info exists build_deps([name $port])])} {
             lappend leaves $port
         }
     }
@@ -232,6 +262,7 @@ proc version {port} {
 
 package require cmdline
 set options {
+    { b     "Don't count ports as leaves when they are only needed at build time" }
     { F.arg ~/.port_leaves.exclude \
             "Specify a different file to read exclusions from" }
     { l     "List leaves and exit"}
