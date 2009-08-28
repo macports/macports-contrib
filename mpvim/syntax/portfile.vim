@@ -32,7 +32,8 @@ syn region PortfileDescription 	matchgroup=Normal start="" skip="\\$" end="$" co
 
 syn keyword PortfileOptional 	PortGroup epoch revision worksrcdir distname platform
 syn keyword PortfileOptional 	use_automake use_autoconf use_configure
-syn keyword PortfileOptional 	patch_sites distfiles dist_subdir
+syn keyword PortfileOptional 	patch_sites distfiles dist_subdir license conflicts
+syn keyword PortfileOptional 	replaced_by
 
 syn keyword PortfileOptional 	checksums nextgroup=PortfileChecksums skipwhite
 syn region PortfileChecksums 	matchgroup=Normal start="" skip="\\$" end="$" contained contains=PortfileChecksumsType
@@ -43,7 +44,7 @@ syn match PortfilePhases 		"\(\(pre\|post\)\-\)\?\(fetch\|checksum\|extract\|pat
 " Fetch phase options
 syn match PortfilePhasesFetch   "fetch\.\(type\|user\|password\|use_epsv\|ignore_sllcert\)"
 syn match PortfilePhasesFetch 	"cvs\.\(root\|password\|tag\|date\|module\)"
-syn match PortfilePhasesFetch 	"svn\.\(url\|tag\)"
+syn match PortfilePhasesFetch 	"svn\.\(url\|revision\)"
 syn match PortfilePhasesFetch 	"git\.\(url\|branch\)"
 syn match PortfilePhasesFetch 	"hg\.\(url\|tag\)"
 
@@ -95,7 +96,7 @@ syn match PortfileOptional 				"default_variants\(-\(append\|delete\)\)\?" nextg
 syn match PortfileDefaultVariants 		"\([+|\-][a-zA-Z0-9_]\+\s*\)\+" contained
 
 " Dependencies
-syn match PortfileDepends 			"depends_\(\(lib\|build\|run\)\(-\(append\|delete\)\)\?\)" nextgroup=PortfileDependsEntries skipwhite
+syn match PortfileDepends 			"depends_\(\(lib\|build\|run\|fetch\|extract\)\(-\(append\|delete\)\)\?\)" nextgroup=PortfileDependsEntries skipwhite
 syn region PortfileDependsEntries 	matchgroup=Normal start="" skip="\\$" end="$" contains=PortfileDependsEntry contained
 syn match PortfileDependsEntry 		"\(port\|bin\):" contained
 
@@ -103,7 +104,7 @@ syn match PortfileDependsEntry 		"\(port\|bin\):" contained
 syn match PortfileOptional 			"startupitem\.\(start\|stop\|restart\|init\|pidfile\)"
 
 " Livecheck / Distcheck
-syn match PortfileOptional 			"livecheck\.\(check\|name\|distname\|version\|url\|regex\|md5\)"
+syn match PortfileOptional 			"livecheck\.\(type\|name\|distname\|version\|url\|regex\|md5\)"
 syn keyword PortfileOptional 		distcheck.check
 
 " Notes
