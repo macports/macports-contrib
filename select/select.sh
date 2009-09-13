@@ -133,17 +133,21 @@ select_version() {
         else
             src=$(head -n ${i} ${CONFPATH}/${1} | tail -n 1)
         fi
+        
+        if [ "/" != $(echo ${target} | colrm 2) ]; then
+            target="${PREFIX}/${target}"
+        fi
 
         # test if line starts with '-' -> dont link, just rm original
         if [ "-" == $(echo ${src} | colrm 2) ]; then
             # source is unavailable for this file
-            action "rm" "${PREFIX}/${target}"
+            action "rm" "${target}"
         elif [ "/" == $(echo ${src} | colrm 2) ]; then
             # source has an absolute path
-            action "ln" "${src}" "${PREFIX}/${target}"
+            action "ln" "${src}" "${target}"
         else
             # source has relative path
-            action "ln" "${PREFIX}/${src}" "${PREFIX}/${target}"
+            action "ln" "${PREFIX}/${src}" "${target}"
         fi
         let "error = error + ${?}"
         let "i = i + 1"
