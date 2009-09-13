@@ -2,7 +2,7 @@
 rm -f Makefile
 
 # some defaults
-version=0.2.1
+version=0.3
 prefix=/usr/local
 mandir=${prefix}/share/man
 name=gcc
