@@ -46,8 +46,6 @@ SELECTEDVERSION=${CONFPATH}/current
 noexec=0
 # enable debug mode
 debug=0
-# skip check for required rights
-isroot=0
 
 # print the usage of this tool
 usage() {
@@ -57,7 +55,6 @@ usage: ${TOOL} [-n] [-d] [-r] [-h] [-v] version
 -n        Show commands to do selection but do not execute them.
 -d        Show debug messages during execution
 -h        Display this help info.
--r        Skip test for necessary rights.
 -v        Display version of ${TOOL}.
 -l        List available options for version.
 -s        Show the currently selected version
@@ -174,8 +171,6 @@ for i; do
             debug=1; shift;;
         -l)
             list_version; exit 0;;
-        -r)
-            isroot=1; shift;;
         -v)
             version; exit 0;;
         -s)
