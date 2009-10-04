@@ -6,14 +6,14 @@ if exists("b:did_ftplugin")
 endif
 let b:did_ftplugin = 1
 
-if exists("g:did_macportsplugin") 
+if !exists("g:did_mpftplugin") 
 	function PortfileGetErrors()
 		if !empty(getqflist())
 			exe "copen"
 		end
 	endfunction
+	let g:did_mpftplugin = 1
 endif
-let g:did_macportsplugin = 1
 
 au QuickFixCmdPre make exe "cclose"
 au QuickFixCmdPost make call PortfileGetErrors()
