@@ -98,7 +98,7 @@ syn match PortfileDefaultVariants 		"\([+|\-][a-zA-Z0-9_]\+\s*\)\+" contained
 " Dependencies
 syn match PortfileDepends 			"depends_\(\(lib\|build\|run\|fetch\|extract\)\(-\(append\|delete\)\)\?\)" nextgroup=PortfileDependsEntries skipwhite
 syn region PortfileDependsEntries 	matchgroup=Normal start="" skip="\\$" end="$" contains=PortfileDependsEntry contained
-syn match PortfileDependsEntry 		"\(port\|bin\|path\):" contained
+syn match PortfileDependsEntry 		"\(port\|bin\|path\|lib\):" contained
 
 " StartupItems
 syn match PortfileOptional 			"startupitem\.\(start\|stop\|restart\|init\|pidfile\)"
