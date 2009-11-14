@@ -317,29 +317,29 @@ class PortPlugin < Plugin
 				portCount = ports.size
 				showMax = 4
 				somePorts = ports.extend(Shuffle).shuffle!.slice(0, showMax)
-				
-				msg = nil;
-				
-				if (portCount == 0) && name
-					msg = "#{nick} is #{name} (#{email})"
-				elsif (portCount == 0)
-					msg = "#{nick} is #{email}"
-				elsif (portCount <= showMax) && name
-					msg = "#{nick} is #{name} (#{email}) and maintainer of " +
-						textEnumeration(somePorts)
-				elsif (portCount <= showMax)
-					msg = "#{nick} is #{email} and maintainer of " +
-						textEnumeration(somePorts)
-				elsif name
-					msg = "#{nick} is #{name} (#{email}) and maintainer of " +
-						textEnumeration(somePorts) +
-						" (of #{portCount} total)"
-				else
-					msg = "#{nick} is #{email} and maintainer of " +
-						textEnumeration(somePorts) +
-						" (of #{portCount} total)"
+
+				msg = "#{nick} is"
+				if name
+				    msg += " #{name}"
 				end
-				
+				if nick != email
+				    if name
+				        msg += " (#{email})"
+				    else
+				        msg += " #{email}"
+				    end
+				end
+
+				if portCount > 0
+				    if name || nick != email
+				        msg +=  " and"
+				    end
+				    msg += " maintainer of " + textEnumeration(somePorts)
+				    if portCount > showMax
+				        msg += " (of #{portCount} total)"
+				    end
+				end
+
 				whereis = whereisNick(nick)
 				if whereis
 					msg = msg + " and #{whereis}"
