@@ -10,7 +10,7 @@
 
 set MY_VERSION 0.1
 
-set supportedGroups [list perl5 python25 ruby]
+set supportedGroups [list perl5 python25 python26 ruby]
 
 
 proc printUsage {} {
@@ -79,6 +79,17 @@ switch ${groupCode} {
       puts "version             ${portversion}"
       puts "categories-append   replaceme"
    }
+   python26 {
+      puts "PortGroup           python26 1.0"
+      puts "name                py26-${portname}"
+      puts "version             ${portversion}"
+      puts "categories-append   replaceme"
+   }
+   ruby {
+      puts "PortGroup           ruby 1.0"
+      puts "ruby.setup          ${portname} ${portversion}"
+      puts "categories-append   replaceme"
+   }
    default {
       puts "name                ${portname}"
       puts "version             ${portversion}"
@@ -92,15 +103,19 @@ puts "   replaceme"
 puts ""
 puts "platforms           darwin"
 puts ""
-puts "homepage            replaceme"
 switch ${groupCode} {
    perl5 {
    }
-   python25 {
+   python25 -
+   python26 {
+      puts "homepage            replaceme"
       puts "master_sites        replaceme"
       puts {distname            ${portname}-${version}}
    }
+   ruby {
+   }
    default {
+      puts "homepage            replaceme"
       puts "master_sites        replaceme"
    }
 }
