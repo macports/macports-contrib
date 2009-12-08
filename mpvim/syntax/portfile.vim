@@ -1,6 +1,6 @@
 " Vim syntax file
 " Language: 	MacPorts Portfiles
-" Author: 		Maximilian Nickel <mnick@macports.org>
+" Maintainer: 	Maximilian Nickel <mnick@macports.org>
 "
 
 if &compatible || v:version < 603
@@ -101,7 +101,10 @@ syn region PortfileDependsEntries 	matchgroup=Normal start="" skip="\\$" end="$"
 syn match PortfileDependsEntry 		"\(port\|bin\|path\|lib\):" contained
 
 " StartupItems
+syn match PortfileStartupPid 		"\(none\|auto\|clean\|manual\)" contained
 syn match PortfileOptional 			"startupitem\.\(start\|stop\|restart\|init\|pidfile\)"
+syn match PortfileOptional 			"startupitem\.\(create\|logevents\|netchange\)" nextgroup=PortfileYesNo skipwhite
+syn match PortfileOptional 			"startupitem\.pidfile" nextgroup=PortfileStartupPid skipwhite
 
 " Livecheck / Distcheck
 syn match PortfileOptional 			"livecheck\.\(type\|name\|distname\|version\|url\|regex\|md5\)"
@@ -128,6 +131,8 @@ syn match 	PortfileGroups 			"xcode\.\(project\|configuration\|target\|build\.se
 syn match 	PortfileGroups 			"xcode\.destroot\.\(type\|path\|settings\)"
 syn match 	PortfileGroups 			"xcode\.universal\.\(sdk\|settings\)"
 
+" Tcl extensions
+syn keyword PortfileTcl		xinstall
 " check whitespace, copied from python.vim
 if g:portfile_highlight_space_errors == 1
   " trailing whitespace
@@ -139,6 +144,7 @@ endif
 
 hi def link PortfileGroup 				String
 hi def link PortfileYesNo 				Special
+hi def link PortfileStartupPid 			Special
 
 hi def link PortfileRequired 			Keyword
 hi def link PortfileOptional 			Keyword
@@ -163,6 +169,8 @@ hi def link PortfileDefaultVariants 	Identifier
 hi def link PortfileDepends 			Keyword
 hi def link PortfileDependsEntry 		Special
 hi def link PortfileGroups 				Keyword
+
+hi def link PortfileTcl 				Keyword
 
 if g:portfile_highlight_space_errors == 1
 	hi def link PortFileSpaceError	Error
