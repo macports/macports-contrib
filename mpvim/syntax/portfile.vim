@@ -102,7 +102,7 @@ syn match PortfileDependsEntry 		"\(port\|bin\|path\|lib\):" contained
 
 " StartupItems
 syn match PortfileStartupPid 		"\(none\|auto\|clean\|manual\)" contained
-syn match PortfileOptional 			"startupitem\.\(start\|stop\|restart\|init\|pidfile\)"
+syn match PortfileOptional 			"startupitem\.\(start\|stop\|restart\|init\|executable\)"
 syn match PortfileOptional 			"startupitem\.\(create\|logevents\|netchange\)" nextgroup=PortfileYesNo skipwhite
 syn match PortfileOptional 			"startupitem\.pidfile" nextgroup=PortfileStartupPid skipwhite
 
