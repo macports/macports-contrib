@@ -1,5 +1,7 @@
+" ============================================================================
 " Vim filetype plugin for portfile
-" Author: Maximilian Nickel <mnick@macports.org>
+" Maintainer: Maximilian Nickel <mnick@macports.org>
+" ============================================================================
 
 if exists("b:did_ftplugin")
 	finish
@@ -12,8 +14,18 @@ if !exists("g:did_mpftplugin")
 			exe "copen"
 		end
 	endfunction
+
+	function TracPatch(url)
+		let patchfile="$TMPDIR/portfile.patch"
+		let url = substitute(a:url, "/attachment/", "/raw-attachment/", "")
+		let cmd = "!curl --progress-bar -o \"" . patchfile . "\" \"" . url . "\""
+		exe cmd
+		exe "diffpatch " . patchfile
+	endfunction
+
 	let g:did_mpftplugin = 1
 endif
 
 au QuickFixCmdPre make exe "cclose"
 au QuickFixCmdPost make call PortfileGetErrors()
+command! -nargs=1 MPpatch :call TracPatch("<args>") 
