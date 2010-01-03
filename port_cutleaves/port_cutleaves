@@ -1,9 +1,10 @@
 #!/bin/sh
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 # \
 exec /usr/bin/tclsh "$0" "$@"
 # $Id$
 
-set VERSION 0.1.1
+set VERSION 0.1.2
 
 # - Procedures ---------------------------------------------------------------
 
@@ -226,7 +227,7 @@ proc revision {port} {
 proc should_be_excluded {port exclusions} {
     foreach exclusion $exclusions {
         set full_name [full_name $port]
-        if {$exclusion eq $full_name || [regexp $exclusion $full_name]} {
+        if {[string equal -nocase $exclusion $full_name] || [regexp -nocase $exclusion $full_name]} {
             return 1
         }
     }
