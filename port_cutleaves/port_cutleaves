@@ -271,7 +271,7 @@ set options {
             "Specify a different location for the base MacPorts Tcl file" }
     { V     "Display version information and exit" }
 }
-set usage "\[-F value] \[-l] \[-t value] \[-V] \[-help] \[-?]\n\nOptions:"
+set usage "\[-b] \[-F value] \[-l] \[-t value] \[-V] \[-help] \[-?]\n\nOptions:"
 if {[catch {array set option [::cmdline::getoptions argv $options]}]} {
     puts [::cmdline::usage $options $usage]
     exit 1

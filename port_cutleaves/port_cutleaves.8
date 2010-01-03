@@ -4,11 +4,14 @@
 .SH NAME
 \fBport_cutleaves\fR \-\- uninstall "leaves" - ports that have no dependents
 .SH SYNOPSIS
-\fBport_cutleaves\fR [\fB\-F\fR \fIfile\fR] [\fB\-l\fR] [\fB\-t\fR \fIpath\fR] [\fB\-V\fR]
+\fBport_cutleaves\fR [\fB\-b\fR] [\fB\-F\fR \fIfile\fR] [\fB\-l\fR] [\fB\-t\fR \fIpath\fR] [\fB\-V\fR]
 .SH DESCRIPTION
 Inspired by FreeBSD's pkg_cutleaves, \fBport_cutleaves\fR is an interactive script
 that eases the uninstallation of "leaves" \- ports that have no dependents.
 .SH OPTIONS
+.TP
+\fB\-b\fR
+Don't count ports as leaves when they are needed (only) at build time
 .TP
 \fB\-F\fR \fIfile\fR
 Specify a different file to read exclusions from <\fI~/.port_leaves.exclude\fR>
