@@ -41,7 +41,7 @@ proc printUsage {} {
 
 proc dependenciesForPort {portName variantInfo} {
    set dependencyList [list]
-   set portSearchResult [mportsearch $portName no exact]
+   set portSearchResult [mportlookup $portName]
    if {[llength $portSearchResult] < 1} {
       puts "Warning: port \"$portName\" not found"
       return [list]
