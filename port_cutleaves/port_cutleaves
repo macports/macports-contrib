@@ -195,7 +195,7 @@ proc leaves {} {
 
     set leaves {}
     foreach port $installed {
-        if {[llength [registry::list_dependents [name $port]]] < 1
+        if {[llength [registry::list_dependents [name $port] [version $port] [revision $port] [variants $port]]] < 1
             && ![should_be_excluded $port $exclusions]
             && (!$option(b) || ![info exists build_deps([name $port])])} {
             lappend leaves $port
