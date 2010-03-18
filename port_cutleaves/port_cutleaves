@@ -239,8 +239,8 @@ proc uninstall {ports} {
 
     set uninstalled {}
     foreach port $ports {
-        if {[catch {portuninstall::uninstall [name $port] \
-                                             [composite_version $port] {}} \
+        if {[catch {registry_uninstall::uninstall [name $port] \
+                                                  [composite_version $port] {}} \
                    result]} {
             set exit_status 1
             puts stderr "Error: $result"
