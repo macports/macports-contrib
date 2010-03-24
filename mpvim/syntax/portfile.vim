@@ -42,7 +42,7 @@ syn keyword PortfileChecksumsType md5 sha1 rmd160 contained
 syn match PortfilePhases 		"\(\(pre\|post\)\-\)\?\(fetch\|checksum\|extract\|patch\|configure\|build\|test\|destroot\|archive\|install\|activate\)\s" contains=PortfilePrePost
 
 " Fetch phase options
-syn match PortfilePhasesFetch   "fetch\.\(type\|user\|password\|use_epsv\|ignore_sllcert\)"
+syn match PortfilePhasesFetch   "fetch\.\(type\|user\|password\|use_epsv\|ignore_sslcert\)"
 syn match PortfilePhasesFetch 	"cvs\.\(root\|password\|tag\|date\|module\)"
 syn match PortfilePhasesFetch 	"svn\.\(url\|revision\)"
 syn match PortfilePhasesFetch 	"git\.\(url\|branch\)"
