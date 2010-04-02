@@ -195,7 +195,9 @@ proc leaves {} {
 
     set leaves {}
     foreach port $installed {
-        if {[llength [registry::list_dependents [name $port] [version $port] [revision $port] [variants $port]]] < 1
+        set regref [registry::open_entry [name $port] [version $port] [revision $port] [variants $port] [epoch $port]]
+        if {![registry::property_retrieve $regref requested]
+            && [llength [registry::list_dependents [name $port] [version $port] [revision $port] [variants $port]]] < 1
             && ![should_be_excluded $port $exclusions]
             && (!$option(b) || ![info exists build_deps([name $port])])} {
             lappend leaves $port
@@ -214,6 +216,10 @@ proc list_leaves {} {
         puts [full_name $leaf]
     }
     return 0
+}
+
+proc epoch {port} {
+    return [lindex $port 5]
 }
 
 proc name {port} {
