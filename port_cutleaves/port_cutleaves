@@ -4,7 +4,7 @@
 exec /usr/bin/tclsh "$0" "$@"
 # $Id$
 
-set VERSION 0.1.2
+set VERSION 0.1.3
 
 # - Procedures ---------------------------------------------------------------
 
@@ -197,7 +197,7 @@ proc leaves {} {
     foreach port $installed {
         set regref [registry::open_entry [name $port] [version $port] [revision $port] [variants $port] [epoch $port]]
         if {![registry::property_retrieve $regref requested]
-            && [llength [registry::list_dependents [name $port] [version $port] [revision $port] [variants $port]]] < 1
+            && [registry::list_dependents [name $port] [version $port] [revision $port] [variants $port]] == ""
             && ![should_be_excluded $port $exclusions]
             && (!$option(b) || ![info exists build_deps([name $port])])} {
             lappend leaves $port
@@ -245,6 +245,13 @@ proc uninstall {ports} {
 
     set uninstalled {}
     foreach port $ports {
+        if {${macports::registry.format} == "receipt_sqlite"} {
+            set regref [registry::open_entry [name $port] [version $port] [revision $port] [variants $port] [epoch $port]]
+            if {[registry::run_target $regref uninstall {}]} {
+                lappend uninstalled [full_name $port]
+                continue
+            }
+        }
         if {[catch {registry_uninstall::uninstall [name $port] \
                                                   [composite_version $port] {}} \
                    result]} {
@@ -273,7 +280,7 @@ set options {
     { F.arg ~/.port_leaves.exclude \
             "Specify a different file to read exclusions from" }
     { l     "List leaves and exit"}
-    { t.arg /Library/Tcl \
+    { t.arg /opt/local/share/macports/Tcl \
             "Specify a different location for the base MacPorts Tcl file" }
     { V     "Display version information and exit" }
 }
