@@ -195,9 +195,13 @@ proc leaves {} {
 
     set leaves {}
     foreach port $installed {
-        set regref [registry::open_entry [name $port] [version $port] [revision $port] [variants $port] [epoch $port]]
+        if {${macports::registry.format} eq "receipt_sqlite"} {
+            set regref [registry::open_entry [name $port] [version $port] [revision $port] [variants $port] [epoch $port]]
+        } else {
+            set regref [registry::open_entry [name $port] [version $port] [revision $port] [variants $port]]
+        }
         if {![registry::property_retrieve $regref requested]
-            && [registry::list_dependents [name $port] [version $port] [revision $port] [variants $port]] eq ""
+            && [registry::list_dependents [name $port]] eq ""
             && ![should_be_excluded $port $exclusions]
             && (!$option(b) || ![info exists build_deps([name $port])])} {
             lappend leaves $port
@@ -252,14 +256,20 @@ proc uninstall {ports} {
                 continue
             }
         }
-        if {[catch {registry_uninstall::uninstall [name $port] \
-                                                  [composite_version $port] {}} \
-                   result]} {
-            set exit_status 1
-            puts stderr "Error: $result"
-        } else {
-            lappend uninstalled [full_name $port]
+        if {[llength [info commands "registry_uninstall::uninstall"]] == 1} {
+            if {[catch {registry_uninstall::uninstall [name $port] [composite_version $port] {}} \
+                        result]} {
+                set exit_status 1
+                puts stderr "Error: $result"
+                continue
+            }
+        } elseif {[catch {portuninstall::uninstall [name $port] [composite_version $port] {}} \
+                         result]} {
+                set exit_status 1
+                puts stderr "Error: $result"
+                continue
         }
+        lappend uninstalled [full_name $port]
     }
     return $uninstalled
 }
