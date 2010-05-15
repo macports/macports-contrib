@@ -20,4 +20,4 @@ dist:
 	tar -z -cf port_cutleaves-$(version).tar.gz port_cutleaves-$(version)
 
 clean:
-	rm -f Makefile
+	rm -f Makefile port_cutleaves
