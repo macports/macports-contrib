@@ -75,7 +75,7 @@ proc cut_leaves {{processed_leaves {}}} {
                     puts "** $full_name will be kept.\n"
                 }
                 default {
-                    puts "** '$action' is an invalid answer.\n"
+                    puts "** '$action' is an invalid action.\n"
                     continue
                 }
             }
@@ -197,7 +197,7 @@ proc leaves {} {
     foreach port $installed {
         set regref [registry::open_entry [name $port] [version $port] [revision $port] [variants $port] [epoch $port]]
         if {![registry::property_retrieve $regref requested]
-            && [registry::list_dependents [name $port] [version $port] [revision $port] [variants $port]] == ""
+            && [registry::list_dependents [name $port] [version $port] [revision $port] [variants $port]] eq ""
             && ![should_be_excluded $port $exclusions]
             && (!$option(b) || ![info exists build_deps([name $port])])} {
             lappend leaves $port
@@ -245,7 +245,7 @@ proc uninstall {ports} {
 
     set uninstalled {}
     foreach port $ports {
-        if {${macports::registry.format} == "receipt_sqlite"} {
+        if {${macports::registry.format} eq "receipt_sqlite"} {
             set regref [registry::open_entry [name $port] [version $port] [revision $port] [variants $port] [epoch $port]]
             if {[registry::run_target $regref uninstall {}]} {
                 lappend uninstalled [full_name $port]
@@ -280,7 +280,7 @@ set options {
     { F.arg ~/.port_leaves.exclude \
             "Specify a different file to read exclusions from" }
     { l     "List leaves and exit"}
-    { t.arg /opt/local/share/macports/Tcl \
+    { t.arg "" \
             "Specify a different location for the base MacPorts Tcl file" }
     { V     "Display version information and exit" }
 }
@@ -290,11 +290,17 @@ if {[catch {array set option [::cmdline::getoptions argv $options]}]} {
     exit 1
 }
 
-if {[catch {source $option(t)/macports1.0/macports_fastload.tcl} \
-           result]} {
+if {$option(t) eq ""} {
+    if {[catch {source /Library/Tcl/macports1.0/macports_fastload.tcl} result]
+        && [catch {source /opt/local/share/macports/Tcl/macports1.0/macports_fastload.tcl} result]} {
+        puts stderr "Error: $result"
+        exit 1
+    }
+} elseif {[catch {source $option(t)/macports1.0/macports_fastload.tcl} result]} {
     puts stderr "Error: $result"
     exit 1
 }
+
 package require macports
 if {[catch {mportinit} result]} {
     puts stderr "Error: $result"
