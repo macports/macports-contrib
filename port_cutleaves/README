@@ -1,7 +1,8 @@
 $Id$
 
 Inspired by FreeBSD's pkg_cutleaves, port_cutleaves is an interactive script
-that eases the uninstallation of "leaves" - ports that have no dependents.
+that eases the uninstallation of leaves - installed ports that are unrequested
+and have no dependents.
 
 An example run is as follows:
 
