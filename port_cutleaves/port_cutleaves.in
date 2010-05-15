@@ -5,6 +5,7 @@ exec /usr/bin/tclsh "$0" "$@"
 # $Id$
 
 set VERSION 0.1.3
+set prefix "@prefix@"
 
 # - Procedures ---------------------------------------------------------------
 
@@ -301,8 +302,8 @@ if {[catch {array set option [::cmdline::getoptions argv $options]}]} {
 }
 
 if {$option(t) eq ""} {
-    if {[catch {source /Library/Tcl/macports1.0/macports_fastload.tcl} result]
-        && [catch {source /opt/local/share/macports/Tcl/macports1.0/macports_fastload.tcl} result]} {
+    if {[catch {source ${prefix}/share/macports/Tcl/macports1.0/macports_fastload.tcl} result]
+        && [catch {source /Library/Tcl/macports1.0/macports_fastload.tcl} result]} {
         puts stderr "Error: $result"
         exit 1
     }

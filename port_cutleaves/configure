@@ -6,7 +6,7 @@ rm -f Makefile
 prefix=/opt/local
 bindir=${prefix}/bin
 mandir=${prefix}/share/man
-version=$(grep 'set VERSION' port_cutleaves | awk '{print $3}')
+version=$(grep 'set VERSION' port_cutleaves.in | awk '{print $3}')
 
 for i; do
     opt=$(echo ${i}|sed 's|=.*||g')
@@ -34,3 +34,7 @@ cat Makefile.in | \
     sed "s|@bindir@|${bindir}|g" | \
     sed "s|@mandir@|${mandir}|g" | \
     sed "s|@version@|${version}|g" > Makefile
+
+sed "s|@prefix@|${prefix}|g" \
+    < port_cutleaves.in > port_cutleaves
+chmod +x port_cutleaves
