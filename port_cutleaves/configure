@@ -38,3 +38,6 @@ cat Makefile.in | \
 sed "s|@prefix@|${prefix}|g" \
     < port_cutleaves.in > port_cutleaves
 chmod +x port_cutleaves
+
+sed "s|@prefix@|${prefix}|g" \
+    < port_cutleaves.8.in > port_cutleaves.8

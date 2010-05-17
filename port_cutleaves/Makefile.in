@@ -16,8 +16,8 @@ install:
 dist:
 	rm -rf port_cutleaves-$(version)
 	mkdir port_cutleaves-$(version)
-	cp configure Makefile.in port_cutleaves.in port_cutleaves.8 port_cutleaves-$(version)
+	cp configure Makefile.in port_cutleaves.in port_cutleaves.8.in port_cutleaves-$(version)
 	tar -z -cf port_cutleaves-$(version).tar.gz port_cutleaves-$(version)
 
 clean:
-	rm -f Makefile port_cutleaves
+	rm -f Makefile port_cutleaves port_cutleaves.8
