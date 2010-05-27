@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title></title>
+    <meta name="author" content="Jim Mock (mij@macports.org)" />
+    <meta name="author" content="Juan Manuel Palacios (jmpp@macports.org)" />
+    <meta name="author" content="Chris Pickel (sfiera@macports.org)" />
+    <meta name="copyright" content="2003, OpenDarwin" />
+    <meta name="copyright" content="2007, The MacPorts Project" />
+    <meta name="description" content="The MacPorts Project is an open-source community initiative to design an easy-to-usesystem for compiling, installing, and upgrading either command-line, X11 or Aqua based open-source software on the Mac OS X operating system." />
+    <meta name="verify-v1" content="Gx4BI7CyPR+VN1q1Ckc6dcbuLF5NQGUaKEcm1Y/TFlY=" />
+    <meta name="robots" content="all" />
+    <%= stylesheet_link_tag 'macports' %>
+</head>
+<body>
+
+  <h1><%= link_to '<span class="accessibility">The MacPorts Project</span>', root_url %></h1>
+
+  <p class="accessibility"><%= link_to 'Skip to Content', '#content' %></p>
+
+  <div id="header">
+    <%= link_to 'Download MacPorts', install_path, {:id => 'download'} %>
+  </div>
+
+  <%= render :partial => '/partials/nav' %>
+
+  <%= yield %>
+
+  <div id="footer">
+    <p>
+      <%= link_to(image_tag('valid-xhtml11-blue.png', :alt => "Valid XHTML 1.1"), 'http://validator.w3.org/check?uri=referer') %>
+      <%= link_to(image_tag('vcss.png', :alt => "Valid CSS"), 'http://validator.w3.org/check?uri=referer') %>
+    </p>
+    <p>Copyright &#xA9; 2002&#x2013;<%= Time.now.strftime("%Y") %>, <%= link_to 'The MacPorts Project', root_url %>.Hosted by <%= link_to 'Mac OS Forge', 'http://www.macosforge.org' %>. All rights reserved.</p>
+  </div>
+
+</body>
+</html>
