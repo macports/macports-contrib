@@ -6,7 +6,7 @@ $Id: macports.css 31871 2007-12-10 17:35:00Z jmpp@macports.org $
 body {
     margin: 0;
     padding: 30px 40px;
-    background: url(img/top-backdrop.png) repeat-x #EDEDED;
+    background: url(/images/top-backdrop.png) repeat-x #EDEDED;
     font: 12px Helvetica, Arial, sans-serif;
     line-height: 1.2em;
 }
@@ -47,7 +47,7 @@ h1 a {
     display: block;
     width: 183px;
     height: 70px;
-    background: url(img/macports-logo-top.png);
+    background: url(/images/macports-logo-top.png);
 }
 
 h2, h3 {
@@ -86,12 +86,12 @@ img {
     float: right;
     width: 70px;
     height: 48px;
-    background: url(img/download.png);
+    background: url(/images/download.png);
     margin-left: 5px;
 }
 
 a#download:hover {
-    background: url(img/download-highlight.png);
+    background: url(/images/download-highlight.png);
 }
 
 
@@ -109,14 +109,14 @@ a#download:hover {
     width: 183px;
     float: left;
     clear: left;
-    background: url(img/nav-header.png) top no-repeat #B1BACC;
+    background: url(/images/nav-header.png) top no-repeat #B1BACC;
     line-height: 1.4em;
 }
 
 #navigation dl {
     padding: 16px 0;
     margin: 0;
-    background: url(img/nav-footer.png) bottom no-repeat;
+    background: url(/img/nav-footer.png) bottom no-repeat;
 }
 
 #navigation dt {
