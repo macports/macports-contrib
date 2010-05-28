@@ -1,0 +1,125 @@
+<div id="content">
+
+  <h2 class="hdr">Installing MacPorts</h2>
+
+  <p>MacPorts version <%= $latest_version %> is available in various formats for download and installation (note, if you are upgrading your Mac OS X to a new major release, see the <%= link_to 'migration info page', "#{$trac_url}wiki/Migration" %>):
+  </p>
+
+  <ul>
+    <li>&#8220;dmg&#8221; disk images for <%= link_to 'Snow Leopard', $snowleopard_dmg %>, <%= link_to 'Leopard', $leopard_dmg %> and <%= link_to 'Tiger', $tiger_dmg %> as a legacy platform, containing pkg installers for use with the Mac OS X Installer. By far the simplest installation procedure that most users should <%= link_to 'follow', '#pkg' %> after meeting the requirements listed <%= link_to 'below', '#requirements' %>.</li>
+    <li>In <%= link_to 'source form', '#source' %> as either a <%= link_to 'tar.bz2', $bz2_tarball %> package or a <%= link_to 'tar.gz', $gz_tarball %> one for manual compilation, if you intend to customize your installation in any way.</li>
+    <li><%= link_to 'SVN checkout', '#svn' %> of the unpackaged sources, if you wish to follow MacPorts development.</li>
+    <li>The <%= link_to 'selfupdate', '#selfupdate' %> target of the <kbd>port(1)</kbd> command, for users who already have MacPorts installed and wish to upgrade to a newer release.</li>
+  </ul>
+
+  <p>Checksums for our packaged <%= link_to 'downloads', $downloads_url %> are contained in the corresponding <%= link_to 'checksums file', $checksums %>.</p>
+
+  <div id="requirements">
+    <p>Please note that in order to install and run MacPorts on Mac OS X, your system must have installations of the following components:</p>
+    <ol>
+      <li>Apple's <%= link_to 'Xcode', 'http://developer.apple.com/tools/xcode' %> Developer Tools (version 3.2.1 or later for Snow Leopard, 3.1.4 or later for Leopard, or 2.5 for Tiger), found at the <%= link_to 'Apple Developer Connection', 'http://connect.apple.com' %> site or on your Mac OS X installation CDs/DVD. Ensure that the optional components for command line development are installed ("Unix Development" in the Xcode 3.x installer).</li>
+      <li>The X11 windowing environment (A.K.A. &#8220;X11 User&#8221;) for ports that depend on the functionality it provides to run.
+        <ul>
+          <li>The &#8220;X11 User&#8221; package is an optional installation on your system CDs/DVD for Tiger, enabled through the &#8220;Customize&#8221; button of the installer, whereas it is included by default on Leopard and Snow Leopard.</li>
+          <li>You can use the xorg-server port instead of Apple's X11.app if you wish.</li>
+        </ul>
+      </li>
+    </ol>
+  </div>
+
+
+  <h3 class="subhdr" id="pkg">Mac OS X Package (.pkg) Installer</h3>
+
+  <p>The easiest way to install MacPorts on a Mac OS X system is by downloading the dmg for <%= link_to 'Snow Leopard', $snowleopard_dmg %>, <%= link_to 'Leopard', $leopard_dmg %> or <%= link_to 'Tiger', $tiger_dmg %> and running the system's Installer by double-clicking on the pkg contained therein, following the on-screen instructions until completion.</p>
+
+  <p>This procedure will place a fully-functional and default MacPorts installation on your host system, ready for usage. If needed your shell configuration files will be <%= link_to 'adapted by the installer', "#{$guide_url}#installing.shell" %> to include the necessary settings to run MacPorts and the programs it installs, but you may need to open a new shell for these changes to take effect.</p>
+
+  <p>The MacPorts &#8220;<kbd>selfupdate</kbd>&#8221; command will also be run for you by the installer to ensure you have our latest available release and the latest revisions to the &#8220;Portfiles&#8221; that contain the instructions employed in the building and installation of ports. After installation is done, it is recommended that you run this step manually on a regular basis to to keep your MacPorts system always current:</p>
+  
+  <pre>sudo port -v selfupdate</pre>
+
+  <p>At this point you should be ready to enjoy MacPorts!</p>
+
+  <p>Type &#8220;<kbd>man port</kbd>&#8221; at the command line prompt and/or browse over to our <%= link_to 'Guide', "#{$guide_url}" %> to find out more information about using MacPorts. <%= link_to 'Help', '#help' %> is also available. </p>
+
+
+  <h3 class="subhdr" id="source">Source Installation</h3>
+
+  <p>If on the other hand you decide to install MacPorts from source, there are still a couple of things you will need to do after downloading the tarball before you can start installing ports, namely compiling and installing MacPorts itself:</p>
+
+
+  <ol>
+    <li>&#8220;<kbd>cd</kbd>&#8221; into the directory where you downloaded the package and run &#8220;<kbd>tar xjvf <%= link_to "MacPorts-#{$latest_version}.tar.bz2", $bz2_tarball %></kbd>&#8221; or &#8220;<kbd>tar xzvf <%= link_to "MacPorts-#{$latest_version}.tar.gz", $gz_tarball %></kbd>&#8221;, depending on whether you downloaded the bz2 tarball or the gz one, respectively.</li>
+    <li>Build and install the recently unpacked sources:
+      <ul>
+        <li><kbd>cd MacPorts-<%= $latest_version %></kbd></li>
+        <li><kbd>./configure &amp;&amp; make &amp;&amp; sudo make install</kbd></li>
+      </ul>
+      Optionally:
+      <ul>
+        <li><kbd>cd ../</kbd></li>
+        <li><kbd>rm -rf MacPorts-<%= $latest_version %>*</kbd></li>
+      </ul>
+    </li>
+  </ol>
+
+  <p>These steps need to be perfomed from an administrator account, for which &#8220;<kbd>sudo</kbd>&#8221; will ask the password upon installation. This procedure will install a pristine MacPorts system and, if the optional steps are taken, remove the as of now unnecessary MacPorts-<%= $latest_version %> source directory and corresponding tarball.</p>
+
+  <p>To customize your installation you should read the output of &#8220;<kbd>./configure --help | more</kbd>&#8221; and pass the appropriate options for the settings you wish to tweak to the configuration script in the steps detailed above.</p>
+
+  <p>You will need to manually adapt your shell's environment to work with MacPorts and your chosen installation <kbd> prefix</kbd> (the value passed to <kbd>configure</kbd>'s <kbd>--prefix</kbd> flag, defaulting to <kbd>/opt/local</kbd>):
+  </p>
+
+  <ul>
+    <li><kbd>Add ${prefix}/bin</kbd> and <kbd>${prefix}/sbin</kbd> to the start of your <kbd>PATH</kbd> environment variable so that MacPorts-installed programs take precedence over system-provided programs of the same name.</li>
+    <li>If a standard <kbd>MANPATH</kbd> environment variable already exists (that is, one that doesn't contain any empty components), add the <kbd>${prefix}/share/man</kbd> path to it so that MacPorts-installed man pages are found by your shell.</li>
+    <li>For Tiger and earlier only, add an appropriate X11 <kbd>DISPLAY</kbd> environment variable to run X11-dependent programs, as Leopard takes care of this requirement on its own.</li>
+  </ul>
+
+  <p>Lastly, you need to synchronize your installation with the MacPorts rsync server:</p>
+
+  <pre>sudo port -v selfupdate</pre>
+
+  <p>Upon completion MacPorts will be ready to install ports!</p>
+
+  <p>It is recommended to run the above command on a regular basis to keep your installation current. Type &#8220;<kbd>man port</kbd>&#8221; at the command line prompt and/or browse over to our <%= link_to 'Guide', $guide_url %> to find out more information about using MacPorts. <%= link_to 'Help', '#help' %> is also available.</p>
+
+
+  <h3 class="subhdr" id="svn">SVN Sources</h3>
+
+  <p>If you are developer or a user with a taste for the bleeding edge and wish for the latest changes and feature additions, you may acquire the MacPorts sources through subversion. See the Guide section on <%= link_to 'installing from subversion', "#{$guide_url}#installing.macports.subversion" %>.</p>
+
+  <p>Purpose-specific branches are also available at the <kbd><%= "#{$svn_url}branches" %></kbd> url.</p>
+
+  <p>Alternatively, if you'd simply like to view the SVN repository without checking it out, you can do so via the <%= link_to 'Trac source browser', "#{$trac_url}browser" %>.</p>
+  
+  
+  <h3 class="subhdr" id="selfupdate">Selfupdate</h3>
+
+  <p>If you already have MacPorts installed and have no restrictions to use the rsync networking protocol (tcp port 873 by default), the easiest way to upgrade to our latest available release, <b><%= $latest_version %></b>, is by using the <kbd>selfupdate</kbd> target of the <kbd>port(1)</kbd> command. This will both update your ports tree (by performing a <kbd>sync</kbd> operation) and rebuild your current installation if it's outdated, preserving your customizations, if any.</p>
+  
+
+  <h3 class="subhdr" id="other">Other Platforms</h3>
+
+  <p>Running on platforms other than Mac OS X is not the main focus of The MacPorts Project, so remaining cross-platform is not an actively-pursued development goal. Nevertheless, it is not an actively-discouraged goal either and as a result some experimental support does exist for other POSIX-compliant platforms such as *BSD and GNU/Linux.</p>
+
+  <p>The full list of requirements to run MacPorts on these other platforms is as follows (we assume you have the basics such as GCC and X11):</p>
+
+  <ul>
+    <li><%= link_to 'Tcl', 'http://www.tcl.tk' %> (8.4 or 8.5), with threads.</li>
+    <li><%= link_to 'GNUstep', 'http://gnustep.org' %> (Base), for Foundation.</li>
+    <li><b>mtree</b> for directory hierarchy.</li>
+    <li><%= link_to 'rsync', 'http://rsync.samba.org' %> for syncing the ports.</li>
+    <li><%= link_to 'cURL', 'http://curl.haxx.se' %> for downloading distfiles.</li>
+    <li><%= link_to 'OpenSSL', 'http://www.openssl.org' %> or <%= link_to 'libmd', 'http://martin.hinner.info/libmd' %> for checksums.</li>
+  </ul>
+
+  <p>Normally you must install from <%= link_to 'source', '#source' %> or from an <%= link_to 'SVN checkout', '#svn' %> to run MacPorts on any of these platforms. Experimental packaging is available for the FreeBSD (.tbz package), Fedora (.rpm package) and Ubuntu (.deb package) operating systems.</p>
+
+  <h3 class="subhdr" id="help">Help</h3>
+
+  <p>Help on a wide variety of topics is also available in the project <%= link_to 'Guide', $guide_url %> and through our <%= link_to 'Trac portal', $trac_url %> should you run into any problems installing and/or using MacPorts. Of particular relevance are the <%= link_to 'installation', "#{$guide_url}#installing" %> &amp; <%= link_to 'usage', "#{$guide_url}#using" %> sections of the former and the <%= link_to 'FAQ', "#{$trac_url}wiki.FAQ" %> section of the <%= link_to 'Wiki', "#{$trac_url}wiki" %>, where we keep track of questions frequently fielded on our <%= link_to 'mailing lists', "#{contact_path}#lists" %>.</p>
+
+  <p>If any of these resources do not answer your questions or if you need any kind of extended support, there are many ways to <%= link_to 'contact us', contact_path %>!</p>
+
+</div>
