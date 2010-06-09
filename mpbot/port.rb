@@ -312,7 +312,7 @@ class PortPlugin < Plugin
 			email = @registry["email_#{nick}"]
 			if email
 				name = @registry["name_#{nick}"]
-				text = callPort("echo", "maintainer:#{email}")
+				text = callPort("echo", "maintainer:(^|\s)#{email}($|\s)")
 				ports = text.split(/\s+/)
 				portCount = ports.size
 				showMax = 4
