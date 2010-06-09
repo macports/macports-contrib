@@ -154,7 +154,7 @@ class PortPlugin < Plugin
 	
 	def isPseudo(m, portname)
 		case portname
-			when "all", "current", "active", "inactive", "installed", "uninstalled", "outdated", "obsolete"
+			when "all", "current", "active", "inactive", "installed", "uninstalled", "outdated", "obsolete", "requested", "unrequested", "leaves"
 		        ret = true
 		    when /:/, /\*/, /\?/, /\{/, /\}/, /\[/, /\]/
 		        ret = true
