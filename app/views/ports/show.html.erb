@@ -1,0 +1,49 @@
+<p>
+  <b>Name:</b>
+  <%=h @port.name %>
+</p>
+
+<p>
+  <b>Path:</b>
+  <%=h @port.path %>
+</p>
+
+<p>
+  <b>Version:</b>
+  <%=h @port.version %>
+</p>
+
+<p>
+  <b>Description:</b>
+  <%=h @port.description %>
+</p>
+
+<p>
+  <b>Licenses:</b>
+  <%=h @port.licenses %>
+</p>
+
+<p>
+  <b>Categories:</b>
+  <%=h @port.categories %>
+</p>
+
+<p>
+  <b>Variants:</b>
+  <%=h @port.variants %>
+</p>
+
+<% form_for([@port, @comment]) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :body, "Text" %><br />
+    <%= f.text_area :body %>
+  </p>
+  <p>
+    <%= f.submit 'Create' %>
+  </p>
+<% end %>
+
+<%= link_to 'Edit', edit_port_path(@port) %> |
+<%= link_to 'Back', ports_path %>

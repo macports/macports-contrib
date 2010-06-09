@@ -1,0 +1,9 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  port_id: 1
+  dependency_id: 1
+
+two:
+  port_id: 1
+  dependency_id: 1
