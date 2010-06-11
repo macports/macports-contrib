@@ -95,14 +95,14 @@ sub debian {
 }
 
 sub find_dist {
-        for (@_) {
-                my $glob = "$_*";
-                print STDERR "trying to find dist in $glob\n";
-                if (my ( $dist ) = grep { -d } glob($glob) ) {
-                        return $dist
-                }
+    for (@_) {
+        my $glob = "$_*";
+        print STDERR "trying to find dist in $glob\n";
+        if (my ( $dist ) = grep { -d } glob($glob) ) {
+                return $dist
         }
-        undef;
+    }
+    undef;
 }
 
 sub module_depends {
