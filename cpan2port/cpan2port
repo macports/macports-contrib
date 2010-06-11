@@ -185,8 +185,8 @@ sub checksums {
 }
 
 sub all_on {
-        my $depends = module_depends( about(@_ ));
-        checksums( $depends );
+    my $depends = module_depends( about(@_ ));
+    checksums( $depends );
 }
 
 package main;
