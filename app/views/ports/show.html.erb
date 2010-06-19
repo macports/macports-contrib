@@ -1,49 +1,51 @@
-<p>
-  <b>Name:</b>
-  <%=h @port.name %>
-</p>
-
-<p>
-  <b>Path:</b>
-  <%=h @port.path %>
-</p>
-
-<p>
-  <b>Version:</b>
-  <%=h @port.version %>
-</p>
-
-<p>
-  <b>Description:</b>
-  <%=h @port.description %>
-</p>
-
-<p>
-  <b>Licenses:</b>
-  <%=h @port.licenses %>
-</p>
-
-<p>
-  <b>Categories:</b>
-  <%=h @port.categories %>
-</p>
-
-<p>
-  <b>Variants:</b>
-  <%=h @port.variants %>
-</p>
-
-<% form_for([@port, @comment]) do |f| %>
-  <%= f.error_messages %>
+<div id="content">
+  <p>
+    <strong>Name:</strong> <%=h @port.name %>
+  </p>
 
   <p>
-    <%= f.label :body, "Text" %><br />
-    <%= f.text_area :body %>
+    <strong>Current Version:</strong> <%=h @port.version %>
   </p>
-  <p>
-    <%= f.submit 'Create' %>
-  </p>
-<% end %>
 
-<%= link_to 'Edit', edit_port_path(@port) %> |
-<%= link_to 'Back', ports_path %>
+  <p>
+    <strong>Licenses:</strong> <%=h @port.licenses %>
+  </p>
+
+  <p>
+    <strong>Categories:</strong> <%=h @port.categories %>
+  </p>
+
+  <p>
+    <strong>Variants:</strong> <%=h @port.variants %>
+  </p>
+
+  <p>
+    <strong>Dependencies:</strong>
+    <% @port.dependencies.each do |dependency| %>
+      <%= link_to dependency.name, dependency %>
+    <% end %>
+  </p>
+
+  <p>
+    <strong>Description:</strong> <%=h @port.description %>
+  </p>
+
+  <p>
+    <strong>SVN Path:</strong> <%=h @port.path %>
+  </p>
+
+  <% form_for([@port, @comment]) do |f| %>
+    <%= f.error_messages %>
+
+    <p>
+      <%= f.label :body, "<strong>Comment</strong>" %><br />
+      <%= f.text_area :body %>
+    </p>
+    <p>
+      <%= f.submit 'Create' %>
+    </p>
+  <% end %>
+
+  <%= link_to 'Edit', edit_port_path(@port) %> |
+  <%= link_to 'Back', ports_path %>
+</div>
