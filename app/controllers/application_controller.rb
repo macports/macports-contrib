@@ -1,5 +1,6 @@
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
+require 'recaptcha'
 
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
@@ -12,7 +13,7 @@ class ApplicationController < ActionController::Base
   $svn_url = 'http://svn.macports.org/repository/macports/'
   $downloads_url = 'http://distfiles.macports.org/MacPorts/'
   $guide_url = 'http://guide.macports.org'
-  $latest_version = '1.8.2'
+  $latest_version = '1.9.1'
   $snowleopard_dmg = "#{$downloads_url}Macports-#{$latest_version}-10.6-SnowLeopard.dmg"
   $leopard_dmg = "#{$downloads_url}Macports-#{$latest_version}-10.5-Leopard.dmg"
   $tiger_dmg = "#{$downloads_url}Macports-#{$latest_version}-10.4-Tiger.dmg"

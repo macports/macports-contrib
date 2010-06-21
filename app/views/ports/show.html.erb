@@ -12,10 +12,6 @@
   </p>
 
   <p>
-    <strong>Categories:</strong> <%=h @port.categories %>
-  </p>
-
-  <p>
     <strong>Variants:</strong> <%=h @port.variants %>
   </p>
 
@@ -42,8 +38,15 @@
       <%= f.text_area :body %>
     </p>
     <p>
+      <%= recaptcha_tags %>
+    </p>
+    <p>
       <%= f.submit 'Create' %>
     </p>
+  <% end %>
+
+  <% @port.comments.each do |comment| %>
+    <div><%= h comment.body %></div>
   <% end %>
 
   <%= link_to 'Edit', edit_port_path(@port) %> |

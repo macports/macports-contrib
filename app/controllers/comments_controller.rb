@@ -7,10 +7,13 @@ class CommentsController < ApplicationController
     @comment = Port.find(params[:port_id]).comments.build(params[:comment])
 
     respond_to do |format|
-      if @comment.save
-        format.html { redirect_to(@comment.port, :notice => 'Comment was successfully created.') }
+      if verify_recaptcha
+        if @comment.save
+          format.html { redirect_to @comment.port }
+        end
       else
-        format.html { render :action => "new" }
+        flash[:error] = "There was an error with the recaptcha code below. Please re-enter the code and click submit." 
+        format.html { redirect_to @comment.port }
       end
     end
   end
