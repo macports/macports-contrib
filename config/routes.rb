@@ -1,5 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :ports do |port|
+  map.resources :ports, :except => [:edit, :update] do |port|
     port.resources :comments, :except => [:index, :show, :new]
   end
 
