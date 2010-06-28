@@ -106,8 +106,14 @@ proc find_all_dependencies {portName variantInfo verbose} {
         }
     }
 
+    set portSpec ${portName}
+    foreach {variantName variantFlag} ${variantInfo} {
+        append portSpec { } ${variantFlag}${variantName}
+    }
+    set caption [format {Dependencies of %s} ${portSpec}]
+
     puts "strict digraph \"$portName\" \{"
-    puts [format {graph [label="%s"]} [format {Dependencies of %s} $portName]]
+    puts [format {graph [label="%s"]} ${caption}]
 
     print_dependencies portDependencies $portName $verbose
 
