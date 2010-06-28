@@ -107,6 +107,7 @@ proc find_all_dependencies {portName variantInfo verbose} {
     }
 
     puts "strict digraph \"$portName\" \{"
+    puts [format {graph [label="%s"]} [format {Dependencies of %s} $portName]]
 
     print_dependencies portDependencies $portName $verbose
 
