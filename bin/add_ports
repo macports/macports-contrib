@@ -1,0 +1,75 @@
+#!/usr/bin/env ruby
+require 'active_record'
+
+TIME_FILE = "/var/tmp/mpwa-sync"
+NEW_PORTS = "/Users/joe/Dev/macports/new-ports"
+PORT_INDEX = "/opt/local/var/macports/sources/rsync.macports.org/release/ports"
+RAILS_ROOT = "/Users/joe/Dev/mpwa"
+
+require File.expand_path(RAILS_ROOT + '/app/models/category.rb',  __FILE__)
+require File.expand_path(RAILS_ROOT + '/app/models/port.rb',  __FILE__)
+require File.expand_path(RAILS_ROOT + '/app/models/port_dependency.rb',  __FILE__)
+require File.expand_path(RAILS_ROOT + '/app/models/supplemental_category.rb',  __FILE__)
+
+$mtime = File.stat(TIME_FILE).mtime.to_i
+$ports = Array.new
+$hashed_data = Hash.new
+
+db_info = YAML.load_file(File.expand_path(RAILS_ROOT + '/config/database.yml',  __FILE__))
+ActiveRecord::Base.establish_connection(db_info['development'])
+
+fp = IO.popen("#{NEW_PORTS} #{PORT_INDEX}")
+new_ports = fp.read.split("\n")
+
+new_ports.each do |line|
+  unless (line == "")
+    data = line.match(/(\S+):\s+\{?(.+)\}?$/)
+    unless data.nil? #field missing, should record this if it happens
+      $hashed_data[data[1].to_sym] = data[2]
+    end
+  else
+    port = Port.new({
+      :name => $hashed_data[:name],
+      :path => $hashed_data[:portdir],
+      :version => $hashed_data[:version],
+      :description => $hashed_data[:description],
+      :licenses => $hashed_data[:license],
+      :category_id => Category.find_by_name($hashed_data[:categories].split(" ")[0]).id,
+      :variants => $hashed_data[:variants],
+      :maintainers => $hashed_data[:maintainers]
+    })
+    $ports << [$hashed_data, port]
+    port.save
+    $hashed_data = {}
+  end
+end
+
+$ports.each do |port|
+  categories = port[0][:categories].split(" ")
+  unless (categories.count < 2)
+    categories[1..-1].each do |category|
+      port[1].supplemental_categories.build({:name => category}).save!
+    end
+  end
+
+  dependencies = Array.new
+  unless port[0][:depends_lib].nil?
+    dependencies << port[0][:depends_lib].split(" ")
+  end
+
+  unless port[0][:depends_run].nil?
+    dependencies << port[0][:depends_run].split(" ")
+  end
+
+  unless port[0][:depends_build].nil?
+    dependencies << port[0][:depends_build].split(" ")
+  end
+
+  dependencies.flatten.uniq.each do |dependency|
+    name = dependency.match(/.+:(.+)/)[1]
+    dep = Port.find_by_name(name)
+    unless dep.nil? #should provide the info that the port doesn't exist eventually
+      port[1].port_dependencies.build({:dependency_id => dep.id}).save!
+    end
+  end
+end
