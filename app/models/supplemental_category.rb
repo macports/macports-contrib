@@ -1,3 +1,3 @@
-class SupplimentalCategory < ActiveRecord::Base
+class SupplementalCategory < ActiveRecord::Base
   belongs_to :port
 end
