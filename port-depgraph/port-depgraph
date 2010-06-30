@@ -82,9 +82,9 @@ proc print_dependencies {dependencyArray portName verbose} {
         }
 
         if {!$verbose} {
-            puts [format {"%s" -> "%s" [ style=%s ] } $portName $aPort $style]
+            puts [format {"%s" -> "%s" [style="%s"]} $portName $aPort $style]
         } else {
-            puts [format {"%s" -> "%s" [ label="%s",style="%s",color="%s" ]} $portName $aPort $aBy $style $color]
+            puts [format {"%s" -> "%s" [style="%s", label="%s", color="%s"]} $portName $aPort $style $aBy $color]
         }
 
         print_dependencies portDependencies $aPort $verbose
