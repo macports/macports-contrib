@@ -9,7 +9,6 @@ RAILS_ROOT = "/Users/joe/Dev/gsoc10-mpwa/mpwa"
 require File.expand_path(RAILS_ROOT + '/app/models/category.rb',  __FILE__)
 require File.expand_path(RAILS_ROOT + '/app/models/port.rb',  __FILE__)
 require File.expand_path(RAILS_ROOT + '/app/models/port_dependency.rb',  __FILE__)
-require File.expand_path(RAILS_ROOT + '/app/models/supplemental_category.rb',  __FILE__)
 
 if File.exists?(TIME_FILE)
   $mtime = File.stat(TIME_FILE).mtime.to_i
@@ -25,6 +24,7 @@ ActiveRecord::Base.establish_connection(db_info['development'])
 
 fp = IO.popen("#{NEW_PORTS} -m #{$mtime} #{PORT_INDEX}")
 new_ports = fp.read.split("\n")
+new_ports << ""
 
 new_ports.each do |line|
   unless (line == "")
@@ -42,7 +42,8 @@ new_ports.each do |line|
       :category_id => Category.find_by_name($hashed_data[:categories].split(" ")[0]).id,
       :variants => $hashed_data[:variants],
       :maintainers => $hashed_data[:maintainers],
-      :platforms => $hashed_data[:platforms]
+      :platforms => $hashed_data[:platforms],
+      :categories => $hashed_data[:categories]
     })
     $ports << [$hashed_data, port]
     port.save
@@ -51,13 +52,6 @@ new_ports.each do |line|
 end
 
 $ports.each do |port|
-  categories = port[0][:categories].split(" ")
-  unless (categories.count < 2)
-    categories[1..-1].each do |category|
-      port[1].supplemental_categories.build({:name => category}).save!
-    end
-  end
-
   dependencies = Array.new
   unless port[0][:depends_lib].nil?
     dependencies << port[0][:depends_lib].split(" ")
