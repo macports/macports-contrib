@@ -2,23 +2,28 @@
 require 'active_record'
 
 TIME_FILE = "/var/tmp/mpwa-sync"
-NEW_PORTS = "/Users/joe/Dev/macports/new-ports"
+NEW_PORTS = "/Users/joe/Dev/gsoc10-mpwa/bin/new-ports"
 PORT_INDEX = "/opt/local/var/macports/sources/rsync.macports.org/release/ports"
-RAILS_ROOT = "/Users/joe/Dev/mpwa"
+RAILS_ROOT = "/Users/joe/Dev/gsoc10-mpwa/mpwa"
 
 require File.expand_path(RAILS_ROOT + '/app/models/category.rb',  __FILE__)
 require File.expand_path(RAILS_ROOT + '/app/models/port.rb',  __FILE__)
 require File.expand_path(RAILS_ROOT + '/app/models/port_dependency.rb',  __FILE__)
 require File.expand_path(RAILS_ROOT + '/app/models/supplemental_category.rb',  __FILE__)
 
-$mtime = File.stat(TIME_FILE).mtime.to_i
+if File.exists?(TIME_FILE)
+  $mtime = File.stat(TIME_FILE).mtime.to_i
+else
+  $mtime = 0
+end
+
 $ports = Array.new
 $hashed_data = Hash.new
 
 db_info = YAML.load_file(File.expand_path(RAILS_ROOT + '/config/database.yml',  __FILE__))
 ActiveRecord::Base.establish_connection(db_info['development'])
 
-fp = IO.popen("#{NEW_PORTS} #{PORT_INDEX}")
+fp = IO.popen("#{NEW_PORTS} -m #{$mtime} #{PORT_INDEX}")
 new_ports = fp.read.split("\n")
 
 new_ports.each do |line|
@@ -36,7 +41,8 @@ new_ports.each do |line|
       :licenses => $hashed_data[:license],
       :category_id => Category.find_by_name($hashed_data[:categories].split(" ")[0]).id,
       :variants => $hashed_data[:variants],
-      :maintainers => $hashed_data[:maintainers]
+      :maintainers => $hashed_data[:maintainers],
+      :platforms => $hashed_data[:platforms]
     })
     $ports << [$hashed_data, port]
     port.save

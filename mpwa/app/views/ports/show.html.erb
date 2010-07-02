@@ -12,6 +12,14 @@
   </p>
 
   <p>
+    <strong>Categories</strong>
+    <%=h @port.category.name %>
+    <% @port.supplemental_categories.each do |category| %>
+      <%=h category.name %>
+    <% end %>
+  </p>
+
+  <p>
     <strong>Variants:</strong> <%=h @port.variants %>
   </p>
 
@@ -30,7 +38,7 @@
     <strong>SVN Path:</strong> <%=h @port.path %>
   </p>
 
-  <% form_for([@port, @comment]) do |f| %>
+  <% form_for([@port.category, @port, @comment]) do |f| %>
     <%= f.error_messages %>
 
     <p>
@@ -49,6 +57,5 @@
     <div><%= h comment.body %></div>
   <% end %>
 
-  <%= link_to 'Edit', edit_port_path(@port) %> |
   <%= link_to 'Back', ports_path %>
 </div>

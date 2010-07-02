@@ -1,32 +1,20 @@
-<h1>Listing ports</h1>
+<div id="content">
+  <%= render :partial => '/partials/port_search' %>
 
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Path</th>
-    <th>Version</th>
-    <th>Description</th>
-    <th>Licenses</th>
-    <th>Categories</th>
-    <th>Variants</th>
-  </tr>
+  <h3>Query Results</h3>
 
-<% @ports.each do |port| %>
-  <tr>
-    <td><%=h port.name %></td>
-    <td><%=h port.path %></td>
-    <td><%=h port.version %></td>
-    <td><%=h port.description %></td>
-    <td><%=h port.licenses %></td>
-    <td><%=h port.categories %></td>
-    <td><%=h port.variants %></td>
-    <td><%= link_to 'Show', port %></td>
-    <td><%= link_to 'Edit', edit_port_path(port) %></td>
-    <td><%= link_to 'Destroy', port, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
-</table>
+  <%= will_paginate @ports %>
 
-<br />
+  <% @ports.each do |port| %>
+    <dl>
+      <dt><b><%= link_to port.name, category_ports_path(port.category, port) %></b> <%= port.version %></dt>
+      <dd><%= port.description %><br />
+      <i>Maintained by:</i> <b><span class="email"><%= port.maintainers %></span></b><br>
+      <i>Categories:</i> <%= port.category.name %><br />
+      <i>Platforms:</i> <%= port.platforms %><br />
+      <i>Variants:</li> <%= port.variants %></dd>
+    </dl>
+  <% end %>
 
-<%= link_to 'New port', new_port_path %>
+  <%= will_paginate @ports %>
+</div>
