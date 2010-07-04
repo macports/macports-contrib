@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100702053149) do
+ActiveRecord::Schema.define(:version => 20100702075455) do
 
   create_table "categories", :force => true do |t|
     t.string   "name"
@@ -43,13 +43,7 @@ ActiveRecord::Schema.define(:version => 20100702053149) do
     t.datetime "updated_at"
     t.string   "maintainers"
     t.string   "platforms"
-  end
-
-  create_table "supplemental_categories", :force => true do |t|
-    t.string   "name"
-    t.integer  "port_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.string   "categories"
   end
 
 end

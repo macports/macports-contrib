@@ -7,35 +7,40 @@
     <strong>Current Version:</strong> <%=h @port.version %>
   </p>
 
-  <p>
-    <strong>Licenses:</strong> <%=h @port.licenses %>
-  </p>
+  <% unless @port.description.nil? %>
+    <p>
+      <strong>Description:</strong> <%=h @port.description %>
+    </p>
+  <% end %>
+
+  <% unless @port.licenses.nil? %>
+    <p>
+      <strong>Licenses:</strong> <%=h @port.licenses %>
+    </p>
+  <% end %>
 
   <p>
     <strong>Categories</strong>
-    <%=h @port.category.name %>
-    <% @port.supplemental_categories.each do |category| %>
-      <%=h category.name %>
-    <% end %>
+    <%=h @port.categories %>
   </p>
 
-  <p>
-    <strong>Variants:</strong> <%=h @port.variants %>
-  </p>
+  <% unless @port.variants.nil? %>
+    <p>
+      <strong>Variants:</strong> <%=h @port.variants %>
+    </p>
+  <% end %>
+
+  <% unless @port.dependencies.empty? %>
+    <p>
+      <strong>Dependencies:</strong>
+      <% @port.dependencies.each do |dependency| %>
+        <%= link_to dependency.name, category_port_path(dependency.category, dependency) %>
+      <% end %>
+    </p>
+  <% end %>
 
   <p>
-    <strong>Dependencies:</strong>
-    <% @port.dependencies.each do |dependency| %>
-      <%= link_to dependency.name, dependency %>
-    <% end %>
-  </p>
-
-  <p>
-    <strong>Description:</strong> <%=h @port.description %>
-  </p>
-
-  <p>
-    <strong>SVN Path:</strong> <%=h @port.path %>
+    <strong>Portfile:</strong> <%= link_to "#{@port.path}/Portfile", "#{$svn_url}/trunk/dports/#{@port.path}/Portfile" %>
   </p>
 
   <% form_for([@port.category, @port, @comment]) do |f| %>
@@ -43,7 +48,7 @@
 
     <p>
       <%= f.label :body, "<strong>Comment</strong>" %><br />
-      <%= f.text_area :body %>
+      <%= f.text_area :body, {:rows => 5, :cols => 80} %>
     </p>
     <p>
       <%= recaptcha_tags %>
@@ -57,5 +62,4 @@
     <div><%= h comment.body %></div>
   <% end %>
 
-  <%= link_to 'Back', ports_path %>
 </div>

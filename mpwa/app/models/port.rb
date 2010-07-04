@@ -3,6 +3,9 @@ class Port < ActiveRecord::Base
   has_many :dependencies, :through => :port_dependencies
   has_many :comments
   has_one :category
-  has_many :supplemental_categories
   belongs_to :category
+
+  def self.search(criteria, val, page)
+    paginate :per_page => 50, :page => page, :conditions => ["#{self.columns_hash[criteria].name} like ?", "%#{val}%"], :order => 'name ASC'
+  end
 end

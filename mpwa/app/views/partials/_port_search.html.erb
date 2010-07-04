@@ -1,0 +1,16 @@
+<h2 class="hdr">MacPorts Portfiles</h2> 
+
+<p>The MacPorts Project currently distributes <b><%= Port.count %></b> ports, organized across 92 different categories and available below for viewing. This form allows you to search the MacPorts software index, last updated on <b><%= @updated.strftime("%Y-%m-%d") %></b> at <b><%= @updated.strftime("%H:%M:%S %Z") %></b>.</p> 
+
+<br />
+
+<p>
+  <% form_tag(search_generate_path, {:method => :get}) do %>
+    <%= select_tag :criteria, options_for_select({"Software Title" => "name", "Category" => "categories", "Maintainer" => "maintainers", "variant" => "variants", "Platform" => "platforms"}) %>
+    <%= text_field_tag :val, "", {:size => 40} %>
+    <%= submit_tag "Search" %>
+  <% end %>
+</p>
+
+<p>Or view the complete <%= link_to "ports list (#{Port.count} ports)", ports_path %>.</p> 
+<br />

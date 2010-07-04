@@ -1,352 +1,184 @@
+0:
+  id: 0
+  name: aqua
+
 1:
   id: 1
-  name: accounting
+  name: archivers
 
 2:
   id: 2
-  name: amusements
+  name: audio
 
 3:
   id: 3
-  name: aqua
+  name: benchmarks
 
 4:
   id: 4
-  name: archivers
+  name: cad
 
 5:
   id: 5
-  name: audio
+  name: comms
 
 6:
   id: 6
-  name: benchmarks
+  name: cross
 
 7:
   id: 7
-  name: biology
+  name: databases
 
 8:
   id: 8
-  name: blinkenlights
+  name: devel
 
 9:
   id: 9
-  name: cad
+  name: editors
 
 10:
   id: 10
-  name: chat
+  name: emulators
 
 11:
   id: 11
-  name: chinese
+  name: erlang
 
 12:
   id: 12
-  name: comms
+  name: finance
 
 13:
   id: 13
-  name: compression
+  name: fuse
 
 14:
   id: 14
-  name: cross
+  name: games
 
 15:
   id: 15
-  name: crypto
+  name: genealogy
 
 16:
   id: 16
-  name: databases
+  name: gis
 
 17:
   id: 17
-  name: devel
+  name: gnome
 
 18:
   id: 18
-  name: editors
+  name: gnustep
 
 19:
   id: 19
-  name: education
+  name: graphics
 
 20:
   id: 20
-  name: electronics
+  name: irc
 
 21:
   id: 21
-  name: emacs
+  name: java
 
 22:
   id: 22
-  name: emulators
+  name: kde
 
 23:
   id: 23
-  name: erlang
+  name: lang
 
 24:
   id: 24
-  name: finance
+  name: mail
 
 25:
   id: 25
-  name: fonts
+  name: math
 
 26:
   id: 26
-  name: framework
+  name: multimedia
 
 27:
   id: 27
-  name: fuse
+  name: net
 
 28:
   id: 28
-  name: games
+  name: news
 
 29:
   id: 29
-  name: genealogy
+  name: office
 
 30:
   id: 30
-  name: gis
+  name: palm
 
 31:
   id: 31
-  name: gnome
+  name: perl
 
 32:
   id: 32
-  name: gnustep
+  name: php
 
 33:
   id: 33
-  name: graphics
+  name: print
 
 34:
   id: 34
-  name: gtk
+  name: python
 
 35:
   id: 35
-  name: haskell
+  name: ruby
 
 36:
   id: 36
-  name: iphone
+  name: science
 
 37:
   id: 37
-  name: irc
+  name: security
 
 38:
   id: 38
-  name: japanese
+  name: shells
 
 39:
   id: 39
-  name: java
+  name: sysutils
 
 40:
   id: 40
-  name: kde
+  name: tex
 
 41:
   id: 41
-  name: kde4
+  name: textproc
 
 42:
   id: 42
-  name: lang
+  name: www
 
 43:
   id: 43
-  name: macports
+  name: x11
 
 44:
   id: 44
-  name: mail
+  name: xfce
 
 45:
   id: 45
-  name: math
-
-46:
-  id: 46
-  name: mercurial
-
-47:
-  id: 47
-  name: ml
-
-48:
-  id: 48
-  name: mono
-
-49:
-  id: 49
-  name: multimedia
-
-50:
-  id: 50
-  name: net
-
-51:
-  id: 51
-  name: network
-
-52:
-  id: 52
-  name: news
-
-53:
-  id: 53
-  name: ocaml
-
-54:
-  id: 54
-  name: office
-
-55:
-  id: 55
-  name: palm
-
-56:
-  id: 56
-  name: parallel
-
-57:
-  id: 57
-  name: pdf
-
-58:
-  id: 58
-  name: perl
-
-59:
-  id: 59
-  name: php
-
-60:
-  id: 60
-  name: pim
-
-61:
-  id: 61
-  name: print
-
-62:
-  id: 62
-  name: project
-
-63:
-  id: 63
-  name: python
-
-64:
-  id: 64
-  name: reporting
-
-65:
-  id: 65
-  name: rox
-
-66:
-  id: 66
-  name: ruby
-
-67:
-  id: 67
-  name: russian
-
-68:
-  id: 68
-  name: scheme
-
-69:
-  id: 69
-  name: science
-
-70:
-  id: 70
-  name: security
-
-71:
-  id: 71
-  name: shells
-
-72:
-  id: 72
-  name: spelling
-
-73:
-  id: 73
-  name: squeak
-
-74:
-  id: 74
-  name: sysutils
-
-75:
-  id: 75
-  name: tcl
-
-76:
-  id: 76
-  name: tex
-
-77:
-  id: 77
-  name: textproc
-
-78:
-  id: 78
-  name: tk
-
-79:
-  id: 79
-  name: unicode
-
-80:
-  id: 80
-  name: vnc
-
-81:
-  id: 81
-  name: win32
-
-82:
-  id: 82
-  name: wsn
-
-83:
-  id: 83
-  name: www
-
-84:
-  id: 84
-  name: x11
-
-85:
-  id: 85
-  name: x11-font
-
-86:
-  id: 86
-  name: x11-wm
-
-87:
-  id: 87
-  name: xfce
-
-88:
-  id: 88
   name: zope
 

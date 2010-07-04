@@ -1,0 +1,13 @@
+<div id="content">
+
+  <%= render :partial => '/partials/port_search' %>
+
+  <h3>Port Categories</h3>
+  <div id="categories">
+    <ul>
+      <% @categories.each do |category| %>
+        <li><%= link_to category.name, category_ports_path(category.id) %></li>
+      <% end %>
+    </ul>
+  </div>
+</div>
