@@ -58,6 +58,15 @@
     </p>
   <% end %>
 
+  <div>
+    <h3>Open Tickets</h3>
+    <ul>
+      <% @port.tickets.each do |ticket| %>
+        <li><%= link_to ticket.summary %></li>
+      <% end %>
+    </ul>
+  </div>
+
   <% @port.comments.each do |comment| %>
     <div><%= h comment.body %></div>
   <% end %>

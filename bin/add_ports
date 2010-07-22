@@ -1,14 +1,20 @@
 #!/usr/bin/env ruby
 require 'active_record'
+require 'trac4r'
 
 TIME_FILE = "/var/tmp/mpwa-sync"
 NEW_PORTS = "/Users/joe/Dev/gsoc10-mpwa/bin/new-ports"
 PORT_INDEX = "/opt/local/var/macports/sources/rsync.macports.org/release/ports"
 RAILS_ROOT = "/Users/joe/Dev/gsoc10-mpwa/mpwa"
+OPEN_STATUSES = ['new', 'reopened', 'assigned']
+TRAC_URL = "http://192.168.1.135/svn-helloworld/xmlrpc"
+TRAC_USER = "admin"
+TRAC_PASS = "turnkey"
 
 require File.expand_path(RAILS_ROOT + '/app/models/category.rb',  __FILE__)
 require File.expand_path(RAILS_ROOT + '/app/models/port.rb',  __FILE__)
 require File.expand_path(RAILS_ROOT + '/app/models/port_dependency.rb',  __FILE__)
+require File.expand_path(RAILS_ROOT + '/app/models/ticket.rb',  __FILE__)
 
 if File.exists?(TIME_FILE)
   $mtime = File.stat(TIME_FILE).mtime.to_i
@@ -21,6 +27,7 @@ $hashed_data = Hash.new
 
 db_info = YAML.load_file(File.expand_path(RAILS_ROOT + '/config/database.yml',  __FILE__))
 ActiveRecord::Base.establish_connection(db_info['development'])
+trac = Trac.new(TRAC_URL, TRAC_USER, TRAC_PASS)
 
 fp = IO.popen("#{NEW_PORTS} -m #{$mtime} #{PORT_INDEX}")
 new_ports = fp.read.split("\n")
@@ -70,6 +77,28 @@ $ports.each do |port|
     dep = Port.find_by_name(name)
     unless dep.nil? #should provide the info that the port doesn't exist eventually
       port[1].port_dependencies.build({:dependency_id => dep.id}).save!
+    end
+  end
+end
+
+var = trac.tickets.changes(Time.at($mtime).to_datetime)
+tickets = var.map {|id| trac.tickets.get(id)}
+tickets.each do |ticket|
+  if ticket.instance_variables.include?(:@port)
+    port = Port.find_by_name(ticket.port)
+    if OPEN_STATUSES.include?(ticket.status)
+      unless (saved_ticket = port.tickets.find_by_ticket(ticket.id)).nil?
+        unless saved_ticket.summary == ticket.summary
+          saved_ticket = ticket.summary
+          saved_ticket.save
+        end
+      else
+        port.tickets.build({:ticket => ticket.id, :summary => ticket.summary}).save
+      end
+    else
+      unless (saved_ticket = port.tickets.find_by_ticket(ticket.id)).nil?
+        saved_ticket.destroy
+      end
     end
   end
 end
