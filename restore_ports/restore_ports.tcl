@@ -143,7 +143,7 @@ proc sort_ports {portList} {
 }
 
 proc install_ports {operationList} {
-    if {[rpm-vercomp [macports::version] 1.8.2] <= 0} {
+    if {[rpm-vercomp [macports::version] 1.9.1] < 0} {
         set install_target install
     } else {
         set install_target activate
