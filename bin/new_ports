@@ -3,9 +3,6 @@
 # Run the Tcl interpreter \
 exec /usr/bin/tclsh "$0" "$@"
 
-# Traverse through all ports, outputting out their info if they are older than a specified time
-# $Id: portindex.tcl 68413 2010-06-03 03:26:35Z jmr@macports.org $
-
 catch {source \
     [file join "/Library/Tcl" macports1.0 macports_fastload.tcl]}
 package require macports
@@ -23,7 +20,7 @@ mportinit ui_options global_options global_variations
 # Standard procedures
 proc print_usage args {
     global argv0
-    puts "Usage: $argv0 \[-dm\] \<directory\>"
+    puts "Usage: $argv0 \[-d\] -m <time> \<directory\>"
     puts "-d:\tOutput debugging information"
     puts "-m:\tOutput ports newer than the given mtime"
 }
