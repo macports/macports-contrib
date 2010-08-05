@@ -5,7 +5,6 @@ class PortsController < ApplicationController
     else
       @ports = Port.paginate :page => params[:page], :order => 'name ASC', :per_page => 50
     end
-    @updated = Port.all(:order => 'updated_at DESC', :limit => 1).first.updated_at
     @page = params[:page] || 1
 
     respond_to do |format|
@@ -24,7 +23,6 @@ class PortsController < ApplicationController
 
   def search
     @ports = Port.search(params[:criteria], params[:val], params[:page])
-    @updated = Port.all(:order => 'updated_at DESC', :limit => 1).first.updated_at
     @page = params[:page] || 1
 
     respond_to do |format|

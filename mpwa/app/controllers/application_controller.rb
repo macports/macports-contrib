@@ -20,4 +20,6 @@ class ApplicationController < ActionController::Base
   $bz2_tarball = "#{$downloads_url}MacPorts-#{$latest_version}.tar.bz2"
   $gz_tarball = "#{$downloads_url}MacPorts-#{$latest_version}.tar.gz"
   $checksums = "#{$downloads_url}MacPorts-#{$latest_version}.chk.txt"
+
+  $updated = Port.all(:order => 'updated_at DESC', :limit => 1).try(:first).try(:updated_at) || Time.at(0)
 end

@@ -3,6 +3,7 @@
 
   <h3>Query Results</h3>
 
+<% unless @ports.empty? %>
   <p>
     <%= ((@page.to_i - 1) * 50) + 1 %> - <%= @page.to_i * 50 %> of <%= Port.count %> Portfiles Selected
   </p>
@@ -44,6 +45,9 @@
       </dd>
     </dl>
   <% end %>
+<% else %>
+  <p>No ports found.</p>
+<% end %>
 
   <p>
     <%= will_paginate @ports %>
