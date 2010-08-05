@@ -143,6 +143,11 @@ proc sort_ports {portList} {
 }
 
 proc install_ports {operationList} {
+    if {[rpm-vercomp [macports::version] 1.8.2] <= 0} {
+        set install_target install
+    } else {
+        set install_target activate
+    }
     foreach op $operationList {
         set name [string trim [lindex $op 0]]
         set variations [lindex $op 1]
@@ -168,7 +173,7 @@ proc install_ports {operationList} {
             puts "$errorInfo"
             return -code error "Unable to open port '$name': $result"
         }
-        if {[catch {set result [mportexec $workername install]} result]} {
+        if {[catch {set result [mportexec $workername $install_target]} result]} {
             global errorInfo
             mportclose $workername
             ui_msg "$errorInfo"
