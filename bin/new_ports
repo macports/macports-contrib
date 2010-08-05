@@ -23,7 +23,7 @@ mportinit ui_options global_options global_variations
 # Standard procedures
 proc print_usage args {
     global argv0
-    puts "Usage: $argv0 \[-dm\] \[directory\]"
+    puts "Usage: $argv0 \[-dm\] \<directory\>"
     puts "-d:\tOutput debugging information"
     puts "-m:\tOutput ports newer than the given mtime"
 }
