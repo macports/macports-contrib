@@ -1,4 +1,6 @@
 class PortsController < ApplicationController
+  caches_page :index, :show
+
   def index
     unless params[:category_id].nil?
       @ports = Category.find(params[:category_id]).ports.paginate :page => params[:page], :order => 'name ASC', :per_page => 50

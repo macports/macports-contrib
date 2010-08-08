@@ -10,5 +10,6 @@ Rails::Initializer.run do |config|
   config.gem 'recaptcha', :lib => "recaptcha/rails"
   config.gem 'will_paginate'
 
+  config.load_paths += %W( #{RAILS_ROOT}/app/sweepers )
   config.time_zone = 'UTC'
 end
