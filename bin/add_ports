@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'active_record'
+require 'fileutils'
 require 'trac4r'
 
 TIME_FILE = "/var/tmp/mpwa-sync"
