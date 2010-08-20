@@ -51,7 +51,7 @@
       <%= f.text_area :body, {:rows => 5, :cols => 80} %>
     </p>
     <p>
-      <%= recaptcha_tags %>
+      <%= recaptcha_tags :display => {:theme => 'clean'} %>
     </p>
     <p>
       <%= f.submit 'Create' %>
