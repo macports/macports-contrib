@@ -15,7 +15,7 @@ class PortSweeper < ActionController::Caching::Sweeper
 
 private
   def expire_cache_for(port)
-    expire_page :action => :index
-    expire_page :action => :show
+    expire_page category_ports_path(port.category)
+    expire_page category_port_path(port.category, port)
   end
 end

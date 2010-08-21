@@ -43,21 +43,6 @@
     <strong>Portfile:</strong> <%= link_to "#{@port.path}/Portfile", "#{$svn_url}/trunk/dports/#{@port.path}/Portfile" %>
   </p>
 
-  <% form_for([@port.category, @port, @comment]) do |f| %>
-    <%= f.error_messages %>
-
-    <p>
-      <%= f.label :body, "<strong>Comment</strong>" %><br />
-      <%= f.text_area :body, {:rows => 5, :cols => 80} %>
-    </p>
-    <p>
-      <%= recaptcha_tags :display => {:theme => 'clean'} %>
-    </p>
-    <p>
-      <%= f.submit 'Create' %>
-    </p>
-  <% end %>
-
   <div>
     <h3>Open Tickets</h3>
     <ul>
@@ -67,8 +52,26 @@
     </ul>
   </div>
 
-  <% @port.comments.each do |comment| %>
-    <div><%= h comment.body %></div>
-  <% end %>
+  <div>
+    <h3>Comments</h3>
+    <% form_for([@port.category, @port, @comment]) do |f| %>
+      <%= f.error_messages %>
+
+      <p>
+        <%= f.label :body, "<strong>Comment</strong>" %><br />
+        <%= f.text_area :body, {:rows => 5, :cols => 80} %>
+      </p>
+      <p>
+        <%= recaptcha_tags :display => {:theme => 'clean'} %>
+      </p>
+      <p>
+        <%= f.submit 'Create' %>
+      </p>
+    <% end %>
+
+    <% @port.comments.each do |comment| %>
+      <div><%= h comment.body %></div>
+    <% end %>
+  </div>
 
 </div>

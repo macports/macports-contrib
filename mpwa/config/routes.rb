@@ -1,7 +1,7 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :categories, :only => [:index] do |category|
     category.resources :ports, :only => [:index, :show] do |port|
-      port.resources :comments, :except => [:index, :show, :new]
+      port.resources :comments, :only => [:new, :create]
     end
     category.connect '/ports/page/:page', :controller => :ports, :action => :index, :page => :page
   end

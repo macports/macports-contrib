@@ -15,6 +15,7 @@ class CategorySweeper < ActionController::Caching::Sweeper
 
 private
   def expire_cache_for(category)
-    expire_page :action => :index
+    expire_page categories_path
+    expire_page category_path(category)
   end
 end

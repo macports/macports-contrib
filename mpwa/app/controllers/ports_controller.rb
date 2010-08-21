@@ -1,5 +1,6 @@
 class PortsController < ApplicationController
   caches_page :index, :show
+  cache_sweeper :port_sweeper, :only => [:create, :update, :destroy]
 
   def index
     unless params[:category_id].nil?
