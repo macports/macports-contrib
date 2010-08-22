@@ -33,7 +33,7 @@ syn region PortfileDescription 	matchgroup=Normal start="" skip="\\$" end="$" co
 syn keyword PortfileOptional 	PortGroup epoch revision worksrcdir distname platform
 syn keyword PortfileOptional 	use_automake use_autoconf use_configure
 syn keyword PortfileOptional 	patch_sites distfiles dist_subdir license conflicts
-syn keyword PortfileOptional 	replaced_by
+syn keyword PortfileOptional 	replaced_by supported_archs
 
 syn keyword PortfileOptional 	checksums nextgroup=PortfileChecksums skipwhite
 syn region PortfileChecksums 	matchgroup=Normal start="" skip="\\$" end="$" contained contains=PortfileChecksumsType
