@@ -54,7 +54,7 @@
 
   <div>
     <h3>Comments</h3>
-    <% form_for([@port.category, @port, @comment]) do |f| %>
+    <%= form_for([@port.category, @port, @comment]) do |f| %>
       <%= f.error_messages %>
 
       <p>

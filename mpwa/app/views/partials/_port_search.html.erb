@@ -5,7 +5,7 @@
 <br />
 
 <p>
-  <% form_tag(search_generate_path, {:method => :get}) do %>
+  <%= form_tag(search_generate_path, {:method => :get}) do %>
     <%= select_tag :criteria, options_for_select({"Software Title" => "name", "Category" => "categories", "Maintainer" => "maintainers", "variant" => "variants", "Platform" => "platforms"}) %>
     <%= text_field_tag :val, "", {:size => 40} %>
     <%= submit_tag "Search" %>
