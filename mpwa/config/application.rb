@@ -13,7 +13,7 @@ module Mpwa
     # -- all .rb files in that directory are automatically loaded.
 
     # Custom directories with classes and modules you want to be autoloadable.
-    config.autoload_paths += %W(#{RAILS_ROOT}/app/sweepers)
+    config.autoload_paths += %W(#{Rails.root.to_s}/app/sweepers)
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
@@ -24,6 +24,5 @@ module Mpwa
 
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
-    config.load_paths += %W( #{RAILS_ROOT}/app/sweepers )
   end
 end
