@@ -1,19 +1,20 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :categories, :only => [:index] do |category|
-    category.resources :ports, :only => [:index, :show] do |port|
-      port.resources :comments, :only => [:new, :create]
+  resources :categories, :only => [:index] do
+    resources :ports, :only => [:index, :show] do
+      resources :comments, :only => [:create, :destroy]
     end
-    category.connect '/ports/page/:page', :controller => :ports, :action => :index, :page => :page
+
+    match '/ports/page/:page', :to => 'ports#index', :as => :ports, :page => :page
   end
 
-  map.connect '/ports/page/:page', :controller => :ports, :action => :index, :page => :page
-  map.resources :ports, :only => [:index, :search]
-  map.search_generate 'ports/search', :controller => :ports, :action => :search_generate
-  map.connect '/ports/search/:criteria/:val/page/:page', :controller => :ports, :action => :search, :criteria => :criteria, :val => :val, :page => :page
-  map.search '/ports/search/:criteria/:val', :controller => :ports, :action => :search, :criteria => :criteria, :val => :val
+  match '/ports/page/:page', :to => 'ports#index', :page => :page
+  resources :ports, :only => [:index, :search]
+  match '/ports/search', :to => 'ports#search_generate', :as => :search_generate
+  match '/ports/search/:criteria/:val/page/:page', :to => 'ports#search', :criteria => :criteria, :val => :val, :page => :page
+  match '/ports/search/:criteria/:val', :to => 'ports#search', :criteria => :criteria, :val => :val, :as => :search
 
-  map.index 'index', :controller => :pages, :action => :show, :page => :index
-  map.install 'install', :controller => :pages, :action => :show, :page => :install
-  map.contact 'contact', :controller => :pages, :action => :show, :page => :contact
-  map.root :controller => :pages, :action => :show, :page => :index
+  match '/index', :to => 'pages#show', :page => :index, :as => :index
+  match '/install', :to => 'pages#show', :page => :install, :as => :install
+  match '/contact', :to => 'pages#show', :page => :contact, :as => :contact
+  root :to => 'pages#show', :page => :index
 end

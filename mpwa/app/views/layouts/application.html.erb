@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title></title>
+    <title>The MacPorts Project - <%= controller_name.titleize %></title>
     <meta name="author" content="Jim Mock (mij@macports.org)" />
     <meta name="author" content="Juan Manuel Palacios (jmpp@macports.org)" />
     <meta name="author" content="Chris Pickel (sfiera@macports.org)" />
@@ -14,12 +14,12 @@
 </head>
 <body>
 
-  <h1><%= link_to '<span class="accessibility">The MacPorts Project</span>', root_url %></h1>
+  <h1><%= link_to raw('<span class="accessibility">The MacPorts Project</span>'), root_url %></h1>
 
   <p class="accessibility"><%= link_to 'Skip to Content', '#content' %></p>
 
   <div id="header">
-    <%= link_to '<span class="accessibility">Download MacPorts</span>', install_path, {:id => 'download'} %>
+    <%= link_to raw('<span class="accessibility">Download MacPorts</span>'), install_path, {:id => 'download'} %>
   </div>
 
   <%= render :partial => '/partials/nav' %>

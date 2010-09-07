@@ -5,7 +5,7 @@ class CommentsController < ApplicationController
     @comment = Port.find(params[:port_id]).comments.build(params[:comment])
 
     respond_to do |format|
-      if verify_recaptcha
+      if recaptcha_valid?
         if @comment.save
           format.html { redirect_to category_port_path(@comment.port.category, @comment.port) }
         end

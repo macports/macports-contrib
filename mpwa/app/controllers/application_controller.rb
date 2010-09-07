@@ -1,6 +1,7 @@
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
-require 'recaptcha'
+#require 'recaptcha'
+include Rack::Recaptcha::Helpers
 
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time

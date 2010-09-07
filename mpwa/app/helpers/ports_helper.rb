@@ -6,7 +6,7 @@ module PortsHelper
       vals.split(" ").each do |val|
         links += "#{link_to val, search_path(member, val)} "
       end
-      return links
+      return raw(links)
     else
       return nil
     end
