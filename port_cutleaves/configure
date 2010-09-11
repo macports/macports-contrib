@@ -1,8 +1,6 @@
 #!/bin/sh
 # $Id$
 
-rm -f Makefile
-
 prefix=/opt/local
 bindir=${prefix}/bin
 mandir=${prefix}/share/man
@@ -29,11 +27,11 @@ for i; do
     fi
 done
 
-cat Makefile.in | \
-    sed "s|@prefix@|${prefix}|g" | \
-    sed "s|@bindir@|${bindir}|g" | \
-    sed "s|@mandir@|${mandir}|g" | \
-    sed "s|@version@|${version}|g" > Makefile
+< Makefile.in \
+    sed -e "s|@prefix@|${prefix}|g" \
+    -e "s|@bindir@|${bindir}|g" \
+    -e "s|@mandir@|${mandir}|g" \
+    -e "s|@version@|${version}|g" > Makefile
 
 sed "s|@prefix@|${prefix}|g" \
     < port_cutleaves.in > port_cutleaves
