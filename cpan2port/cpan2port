@@ -202,11 +202,11 @@ use Pod::Usage;
 my %opt;
 
 # my %info;
-# $info{maintainers} = $ENV{maintainers} || 'cpan2port';
+# $info{maintainers} = $ENV{maintainers} || 'nomaintainer';
 
 sub portfile {
     my ($info) = @_ or return ();
-    $$info{maintainers} ||= 'cpan2port';
+    $$info{maintainers} ||= 'nomaintainer';
     my $checksums = '';
     my $depends = '';
     my $build_depends = '';
