@@ -70,38 +70,43 @@ puts "PortSystem          1.0"
 switch ${groupCode} {
    perl5 {
       puts "PortGroup           perl5 1.0"
+      puts ""
       puts "perl5.setup         ${portname} ${portversion}"
       puts "categories-append   replaceme"
    }
    python25 {
       puts "PortGroup           python25 1.0"
+      puts ""
       puts "name                py25-${portname}"
       puts "version             ${portversion}"
       puts "categories-append   replaceme"
    }
    python26 {
       puts "PortGroup           python26 1.0"
+      puts ""
       puts "name                py26-${portname}"
       puts "version             ${portversion}"
       puts "categories-append   replaceme"
    }
    ruby {
       puts "PortGroup           ruby 1.0"
+      puts ""
       puts "ruby.setup          ${portname} ${portversion}"
       puts "categories-append   replaceme"
    }
    default {
+      puts ""
       puts "name                ${portname}"
       puts "version             ${portversion}"
       puts "categories          replaceme"
    }
 }
+puts "platforms           darwin"
+puts "license             replaceme"
 puts "maintainers         replaceme"
 puts "description         replaceme"
 puts "long_description \\"
 puts "   replaceme"
-puts ""
-puts "platforms           darwin"
 puts ""
 switch ${groupCode} {
    perl5 {
