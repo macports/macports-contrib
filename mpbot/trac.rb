@@ -29,7 +29,7 @@ class TracPlugin < Plugin
     def ticket(m, params)
         number = params[:number][/^#?(\d*)$/,1]
         if ( number )
-            url = "http://trac.macports.org/ticket/"+number
+            url = "https://trac.macports.org/ticket/"+number
             m.reply "#{url}"
         else
             m.reply "Use either #1234 or 1234 for ticket number"
@@ -37,7 +37,7 @@ class TracPlugin < Plugin
     end
 
     def faq(m, params)
-        m.reply "FAQs are at: http://trac.macports.org/wiki/FAQ"
+        m.reply "FAQs are at: https://trac.macports.org/wiki/FAQ"
     end
 
     def paste(m, params)
@@ -53,7 +53,7 @@ class TracPlugin < Plugin
     end
     
     def team(m, params)
-        m.reply "http://trac.macports.org/wiki/MacPortsDevelopers"
+        m.reply "https://trac.macports.org/wiki/MacPortsDevelopers"
     end
 
 end
