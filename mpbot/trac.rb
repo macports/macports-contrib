@@ -5,7 +5,7 @@
 #   services related to MacPorts trac systemfor the #macports channel
 #   on freenode.net, created from PortPlugin by James D. Berry
 #
-#   By Andrea D'Amore
+#   By Andrea D'Amore <and.damore@macports.org>
 #
 #   $Id: $
 
@@ -16,14 +16,19 @@ class TracPlugin < Plugin
     def help(plugin, topic="")
         case topic
           when "ticket"
-            return "ticket <ticket no.> => show http link for ticket # <ticket no.>"
+            return "ticket <ticket no.> => show http link for ticket <ticket no.>"
           when "faq"
             return "faq => show FAQs' URL"
+          when "paste"
+            return "paste => show direct pastebin link for #macports channel "
           when "guide"
-            return "guide [chunked] => show The Guide's URL. Don't Panic."       
+            return "guide [chunked] => show The Guide's URL. Don't Panic."
+          when "team"
+            return "team => show link to team page on wiki"
           else
-            return "trac module provides: !ticket, !faq, !guide"
+            return "trac module provides: !ticket, !faq, !paste, !guide, !team"
         end
+
     end
 
     def ticket(m, params)
@@ -32,7 +37,7 @@ class TracPlugin < Plugin
             url = "https://trac.macports.org/ticket/"+number
             m.reply "#{url}"
         else
-            m.reply "Use either #1234 or 1234 for ticket number"
+            m.reply "Use either #1234 or 1234 syntax for ticket number"
         end
     end
 
@@ -41,7 +46,7 @@ class TracPlugin < Plugin
     end
 
     def paste(m, params)
-        m.reply "Paste texts more than 3 rows using: http://paste.lisp.org/new/macports"
+        m.reply "Paste more than 3 rows using: http://paste.lisp.org/new/macports"
     end
 
     def guide(m, params)
