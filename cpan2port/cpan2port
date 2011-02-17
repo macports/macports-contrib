@@ -179,7 +179,7 @@ sub checksums {
     my ($info) = shift;
     my $tarball = $$info{tarball} or die;
     my %check;
-    for my $k (qw( md5 sha1 rmd160)) {
+    for my $k (qw( sha1 rmd160)) {
         my ($sum) = qx( openssl $k $tarball);
         my ($v)   = $sum =~ / (.*)/;
         $check{$k} = $v;
