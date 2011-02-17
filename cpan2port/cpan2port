@@ -235,22 +235,31 @@ sub portfile {
          }
     }
 
-'# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
-# $I'.'d$
+    my $portfile = <<STOP;
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# \$Id\$
 
 PortSystem      1.0
 PortGroup       perl5 1.0
-'."
+
 perl5.setup     $$info{prefix} $$info{version}
 platforms       darwin
 maintainers     $$info{maintainers}
 description     $$info{description}
-extract.suffix  .$$info{suffix}
+STOP
+
+    if ( $$info{suffix} ne 'tar.gz' ) {
+        $portfile .= qq{extract.suffix  .$$info{suffix}\n};
+    }
+
+    $portfile .= <<STOP;
 master_sites    http://search.cpan.org/CPAN/authors/id/$$info{cpan_path}
 $checksums
 $depends
 $build_depends
-"
+STOP
+
+    return $portfile;
 }
 
 sub fmt {
