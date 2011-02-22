@@ -195,7 +195,6 @@ a#download:hover {
 }
 
 #categories > ul > li {
-    margin-bottom: 40px;
 }
 
 #categories ul > li  {
@@ -217,6 +216,7 @@ a#download:hover {
     font-size: 90%;
     clear: both;
     text-align: center;
+    padding-top: 20px;
 }
 
 #footer img {

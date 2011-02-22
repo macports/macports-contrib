@@ -107,11 +107,13 @@
 
   <ul>
     <li><%= link_to 'Tcl', 'http://www.tcl.tk' %> (8.4 or 8.5), with threads.</li>
-    <li><%= link_to 'GNUstep', 'http://gnustep.org' %> (Base), for Foundation.</li>
     <li><b>mtree</b> for directory hierarchy.</li>
     <li><%= link_to 'rsync', 'http://rsync.samba.org' %> for syncing the ports.</li>
     <li><%= link_to 'cURL', 'http://curl.haxx.se' %> for downloading distfiles.</li>
-    <li><%= link_to 'OpenSSL', 'http://www.openssl.org' %> or <%= link_to 'libmd', 'http://martin.hinner.info/libmd' %> for checksums.</li>
+    <li><%= link_to 'libmd', 'http://martin.hinner.info/libmd' %> for checksums.</li>
+    <li><%= link_to 'SQLite', 'http://www.sqlite.org/' %> for the port registry.</li>
+    <li><%= link_to 'GNUstep', 'http://gnustep.org/' %> (Base), for Foundation (optional, can be disabled via configure args).</li> 
+    <li><%= link_to 'OpenSSL', 'http://www.openssl.org' %> for signature verification (currently trunk only).
   </ul>
 
   <p>Normally you must install from <%= link_to 'source', '#source' %> or from an <%= link_to 'SVN checkout', '#svn' %> to run MacPorts on any of these platforms. Experimental packaging is available for the FreeBSD (.tbz package), Fedora (.rpm package) and Ubuntu (.deb package) operating systems.</p>
