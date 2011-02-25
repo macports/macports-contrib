@@ -1,10 +1,9 @@
 ActionController::Routing::Routes.draw do |map|
   resources :categories, :only => [:index] do
+    match '/ports/page/:page', :to => 'ports#index', :page => :page
     resources :ports, :only => [:index, :show] do
       resources :comments, :only => [:create, :destroy]
     end
-
-    match '/ports/page/:page', :to => 'ports#index', :as => :ports, :page => :page
   end
 
   match '/ports/page/:page', :to => 'ports#index', :page => :page
