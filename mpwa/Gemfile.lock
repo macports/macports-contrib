@@ -28,7 +28,7 @@ GEM
       activemodel (= 3.0.4)
       activesupport (= 3.0.4)
     activesupport (3.0.4)
-    arel (2.0.8)
+    arel (2.0.9)
     builder (2.1.2)
     erubis (2.6.6)
       abstract (>= 1.0.0)
@@ -67,7 +67,7 @@ GEM
     treetop (1.4.9)
       polyglot (>= 0.3.1)
     tzinfo (0.3.24)
-    will_paginate (2.3.15)
+    will_paginate (3.0.pre2)
 
 PLATFORMS
   ruby
@@ -76,4 +76,4 @@ DEPENDENCIES
   rack-recaptcha
   rails
   sqlite3
-  will_paginate
+  will_paginate (>= 3.0.pre2)
