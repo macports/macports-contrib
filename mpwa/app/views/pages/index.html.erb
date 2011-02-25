@@ -4,13 +4,13 @@
 
   <p>The MacPorts Project is an open-source community initiative to design an easy-to-use system for compiling, installing, and upgrading either command-line, X11 or Aqua based open-source software on the <%= link_to 'Mac OS X', 'http://www.apple.com/macosx/' %> operating system. To that end we provide the command-line driven MacPorts software package under a <%= link_to 'BSD License', 'http://opensource.org/licenses/bsd-license.php' %>, and through it easy access to thousands of ports that <%= link_to 'greatly simplify', "#{$guide_url}#introduction" %> the task of <%= link_to 'compiling and installing', "#{$guide_url}#using" %> open-source software on your Mac.</p>
 
-  <p>We provide a single software tree that attempts to track the latest release of every software title (port) we distribute, without splitting them into &#8220;stable&#8221; Vs. &#8220;unstable&#8221; branches, targeting mainly the current Mac OS X release (10.6, A.K.A Snow Leopard) and the immediately previous one (10.5, A.K.A. Leopard). There are currently <%= link_to "<b>#{Port.count}</b> ports", categories_path %> in our tree, distributed among <%= Category.count %> different categories, and more are being added on a regular basis.</p>
+  <p>We provide a single software tree that attempts to track the latest release of every software title (port) we distribute, without splitting them into &#8220;stable&#8221; Vs. &#8220;unstable&#8221; branches, targeting mainly the current Mac OS X release (10.6, A.K.A Snow Leopard) and the immediately previous one (10.5, A.K.A. Leopard). There are currently <%= link_to raw("<b>#{Port.count}</b> ports"), categories_path %> in our tree, distributed among <%= Category.count %> different categories, and more are being added on a regular basis.</p>
 
   <h3 class="subhdr">Getting started</h3>
 
   <p>For information on installing MacPorts please see the <%= link_to 'installation', install_path %> section of this site and explore the myriad of download options we provide and our base system requirements.</p>
 
-  <p>If you run into any problems installing and/or using MacPorts we also have many options to help you, depending on how you wish to get <%= link_to 'get in touch with us', contact_path %>. Other important help resources are our online documentation, A.K.A <a href="<?php print $guide_url; ?>"> The MacPorts Guide</a>, and our Trac <%= link_to 'Wiki server & bug tracker', $trac_url %>.</p>
+  <p>If you run into any problems installing and/or using MacPorts we also have many options to help you, depending on how you wish to get <%= link_to 'get in touch with us', contact_path %>. Other important help resources are our online documentation, A.K.A <%= link_to "The MacPorts Guide", $guide_url %>, and our Trac <%= link_to 'Wiki server & bug tracker', $trac_url %>.</p>
 
   <p><b>Latest MacPorts <%= link_to 'release', install_path %>: <%= $latest_version %></b></p>
 
@@ -20,7 +20,7 @@
 
   <ul>
     <li>Explore our <%= link_to 'mailing lists', "#{contact_path}#Lists" %>, either if it is for some general user support or to keep on top of the latest MacPorts developments and commits to our software repository.</li>
-    <li>Check out our <%= link_to 'Support &amp; Development', "#{contact_path}#Tracker" %> portal for some bug reporting and live tutorials through the integrated Wiki server.</li>
+    <li>Check out our <%= link_to 'Support & Development', "#{contact_path}#Tracker" %> portal for some bug reporting and live tutorials through the integrated Wiki server.</li>
     <li>Or simply come join us for a friendly <%= link_to 'IRC chat', "#{contact_path}#IRC" %> if you wish for more direct contact with the <%= link_to 'people behind', "#{contact_path}#Individuals" %> it all.</li>
   </ul>
 
