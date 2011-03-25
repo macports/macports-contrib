@@ -253,7 +253,8 @@ perl5.setup         $$info{prefix} $$info{version}
 #perl5.setup         $$info{prefix} $$info{version} ../by-authors/id/$$info{cpan_path}
 platforms           darwin
 maintainers         $$info{maintainers}
-supported_archs     noarch
+# Uncomment this line if you know there will be no arch-specific code:
+#supported_archs     noarch
 
 description         $$info{description}
 
