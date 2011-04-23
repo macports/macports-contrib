@@ -28,7 +28,7 @@ proc dependenciesForPort {portName variantInfo} {
       return $dependencyList
    }
    array set portInfo [lindex $portSearchResult 1]
-   if {[catch {set mport [mportopen $portInfo(porturl) {} $variantInfo]} result]} {
+   if {[catch {set mport [mportopen $portInfo(porturl) [list subport $portInfo(name)] $variantInfo]} result]} {
       global errorInfo
       puts "$errorInfo"
       return -code error "Unable to open port '$portName': $result"
@@ -168,7 +168,7 @@ proc install_ports {operationList} {
         
         # XXX should explicitly turn off default variants that don't appear in the list
         
-        if {[catch {set workername [mportopen $porturl {} $variations]} result]} {
+        if {[catch {set workername [mportopen $porturl [list subport $portinfo(name)] $variations]} result]} {
             global errorInfo
             puts "$errorInfo"
             return -code error "Unable to open port '$name': $result"
