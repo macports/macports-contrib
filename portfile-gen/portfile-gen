@@ -10,16 +10,16 @@
 
 set MY_VERSION 0.1
 
-set supportedGroups [list perl5 python25 python26 ruby]
+set supportedGroups [list perl5 python25 python26 python27 python31 ruby]
 
 
 proc printUsage {} {
    puts "Usage: $::argv0 \[-h\] \[-g portgroup\] <portname> <portversion>"
-   puts "   -g   Specify a port group to use (perl5, python25, etc)"
+   puts "   -g   Specify a port group to use (perl5, python27, etc)"
    puts "   -h   This help"
    puts ""
    puts "portname      name to use for the port; for group-based ports, don't"
-   puts "              use the prefix (py25-, p5-, etc) as this will add that"
+   puts "              use the prefix (py27-, p5-, etc) as this will add that"
    puts "              for you when needed"
    puts "portversion   version to use for the port"
 }
@@ -88,6 +88,20 @@ switch ${groupCode} {
       puts "version             ${portversion}"
       puts "categories-append   replaceme"
    }
+   python27 {
+      puts "PortGroup           python27 1.0"
+      puts ""
+      puts "name                py27-${portname}"
+      puts "version             ${portversion}"
+      puts "categories-append   replaceme"
+   }
+   python31 {
+      puts "PortGroup           python31 1.0"
+      puts ""
+      puts "name                py31-${portname}"
+      puts "version             ${portversion}"
+      puts "categories-append   replaceme"
+   }
    ruby {
       puts "PortGroup           ruby 1.0"
       puts ""
@@ -112,7 +126,9 @@ switch ${groupCode} {
    perl5 {
    }
    python25 -
-   python26 {
+   python26 -
+   python27 -
+   python31 {
       puts "homepage            replaceme"
       puts "master_sites        replaceme"
       puts {distname            ${portname}-${version}}
