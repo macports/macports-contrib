@@ -258,11 +258,20 @@ proc uninstall {ports} {
             }
         }
         if {[llength [info commands "registry_uninstall::uninstall"]] == 1} {
-            if {[catch {registry_uninstall::uninstall [name $port] [composite_version $port] {}} \
-                        result]} {
-                set exit_status 1
-                puts stderr "Error: $result"
-                continue
+            if {[llength [info commands "registry_uninstall::uninstall_composite"]] == 1} {
+                if {[catch {registry_uninstall::uninstall [name $port] [version $port] [revision $port] [variants $port] {}} \
+                            result]} {
+                    set exit_status 1
+                    puts stderr "Error: $result"
+                    continue
+                }
+            } else {
+                if {[catch {registry_uninstall::uninstall [name $port] [composite_version $port] {}} \
+                            result]} {
+                    set exit_status 1
+                    puts stderr "Error: $result"
+                    continue
+                }
             }
         } elseif {[catch {portuninstall::uninstall [name $port] [composite_version $port] {}} \
                          result]} {
