@@ -184,10 +184,18 @@ proc install_ports {operationList} {
         
         # XXX some ports may be reactivated to fulfil dependencies - check again at the end?
         if {!$active} {
-            if {[catch {portimage::deactivate $name "" [list ports_nodepcheck 1]} result]} {
-                global errorInfo
-                ui_debug "$errorInfo"
-                return -code error "port deactivate failed: $result"
+            if {[llength [info commands "portimage::deactivate_composite"]] == 1} {
+                if {[catch {portimage::deactivate $name "" "" 0 [list ports_nodepcheck 1]} result]} {
+                    global errorInfo
+                    ui_debug "$errorInfo"
+                    return -code error "port deactivate failed: $result"
+                }
+            } else {
+                if {[catch {portimage::deactivate $name "" [list ports_nodepcheck 1]} result]} {
+                    global errorInfo
+                    ui_debug "$errorInfo"
+                    return -code error "port deactivate failed: $result"
+                }
             }
         }
     }
