@@ -1,0 +1,15 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  uuid: MyString
+  osversion: MyString
+  machine: MyString
+  gccversion: MyString
+  x11installed: false
+
+two:
+  uuid: MyString
+  osversion: MyString
+  machine: MyString
+  gccversion: MyString
+  x11installed: false

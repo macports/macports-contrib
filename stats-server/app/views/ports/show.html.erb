@@ -1,0 +1,33 @@
+<div id="content">
+  <p>
+    <strong>Name:</strong> <%= @port.name %>
+  </p>
+
+  <p>
+    <strong>Current Version:</strong> <%= @port.version %>
+  </p>
+
+  <% unless @port.description.nil? %>
+    <p>
+      <strong>Description:</strong> <%= @port.description %>
+    </p>
+  <% end %>
+
+  <% unless @port.licenses.nil? %>
+    <p>
+      <strong>Licenses:</strong> <%= @port.licenses %>
+    </p>
+  <% end %>
+
+  <p>
+    <strong>Categories</strong>
+    <%=h @port.categories %>
+  </p>
+
+  <% unless @port.variants.nil? %>
+    <p>
+      <strong>Variants:</strong> <%=h @port.variants %>
+    </p>
+  <% end %>
+
+</div>

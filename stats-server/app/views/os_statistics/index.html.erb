@@ -1,0 +1,153 @@
+<!--Load the AJAX API-->
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+<script type="text/javascript">
+// Load the Visualization API and the piechart package.
+google.load('visualization', '1', {'packages':['corechart']});
+      
+// Set a callback to run when the Google Visualization API is loaded.
+google.setOnLoadCallback(drawAllCharts);
+
+function drawChart(chart_title, chart_div, chart_data) {
+
+// Create our data table.
+var data = new google.visualization.DataTable();
+data.addColumn('string', 'Version');
+data.addColumn('number', 'Frequency');
+
+// Add rows
+data.addRows(chart_data)
+
+//Draw chart
+var chart = new google.visualization.PieChart(document.getElementById(chart_div));
+chart.draw(data, {width: 450, height: 300, title: chart_title});
+}
+
+function drawMacPortsVersions() {
+	var data = [
+		<% @macports_version.each do |key, value| %>
+		['<%= key %>', <%= value %>],
+		<% end %>
+	];
+	
+	drawChart('MacPorts Versions', 'macports_versions_div', data);
+}
+
+function drawOSXVersions() {
+	var data = [
+		<% @osx_version.each do |key, value| %>
+		['<%= key %>', <%= value %>],
+		<% end %>
+	];
+	
+	drawChart('OSX Versions', 'osx_versions_div', data);
+}
+
+function drawOSArch() {
+	var data = [
+		<% @os_arch.each do |key, value| %>
+		['<%= key %>', <%= value %>],
+		<% end %>
+	];
+	
+	drawChart('OS Arch', 'os_arch_div', data);
+}
+
+function drawOSPlatform() {
+	var data = [
+		<% @os_platform.each do |key, value| %>
+		['<%= key %>', <%= value %>],
+		<% end %>
+	];
+	
+	drawChart('OS Platform', 'os_platform_div', data);
+}
+
+function drawBuildArch() {
+	var data = [
+		<% @build_arch.each do |key, value| %>
+		['<%= key %>', <%= value %>],
+		<% end %>
+	];
+	
+	drawChart('Build Arch', 'build_arch_div', data);
+}
+
+function drawGccVersion() {
+	var data = [
+		<% @gcc_version.each do |key, value| %>
+		['<%= key %>', <%= value %>],
+		<% end %>
+	];
+	
+	drawChart('gcc Version', 'gcc_version_div', data);
+}
+
+function drawXCodeVersion() {
+	var data = [
+		<% @xcode_version.each do |key, value| %>
+		['<%= key %>', <%= value %>],
+		<% end %>
+	];
+	
+	drawChart('XCode Version', 'xcode_version_div', data);
+}
+
+function drawAllCharts() {
+	drawMacPortsVersions();
+	drawOSXVersions();
+	drawOSArch();
+	drawOSPlatform();
+	drawBuildArch();
+	drawGccVersion();
+	drawXCodeVersion();
+}
+</script>
+ 
+<!--Div that will hold the pie chart-->
+<div id="macports_versions_div"></div>
+<div id="osx_versions_div"></div>
+<div id="os_arch_div"></div>
+<div id="os_platform_div"></div>
+<div id="build_arch_div"></div>
+<div id="gcc_version_div"></div>
+<div id="xcode_version_div"></div>
+
+<br />
+
+<h1>All Stats</h1>
+
+<table border=1>
+	<tr>
+		<th> ID </th>
+		<th> UUID </th>
+		<th> MacPorts Version</th>
+		<th> OSX Version</th>
+		<th> OS Arch </th>
+		<th> Platform </th>
+		<th> Build Arch</th>
+		<th> gcc Version</th>
+		<th> XCode Version</th>
+		<th> Details </th>
+	</tr>
+
+<% @stats.each do |row| %>
+  <tr>
+    <td> <%= row.id %> </td>
+		<td> <%= row.uuid %> </td>
+		<td> <%= row.macports_version %> </td>
+		<td> <%= row.osx_version %></td>
+		<td> <%= row.os_arch %> </td>
+		<td> <%= row.os_platform %></td>
+		<td> <%= row.build_arch %></td>
+		<td> <%= row.gcc_version %></td>
+		<td> <%= row.xcode_version %></td>
+    <td> <%= link_to 'Show', row %></td>
+  </tr>
+<% end %>
+</table>
+
+
+
+
+

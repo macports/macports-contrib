@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  uuid: MyString
+  port_id: 1
+  version: MyString
+  variants: MyString
+  month: MyString
+  year: MyString
+
+two:
+  uuid: MyString
+  port_id: 1
+  version: MyString
+  variants: MyString
+  month: MyString
+  year: MyString

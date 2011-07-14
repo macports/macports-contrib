@@ -1,0 +1,10 @@
+<h1>MacPorts Statistics</h1>
+
+<ul>
+	<li> <%= link_to "User System Information", os_statistics_path %> </li>
+	<li> <%= link_to "User Installed Ports", installed_ports_path %> </li>
+</ul>
+
+
+<%= render :partial => '/partials/port_search' %>
+<%= link_to "Browse By Category", categories_path %> </li>

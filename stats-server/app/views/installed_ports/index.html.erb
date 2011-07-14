@@ -1,0 +1,27 @@
+<h1>All Installed Ports</h1>
+
+<table border=1>
+	<tr>
+		<th> ID </th>
+		<th> UUID </th>
+		<th> Port ID </th>
+		<th> Version </th>
+		<th> Variants </th>
+		<th> Month </th>
+		<th> Year </th>
+		<th> Details </th>
+	</tr>
+
+<% @ports.each do |row| %>
+  <tr>
+    <td> <%= row.id %> </td>
+		<td> <%= row.uuid %> </td>
+		<td> <%= row.port_id %> </td>
+		<td> <%= row.version %></td>
+		<td> <%= row.variants %> </td>
+		<td> <%= row.month %></td>
+		<td> <%= row.year %></td>
+    <td> <%= link_to 'Show', row %></td>
+  </tr>
+<% end %>
+</table>
