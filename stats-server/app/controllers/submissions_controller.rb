@@ -35,7 +35,7 @@ class SubmissionsController < ApplicationController
     gcc_version      = os['gcc_version']
     xcode_version    = os['xcode_version']
    
-    # Try and find an existing entry
+    # Try to find an existing entry
     os_stats = OsStatistic.find_by_user_id(user.id)
      
     if os_stats.nil?
@@ -58,10 +58,26 @@ class SubmissionsController < ApplicationController
     end
   end
 
-  def add_port_data(uuid, ports)
-    logger.debug "In add_port_data"
+  def add_port(uuid, macports_port, installed_port, month, year)
+    logger.debug {"Adding installed port #{installed_port['name']}"}
+        
+    portEntry = InstalledPort.new(:uuid => uuid,
+                             :port_id => macports_port.id,
+                             :version => installed_port['version'],
+                             :variants => installed_port['variants'],
+                             :month => month,
+                             :year => year)
+                        
+    if not portEntry.save
+     logger.debug "Unable to save port #{port['name']}"
+     logger.debug "Error message: #{portEntry.errors.full_messages}"
+   end
+ end
+
+  def add_installed_ports(uuid, installed_ports)
+    logger.debug "In add_installed_ports"
     
-    if ports.nil?
+    if installed_ports.nil?
       return
     end
     
@@ -69,20 +85,17 @@ class SubmissionsController < ApplicationController
     month = current_time.month
     year = current_time.year
     
-    ports.each do |port|
-      logger.debug {"Adding port #{port}"}
-      port_id = 5
-      portEntry = InstalledPort.new(:uuid => uuid,
-                               :port_id => port_id,
-                               :version => port['version'],
-                               :variants => port['variants'],
-                               :month => month,
-                               :year => year)
-                          
-      if not portEntry.save
-       logger.debug "Unable to save port #{port['name']}"
-       logger.debug "Error message: #{portEntry.errors.full_messages}"
-     end
+    installed_ports.each do |installed_port|
+      # Find the reported port in the MacPorts repository
+      macports_port = Port.find_by_name(installed_port['name'])
+
+      if macports_port.nil?
+        logger.debug {"Skipping unknown port #{installed_port['name']} - Not in MacPorts repository"}
+        next
+      end
+      
+      # Update installed port information
+      add_port(uuid, macports_port, installed_port, month, year)
     end
   end
 
@@ -96,7 +109,7 @@ class SubmissionsController < ApplicationController
     user = User.find_or_create_by_uuid(json['id'])
     
     add_os_data(user, os)
-    add_port_data(json['id'], active_ports)
+    add_installed_ports(json['id'], active_ports)
 
     respond_to do |format|
       format.html { redirect_to(@submission, :notice => 'Submission was successfully created.') }
