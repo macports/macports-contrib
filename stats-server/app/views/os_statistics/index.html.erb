@@ -120,7 +120,7 @@ function drawAllCharts() {
 <table border=1>
 	<tr>
 		<th> ID </th>
-		<th> UUID </th>
+		<th> user_id </th>
 		<th> MacPorts Version</th>
 		<th> OSX Version</th>
 		<th> OS Arch </th>
@@ -134,7 +134,7 @@ function drawAllCharts() {
 <% @stats.each do |row| %>
   <tr>
     <td> <%= row.id %> </td>
-		<td> <%= row.uuid %> </td>
+		<td> <%= row.user_id %> </td>
 		<td> <%= row.macports_version %> </td>
 		<td> <%= row.osx_version %></td>
 		<td> <%= row.os_arch %> </td>

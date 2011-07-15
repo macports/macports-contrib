@@ -1,5 +1,7 @@
 class OsStatistic < ActiveRecord::Base
-  attr_accessible :uuid 
+  belongs_to :user
+  
+  attr_accessible :user_id
   attr_accessible :macports_version
   attr_accessible :osx_version
   attr_accessible :os_arch
@@ -8,7 +10,7 @@ class OsStatistic < ActiveRecord::Base
   attr_accessible :gcc_version
   attr_accessible :xcode_version
   
-  validates :uuid,              :presence => true
+  validates :user_id,           :presence => true
   validates :macports_version,  :presence => true
   validates :osx_version,       :presence => true
   validates :os_arch,           :presence => true
