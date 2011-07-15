@@ -20,7 +20,7 @@ class SubmissionsController < ApplicationController
   end
 
   # Populate an OsStatistics row based on submitted JSON data
-  def add_os_data(uuid, os)
+  def add_os_data(user, os)
     logger.debug "In add_os_data"
     
     if os.nil?
@@ -35,17 +35,26 @@ class SubmissionsController < ApplicationController
     gcc_version      = os['gcc_version']
     xcode_version    = os['xcode_version']
    
-    @os_stats = OsStatistic.new(:uuid => uuid,
-                            :macports_version => macports_version,
-                            :osx_version      => osx_version,
-                            :os_arch          => os_arch,
-                            :os_platform      => os_platform,
-                            :build_arch       => build_arch,
-                            :gcc_version      => gcc_version,
-                            :xcode_version    => xcode_version)
-    if not @os_stats.save
+    # Try and find an existing entry
+    os_stats = OsStatistic.find_by_user_id(user.id)
+     
+    if os_stats.nil?
+      # No entry for this user - create a new one
+      os_stats = OsStatistic.new()
+    end
+    
+    os_stats[:user_id]          = user.id
+    os_stats[:macports_version] = macports_version
+    os_stats[:osx_version]      = osx_version
+    os_stats[:os_arch]          = os_arch
+    os_stats[:os_platform]      = os_platform
+    os_stats[:build_arch]       = build_arch
+    os_stats[:gcc_version]      = gcc_version
+    os_stats[:xcode_version]    = xcode_version
+    
+    if not os_stats.save
       logger.debug "Unable to save os_stats"
-      logger.debug "Error message: #{@os_stats.errors.full_messages}"
+      logger.debug "Error message: #{os_stats.errors.full_messages}"
     end
   end
 
@@ -83,7 +92,10 @@ class SubmissionsController < ApplicationController
     json = ActiveSupport::JSON.decode(@submission.data) 
     os = json['os']
     active_ports = json['active_ports']
-    add_os_data(json['id'], os)
+    
+    user = User.find_or_create_by_uuid(json['id'])
+    
+    add_os_data(user, os)
     add_port_data(json['id'], active_ports)
 
     respond_to do |format|
