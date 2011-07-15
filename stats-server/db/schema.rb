@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110713220512) do
+ActiveRecord::Schema.define(:version => 20110714162815) do
 
   create_table "categories", :force => true do |t|
     t.string   "name"
@@ -30,7 +30,6 @@ ActiveRecord::Schema.define(:version => 20110713220512) do
   end
 
   create_table "os_statistics", :force => true do |t|
-    t.string   "uuid"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "macports_version"
@@ -40,6 +39,7 @@ ActiveRecord::Schema.define(:version => 20110713220512) do
     t.string   "build_arch"
     t.string   "xcode_version"
     t.string   "gcc_version"
+    t.integer  "user_id"
   end
 
   create_table "ports", :force => true do |t|
@@ -59,6 +59,12 @@ ActiveRecord::Schema.define(:version => 20110713220512) do
 
   create_table "submissions", :force => true do |t|
     t.string   "data"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "users", :force => true do |t|
+    t.string   "uuid"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
