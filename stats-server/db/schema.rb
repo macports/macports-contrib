@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110714162815) do
+ActiveRecord::Schema.define(:version => 20110716021834) do
 
   create_table "categories", :force => true do |t|
     t.string   "name"
@@ -19,7 +19,6 @@ ActiveRecord::Schema.define(:version => 20110714162815) do
   end
 
   create_table "installed_ports", :force => true do |t|
-    t.string   "uuid"
     t.integer  "port_id"
     t.string   "version"
     t.text     "variants"
@@ -27,6 +26,7 @@ ActiveRecord::Schema.define(:version => 20110714162815) do
     t.string   "year"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "user_id"
   end
 
   create_table "os_statistics", :force => true do |t|

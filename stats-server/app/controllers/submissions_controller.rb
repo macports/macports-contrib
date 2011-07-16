@@ -58,10 +58,10 @@ class SubmissionsController < ApplicationController
     end
   end
 
-  def add_port(uuid, macports_port, installed_port, month, year)
+  def add_port(user_id, macports_port, installed_port, month, year)
     logger.debug {"Adding installed port #{installed_port['name']}"}
         
-    portEntry = InstalledPort.new(:uuid => uuid,
+    portEntry = InstalledPort.new(:user_id => user_id,
                              :port_id => macports_port.id,
                              :version => installed_port['version'],
                              :variants => installed_port['variants'],
