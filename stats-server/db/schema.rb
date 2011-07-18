@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110716021834) do
+ActiveRecord::Schema.define(:version => 20110718213618) do
 
   create_table "categories", :force => true do |t|
     t.string   "name"
@@ -22,12 +22,13 @@ ActiveRecord::Schema.define(:version => 20110716021834) do
     t.integer  "port_id"
     t.string   "version"
     t.text     "variants"
-    t.string   "month"
-    t.string   "year"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "user_id"
   end
+
+  add_index "installed_ports", ["port_id"], :name => "index_installed_ports_on_port_id"
+  add_index "installed_ports", ["user_id"], :name => "index_installed_ports_on_user_id"
 
   create_table "os_statistics", :force => true do |t|
     t.datetime "created_at"
@@ -41,6 +42,8 @@ ActiveRecord::Schema.define(:version => 20110716021834) do
     t.string   "gcc_version"
     t.integer  "user_id"
   end
+
+  add_index "os_statistics", ["user_id"], :name => "index_os_statistics_on_user_id"
 
   create_table "ports", :force => true do |t|
     t.string   "name"
@@ -56,6 +59,8 @@ ActiveRecord::Schema.define(:version => 20110716021834) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "ports", ["name"], :name => "index_ports_on_name"
 
   create_table "submissions", :force => true do |t|
     t.string   "data"
