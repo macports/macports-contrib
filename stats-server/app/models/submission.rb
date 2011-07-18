@@ -17,7 +17,7 @@ class Submission < ActiveRecord::Base
     xcode_version    = os['xcode_version']
    
     # Try to find an existing entry
-    os_stats = OsStatistic.find_by_user_id(user.id)
+    os_stats = user.os_statistic
      
     if os_stats.nil?
       # No entry for this user - create a new one
@@ -42,24 +42,20 @@ class Submission < ActiveRecord::Base
   def add_port(user, macports_port, installed_port, month, year)
     logger.debug {"Adding installed port #{installed_port['name']}"}
     
-    # Update any ports found for this user is they have already been submitted this month
-    port_entry = InstalledPort.find_by_port_id_and_user_id_and_month_and_year(macports_port.id, 
-                                                                              user.id, 
-                                                                              month, 
-                                                                              year)
-    
-    # New port entry                  
+    # Update any ports found for this user if they have already been submitted this month  
+    port_entrys = user.installed_ports.where(:created_at => (Date.today.at_beginning_of_month)..(Date.today.at_end_of_month))
+    port_entry = port_entrys.find_by_port_id(macports_port.id)
+
+    # No existing entry was found - create a new one                
     if port_entry.nil?
       port_entry = InstalledPort.new
     end
-        
+    
     port_entry[:user_id]  = user.id
     port_entry[:port_id]  = macports_port.id
     port_entry[:version]  = installed_port['version']
     port_entry[:variants] = installed_port['variants']
-    port_entry[:month]    = month
-    port_entry[:year]     = year
-                              
+                            
     if not port_entry.save
      logger.debug "Unable to save port #{installed_port['name']}"
      logger.debug "Reason: #{port_entry.errors.full_messages}"
