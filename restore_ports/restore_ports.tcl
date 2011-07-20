@@ -143,17 +143,18 @@ proc sort_ports {portList} {
 }
 
 proc install_ports {operationList} {
-    if {[rpm-vercomp [macports::version] 1.9.1] < 0} {
-        set install_target install
-    } else {
-        set install_target activate
-    }
     foreach op $operationList {
         set name [string trim [lindex $op 0]]
         set variations [lindex $op 1]
         set active [lindex $op 2]
-        
-         if {[catch {set res [mportlookup $name]} result]} {
+
+        if {!$active || [rpm-vercomp [macports::version] 1.9.1] < 0} {
+            set install_target install
+        } else {
+            set install_target activate
+        }
+
+        if {[catch {set res [mportlookup $name]} result]} {
             global errorInfo
             ui_debug "$errorInfo"
             return -code error "lookup of portname $name failed: $result"
@@ -183,19 +184,11 @@ proc install_ports {operationList} {
         }
         
         # XXX some ports may be reactivated to fulfil dependencies - check again at the end?
-        if {!$active} {
-            if {[llength [info commands "portimage::deactivate_composite"]] == 1} {
-                if {[catch {portimage::deactivate $name "" "" 0 [list ports_nodepcheck 1]} result]} {
-                    global errorInfo
-                    ui_debug "$errorInfo"
-                    return -code error "port deactivate failed: $result"
-                }
-            } else {
-                if {[catch {portimage::deactivate $name "" [list ports_nodepcheck 1]} result]} {
-                    global errorInfo
-                    ui_debug "$errorInfo"
-                    return -code error "port deactivate failed: $result"
-                }
+        if {[rpm-vercomp [macports::version] 1.9.1] < 0 && !$active} {
+            if {[catch {portimage::deactivate $name "" [list ports_nodepcheck 1]} result]} {
+                global errorInfo
+                ui_debug "$errorInfo"
+                return -code error "port deactivate failed: $result"
             }
         }
     }
