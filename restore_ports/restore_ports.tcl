@@ -212,7 +212,9 @@ proc read_portlist {filename} {
 # Begin
 
 set macportsTclPath "/Library/Tcl"
-#set macportsTclPath "/opt/mptest/share/macports/Tcl"
+if {![file isfile ${macportsTclPath}/macports1.0/macports_fastload.tcl]} {
+    set macportsTclPath "/opt/local/share/macports/Tcl"
+}
 set showVersion 0
 
 while {[string index [lindex $::argv 0] 0] == "-" } {
