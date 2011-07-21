@@ -246,6 +246,8 @@ while {[string index [lindex $::argv 0] 0] == "-" } {
 
 source ${macportsTclPath}/macports1.0/macports_fastload.tcl
 package require macports
+package require Pextlib 1.0
+umask 022
 mportinit
 
 if {$showVersion} {
