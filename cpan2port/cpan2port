@@ -179,7 +179,7 @@ sub checksums {
     my ($info) = shift;
     my $tarball = $$info{tarball} or die;
     my %check;
-    for my $k (qw( sha1 rmd160)) {
+    for my $k (qw( sha256 rmd160)) {
         my ($sum) = qx( openssl $k $tarball);
         my ($v)   = $sum =~ / (.*)/;
         $check{$k} = $v;
@@ -220,7 +220,9 @@ sub portfile {
     my $build_depends = '';
     if ( exists $$info{depends} ) {
          if ( my $check =  $$info{checksums} ) {
-             $checksums = join (' ', 'checksums', %{ $check });
+             my @hashes;
+             foreach my $key (keys %{ $check }) { push @hashes, "$key ".$$check{$key}; }
+             $checksums = 'checksums   '.join(" \\\n".(' 'x12),@hashes);
          }
 
          if ( my $dep_ref = Huggy::depends_on($info) ) {
@@ -229,7 +231,7 @@ sub portfile {
                  'port:'.Huggy::from_port $_
              } keys %{ $dep_ref };
              if (@depends) {
-                 $depends = join ' ','depends_lib-append',@depends;
+                 $depends = 'depends_lib-append  '.join(" \\\n".(' 'x20),@depends);
              }
 
          }
@@ -268,6 +270,7 @@ STOP
 
     $portfile .= <<STOP;
 $checksums
+
 $depends
 $build_depends
 STOP
