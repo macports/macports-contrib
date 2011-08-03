@@ -118,6 +118,8 @@ sub module_depends {
     DEBUG::warn("$$info{name} will show deps");
     my $dist = find_dist( $info->{dist_dir}, $info->{module}->get )
         or die "can't find dist";
+    $$info{has_makefile_pl} = (-e "$dist/Makefile.PL");
+    $$info{has_build_pl} = (-e "$dist/Build.PL");
     $$info{depends} = (
         -e "$dist/META.yml"
             ? 'Module::Depends'
@@ -218,11 +220,13 @@ sub portfile {
     my $checksums = '';
     my $depends = '';
     my $build_depends = '';
+    my $use_module_build = '';
+    
     if ( exists $$info{depends} ) {
          if ( my $check =  $$info{checksums} ) {
              my @hashes;
              foreach my $key (keys %{ $check }) { push @hashes, "$key ".$$check{$key}; }
-             $checksums = 'checksums   '.join(" \\\n".(' 'x12),@hashes);
+             $checksums = 'checksums           '.join(" \\\n".(' 'x20),@hashes);
          }
 
          if ( my $dep_ref = Huggy::depends_on($info) ) {
@@ -233,8 +237,26 @@ sub portfile {
              if (@depends) {
                  $depends = 'depends_lib-append  '.join(" \\\n".(' 'x20),@depends);
              }
+         }
+         if ( my $dep_ref = Huggy::depends_on($info, during=>"build_requires") ) {
+             my @depends = map {
+                 MSG::warn "$$info{name} build_requires $_";
+                 'port:'.Huggy::from_port $_
+             } keys %{ $dep_ref };
+             if (@depends) {
+                 $build_depends = 'depends_build-append '.join(" \\\n".(' 'x21),@depends);
+             }
 
          }
+    }
+
+    # If no Makefile.PL is present, maybe we need use_module_build?
+    if (!($$info{has_makefile_pl})) {
+        if ($$info{has_build_pl}) {
+            $use_module_build = "perl5.use_module_build";
+        } else {
+            MSG::warn "Didn't find either Makefile.PL or Build.PL";
+        }
     }
 
     # Generate text for the portfile.
@@ -273,6 +295,7 @@ $checksums
 
 $depends
 $build_depends
+$use_module_build
 STOP
 
     return $portfile;
