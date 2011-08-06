@@ -1,3 +1,15 @@
+<%# title: Title of the chart %>
+<%# key: key into chartjson hash table %>
+<%# div: div where chart should be drawn %>
+<% charts = [] %>
+<% charts << {:title => 'MacPorts Versions', :key => 'macports_version',  :div => 'macports_versions_div'} %>
+<% charts << {:title => 'OSX Versions', :key => 'osx_version', :div => 'osx_versions_div'} %>
+<% charts << {:title => 'OS Arch', :key => 'os_arch', :div => 'os_arch_div'} %>
+<% charts << {:title => 'OS Platform', :key => 'os_platform', :div => 'os_platform_div'} %>
+<% charts << {:title => 'Build Arch', :key => 'build_arch', :div => 'build_arch_div'} %>
+<% charts << {:title => 'gcc Version', :key => 'gcc_version', :div => 'gcc_version_div'} %>
+<% charts << {:title => 'XCode Version', :key => 'xcode_version', :div => 'xcode_version_div'} %>
+
 <!--Load the AJAX API-->
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
@@ -8,103 +20,21 @@ google.load('visualization', '1', {'packages':['corechart']});
 // Set a callback to run when the Google Visualization API is loaded.
 google.setOnLoadCallback(drawAllCharts);
 
-function drawChart(chart_title, chart_div, chart_data) {
-
-// Create our data table.
-var data = new google.visualization.DataTable();
-data.addColumn('string', 'Version');
-data.addColumn('number', 'Frequency');
-
-// Add rows
-data.addRows(chart_data)
-
-//Draw chart
-var chart = new google.visualization.PieChart(document.getElementById(chart_div));
-chart.draw(data, {width: 450, height: 300, title: chart_title});
-}
-
-function drawMacPortsVersions() {
-	var data = [
-		<% @macports_version.each do |key, value| %>
-		['<%= key %>', <%= value %>],
-		<% end %>
-	];
-	
-	drawChart('MacPorts Versions', 'macports_versions_div', data);
-}
-
-function drawOSXVersions() {
-	var data = [
-		<% @osx_version.each do |key, value| %>
-		['<%= key %>', <%= value %>],
-		<% end %>
-	];
-	
-	drawChart('OSX Versions', 'osx_versions_div', data);
-}
-
-function drawOSArch() {
-	var data = [
-		<% @os_arch.each do |key, value| %>
-		['<%= key %>', <%= value %>],
-		<% end %>
-	];
-	
-	drawChart('OS Arch', 'os_arch_div', data);
-}
-
-function drawOSPlatform() {
-	var data = [
-		<% @os_platform.each do |key, value| %>
-		['<%= key %>', <%= value %>],
-		<% end %>
-	];
-	
-	drawChart('OS Platform', 'os_platform_div', data);
-}
-
-function drawBuildArch() {
-	var data = [
-		<% @build_arch.each do |key, value| %>
-		['<%= key %>', <%= value %>],
-		<% end %>
-	];
-	
-	drawChart('Build Arch', 'build_arch_div', data);
-}
-
-function drawGccVersion() {
-	var data = [
-		<% @gcc_version.each do |key, value| %>
-		['<%= key %>', <%= value %>],
-		<% end %>
-	];
-	
-	drawChart('gcc Version', 'gcc_version_div', data);
-}
-
-function drawXCodeVersion() {
-	var data = [
-		<% @xcode_version.each do |key, value| %>
-		['<%= key %>', <%= value %>],
-		<% end %>
-	];
-	
-	drawChart('XCode Version', 'xcode_version_div', data);
+function drawPieChart(json, title, div) {
+  var data  = new google.visualization.DataTable(json);
+  var chart = new google.visualization.PieChart(document.getElementById(div));
+  chart.draw(data, {width: 450, height: 300, title: title});
 }
 
 function drawAllCharts() {
-	drawMacPortsVersions();
-	drawOSXVersions();
-	drawOSArch();
-	drawOSPlatform();
-	drawBuildArch();
-	drawGccVersion();
-	drawXCodeVersion();
+  
+  <% charts.each do |hash|%>
+  json = <%= raw @chartjson[hash[:key]] %>;
+  drawPieChart(json, '<%= hash[:title] %>', '<%= hash[:div] %>');
+  <% end %>
 }
 </script>
  
-<!--Div that will hold the pie chart-->
 <div id="macports_versions_div"></div>
 <div id="osx_versions_div"></div>
 <div id="os_arch_div"></div>
