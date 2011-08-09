@@ -59,6 +59,15 @@
     <% end %>
   <% end %>
 
+  <table border=1>
+    <tr>
+      <th> ID </th>
+      <th> port_id </th>
+      <th> version </th>
+      <th> variants </th>
+      <th> modified_date </th>
+    </tr>
+
   <% @installed.each do |row| %>
     <tr>
       <td> <%= row.id %> </td>
@@ -68,5 +77,6 @@
       <td> <%= row.updated_at %> </td>
     </tr>
   <% end %>
-
+  </table>
+  
 </div>
