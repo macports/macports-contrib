@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/jeremyolliver/gvis.git
+  revision: 018819a0e0a974eafc38f2c87d214d37f4fb27ab
+  specs:
+    gvis (2.0.3)
+      json
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -32,7 +39,6 @@ GEM
     builder (2.1.2)
     erubis (2.6.6)
       abstract (>= 1.0.0)
-    googlecharts (1.6.7)
     i18n (0.5.0)
     json (1.5.3)
     mail (2.2.19)
@@ -74,7 +80,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  googlecharts
+  gvis!
   json
   rails (= 3.0.9)
   rake (= 0.8.7)
