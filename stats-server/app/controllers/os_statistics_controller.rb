@@ -1,37 +1,21 @@
-class OsStatisticsController < ApplicationController
+class OsStatisticsController < ChartController
   
-  def hash_to_google_json(hash, columns)
-    json = Hash.new
+  # Populate charts with data
+  def populate(chart_name, chart)
+    # This is the column's label
+    chart.string "Item"
     
-    json['cols'] = columns
-    
-    # Create rows array
-    rows = []
-    hash.each do |key, frequency|
-      row = Hash.new
-      row['c'] = [{'v' => key}, {'v' => frequency}]
-      rows << row
+    # This is the numerical value associated with the label
+    chart.number "Frequency"
+
+    # Add rows of data
+    dataset = chart_dataset chart_name
+    dataset.each do |item, count|
+      chart.add_row([item, count])
     end
-  
-    json['rows'] = rows
-    
-    return json.to_json.to_s
   end
   
-  def to_json(frequencies)
-    first_col = {'id' => 'name', 'label' => 'name', 'type' => 'string'}
-    second_col = {'id' => 'frequency', 'label' => 'Frequency', 'type' => 'number'}
-    
-    cols = [first_col, second_col]
-    
-    json = Hash.new
-    frequencies.each do |name, hash|
-      json[name] = hash_to_google_json(frequencies[name], cols)
-    end
-    
-    return json
-  end
-  
+  # Gather all needed data from the model
   def gather_frequencies(stats)
     macports_version = Hash.new(0)
     osx_version = Hash.new(0)
@@ -41,6 +25,7 @@ class OsStatisticsController < ApplicationController
     gcc_version = Hash.new(0)
     xcode_version = Hash.new(0)
     
+    # For each column in OsStatistics count the number of unique entries
     stats.each do |row|
       key = row.macports_version.to_sym  
       macports_version[key] = macports_version[key] + 1
@@ -64,23 +49,22 @@ class OsStatisticsController < ApplicationController
       xcode_version[key] = xcode_version[key] + 1    
     end
     
-    frequencies = Hash.new
-    frequencies['macports_version'] = macports_version
-    frequencies['osx_version'] = osx_version
-    frequencies['os_arch'] = os_arch
-    frequencies['os_platform'] = os_platform
-    frequencies['build_arch'] = build_arch
-    frequencies['gcc_version'] = gcc_version
-    frequencies['xcode_version'] = xcode_version
+    populate = method(:populate)
     
-    return frequencies
+    add_chart :macports_version, macports_version, populate
+    add_chart :osx_version, osx_version, populate
+    add_chart :os_arch, os_arch, populate
+    add_chart :os_platform, os_platform, populate
+    add_chart :build_arch, build_arch, populate
+    add_chart :macports_version, macports_version, populate
+    add_chart :gcc_version, gcc_version, populate
+    add_chart :xcode_version, xcode_version, populate
   end
-  
+    
   def index
     @stats = OsStatistic.all
-    
-    frequencies = gather_frequencies @stats
-    @chartjson = to_json frequencies
+    @charts = Hash.new
+    gather_frequencies @stats
     
     respond_to do |format|
       format.html # index.html.erb
