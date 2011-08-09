@@ -1,47 +1,35 @@
-<%# title: Title of the chart %>
-<%# key: key into chartjson hash table %>
-<%# div: div where chart should be drawn %>
-<% charts = [] %>
-<% charts << {:title => 'MacPorts Versions', :key => 'macports_version',  :div => 'macports_versions_div'} %>
-<% charts << {:title => 'OSX Versions', :key => 'osx_version', :div => 'osx_versions_div'} %>
-<% charts << {:title => 'OS Arch', :key => 'os_arch', :div => 'os_arch_div'} %>
-<% charts << {:title => 'OS Platform', :key => 'os_platform', :div => 'os_platform_div'} %>
-<% charts << {:title => 'Build Arch', :key => 'build_arch', :div => 'build_arch_div'} %>
-<% charts << {:title => 'gcc Version', :key => 'gcc_version', :div => 'gcc_version_div'} %>
-<% charts << {:title => 'XCode Version', :key => 'xcode_version', :div => 'xcode_version_div'} %>
+<%# Set titles for charts %>
+<% controller.set_chart_title :macports_version, "MacPorts Versions" %>
+<% controller.set_chart_title :osx_version, "OSX Versions" %>
+<% controller.set_chart_title :os_arch, "OS Arch" %>
+<% controller.set_chart_title :os_platform, "OS Platform" %>
+<% controller.set_chart_title :build_arch, "Build Arch" %>
+<% controller.set_chart_title :gcc_version, "gcc Versions" %>
+<% controller.set_chart_title :xcode_version, "XCode Versions" %>
 
-<!--Load the AJAX API-->
-<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<%# All these charts are pie charts - set :type to PieChart %>
+<% @charts.each do |chart_name, chartdata| %>
+  <% controller.set_chart_type chart_name, "PieChart" %>
+<% end %>
 
-<script type="text/javascript">
-// Load the Visualization API and the piechart package.
-google.load('visualization', '1', {'packages':['corechart']});
-      
-// Set a callback to run when the Google Visualization API is loaded.
-google.setOnLoadCallback(drawAllCharts);
+<%# Order the charts %>
+<% ordered_charts = [:macports_version, 
+                     :osx_version, 
+                     :os_arch, 
+                     :os_platform,
+                     :build_arch,
+                     :gcc_version,
+                     :xcode_version] %>
 
-function drawPieChart(json, title, div) {
-  var data  = new google.visualization.DataTable(json);
-  var chart = new google.visualization.PieChart(document.getElementById(div));
-  chart.draw(data, {width: 450, height: 300, title: title});
-}
-
-function drawAllCharts() {
+<% ordered_charts.each do |chart| %>
+  <% options = {:width => 600, :height => 400, :html => {:class => "graph_chart"}} %>
+  <% options[:title] = controller.chart_title chart %>
+  <% type = controller.chart_type chart %>
   
-  <% charts.each do |hash|%>
-  json = <%= raw @chartjson[hash[:key]] %>;
-  drawPieChart(json, '<%= hash[:title] %>', '<%= hash[:div] %>');
+  <% visualization chart, type, options do |visualization| %>
+    <% controller.populate_chart chart, visualization %>
   <% end %>
-}
-</script>
- 
-<div id="macports_versions_div"></div>
-<div id="osx_versions_div"></div>
-<div id="os_arch_div"></div>
-<div id="os_platform_div"></div>
-<div id="build_arch_div"></div>
-<div id="gcc_version_div"></div>
-<div id="xcode_version_div"></div>
+<% end %>
 
 <br />
 
