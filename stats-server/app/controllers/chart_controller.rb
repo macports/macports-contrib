@@ -8,7 +8,7 @@ class ChartController < ApplicationController
     set_chart_attribute chart_name, :data, dataset
     set_chart_attribute chart_name, :populate, populate_code
   end
-  
+    
   # Set the chart's title
   def set_chart_title(chart, title)
     set_chart_attribute chart, :title, title
@@ -25,14 +25,23 @@ class ChartController < ApplicationController
     populate.call(chart_name, chart)
   end
   
+  # Get the dataset associate with this chart
   def chart_dataset(chart_name)
     @charts[chart_name][:data]
   end
   
+  # Check if the chart's dataset is empty
+  def dataset_empty?(chart_name)
+    dataset = chart_dataset(chart_name)
+    return dataset.empty?
+  end
+  
+  # Get the title associate with this chart
   def chart_title(chart_name)
     @charts[chart_name][:title]
   end
   
+  # Get the type of this chart (eg: PieChart, LineChart, etc...)
   def chart_type(chart_name)
     @charts[chart_name][:type]
   end
@@ -50,5 +59,4 @@ class ChartController < ApplicationController
     attrs[attribute] = value
     @charts[chart] = attrs
   end
-  
 end
