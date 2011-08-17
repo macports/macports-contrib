@@ -182,9 +182,196 @@ Transmitted data is encoded as a JSON object with four fields.
 \end{enumerate}
 
 \section{Server Side - Ruby on Rails}
+\subsection{Database Schema}
+
+\subsubsection {Categories table}
+
+Imported from MPWA
+
+\begin{verbatim}
+  create_table "categories", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+\end{verbatim}
+
+\textbf{Relationships and Validations}
+
+\begin{verbatim}
+  has_many :ports
+  validates_presence_of :name
+\end{verbatim}
+
+\textbf{Changes from MPWA}
+\begin{itemize}
+  \item Validate presence of name
+\end{itemize}
+
+\subsection{Ports table}
+
+Imported from MPWA
+
+\begin{verbatim}
+  create_table "ports", :force => true do |t|
+    t.string   "name"
+    t.string   "path"
+    t.string   "version"
+    t.text     "description"
+    t.string   "licenses"
+    t.integer  "category_id"
+    t.text     "variants"
+    t.string   "maintainers"
+    t.string   "platforms"
+    t.string   "categories"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ports", ["name"], :name => "index_ports_on_name"
+\end{verbatim}
+
+\textbf{Relationships and Validations}
+  
+\begin{verbatim}
+  has_one :category
+  belongs_to :category
+  has_many :installed_ports
+  validates_presence_of :name, :version
+\end{verbatim}
+
+\textbf{Changes from MPWA}
+\begin{itemize}
+  \item Changed variant column to text type from string
+  \item Added index on name column
+  \item Validate presence of name and version
+  \item has\_many installed ports
+\end{itemize}
+
+\subsubsection{installed\_ports table}
+
+The installed\_ports table holds submitted port installation data. It keeps track of an installed port's version and variants as well as the id of the submitting user.
+
+\begin{verbatim}
+  create_table "installed_ports", :force => true do |t|
+    t.integer  "port_id"
+    t.string   "version"
+    t.text     "variants"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "user_id"
+  end
+
+  add_index "installed_ports", ["port_id"], :name => "index_installed_ports_on_port_id"
+  add_index "installed_ports", ["user_id"], :name => "index_installed_ports_on_user_id"
+\end{verbatim}
+
+\textbf{Relationships and Validations}
+  
+\begin{verbatim}
+  belongs_to :port
+  has_one    :user
+  
+  validates_presence_of :user_id, :port_id, :version
+\end{verbatim}
+
+\subsubsection{os\_statistics table}
+
+The os\_statistics table holds information about a user's system.
+
+\begin{verbatim}
+  create_table "os_statistics", :force => true do |t|
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "macports_version"
+    t.string   "osx_version"
+    t.string   "os_arch"
+    t.string   "os_platform"
+    t.string   "build_arch"
+    t.string   "xcode_version"
+    t.string   "gcc_version"
+    t.integer  "user_id"
+  end
+
+  add_index "os_statistics", ["user_id"], :name => "index_os_statistics_on_user_id"
+\end{verbatim}
+
+\begin{verbatim}
+  belongs_to :port
+  has_one    :user
+  
+  validates_presence_of :user_id, :port_id, :version
+\end{verbatim}
+
+\subsubsection{users table}
+
+The users table holds UUIDs for each user.
+
+\begin{verbatim}
+  create_table "users", :force => true do |t|
+    t.string   "uuid"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+\end{verbatim}
+
+\begin{verbatim}
+  has_one  :os_statistic
+  has_many :installed_ports
+\end{verbatim}
+
+\subsection{Submissions}
+
+JSON encoded submissions are sent via HTTPS POST to the \texttt{/submissions} page. All data is stored in the \texttt{data} POST variable.
+
+Submissions are stored on a month by month basis. Resubmissions in a given month cause that month's data to be updated.
+
+Storing data happens as follows
+\begin{enumerate}
+  \item Attempt to find a user with the given UUID in the database. If no user is found then add a new entry
+  \item Attempt to find an entry in the os\_statistics table for this user that was created this month. If no such entry is found then add an try for this month. If an entry is found then update it.
+  \item For each submitted port verify that it is a valid port by checking to see if it exists in the \texttt{ports} table. If it does not exist then skip it. If it does exist then attempt to find an entry for the given user that was created this month. If an entry was found then update it, otherwise create a new entry.
+\end{enumerate}
+ 
+\subsection{OS Statistics Page}
+
+The OS statistics page provides visualizations of the data in the \texttt{os\_statistics} table. It shows pie charts for each of
+\begin{itemize}
+  \item MacPorts Version
+  \item OSX Versions
+  \item OS Arch
+  \item OS Platform
+  \item Build Arch
+  \item gcc Versions
+  \item XCode Versions
+\end{itemize}
+
+These pie charts show the percentage of the user population running different versions (or arch / platform) in each category.
+
+\subsection{Port Page}
+
+Every port in the MacPorts repository has an associated port page. This page displays basic information about the port such as
+\begin{itemize}
+  \item Name
+  \item Current version
+  \item Licenses
+  \item Categories
+  \item Variants
+\end{itemize}
+
+This page also shows visualizations of the data in the \texttt{installed\_ports} page for this particular port.
+
+It has the following
+\begin{itemize}
+  \item Line chart of installation counts over the past 12 months.
+  \item Top versions over the past 12 months. This finds the top 5 most popular versions in use right now and tracks how their popularity has changed over the past 12 months. Popularity is measured by the number of installations of each version per month.
+  \item Pie chart of all versions. This shows the distribution of all different versions in use right now. It will show you that \(x\%\) of users of this port are using version \(y\).
+  \item Similarly to all versions, there is a pie chart of all variants in use.
+\end{itemize}
+
+\subsection{Installed Ports Page}
+
 TODO
-
-
 
 
 \end{document}
