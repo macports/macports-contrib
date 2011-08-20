@@ -1,8 +1,11 @@
 .PHONY: all install
 
+DESTDIR=~/.vim
+
 all:
 
 install:
 	@for dir in compiler ftdetect ftplugin snippets syntax; do \
-		cp -rv $$dir/* ~/.vim/$$dir/ ; \
+		mkdir -p $(DESTDIR)/$$dir/ ; \
+		cp -rv $$dir/* $(DESTDIR)/$$dir/ ; \
 	done
