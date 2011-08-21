@@ -25,6 +25,9 @@ end
 
 FileUtils.touch(TIME_FILE)
 
+# Output encoding magic comment
+puts "# coding: UTF-8"
+
 $ports = Array.new
 $hashed_data = Hash.new
 
