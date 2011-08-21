@@ -1,27 +1,33 @@
-<h1>All Installed Ports</h1>
+<% controller.set_chart_title :top25, 'Most popular ports this month' %>
+<% controller.set_chart_type  :top25, "BarChart" %>
 
-<table border=1>
-	<tr>
-		<th> ID </th>
-		<th> user_id </th>
-		<th> Port ID </th>
-		<th> Version </th>
-		<th> Variants </th>
-		<th> Month </th>
-		<th> Year </th>
-		<th> Details </th>
-	</tr>
+<h1>Port Statistics</h1>
 
-<% @ports.each do |row| %>
-  <tr>
-    <td> <%= row.id %> </td>
-		<td> <%= row.user_id %> </td>
-		<td> <%= row.port_id %> </td>
-		<td> <%= row.version %></td>
-		<td> <%= row.variants %> </td>
-		<td> <%= row.month %></td>
-		<td> <%= row.year %></td>
-    <td> <%= link_to 'Show', row %></td>
-  </tr>
+Participating users: <%= User.count %> <br />
+Number of ports: <%= Port.count %> <br />
+Average number of ports installed per user: <%= @average_ports %><br />
+
+<br />
+<%# Most popular port this month %>
+<% unless @popular_port_month.nil? %>
+  <% port = @popular_port_month %>
+  Most popular port this month (<%= @month %>) is <%= link_to port.name, category_port_path(port.category, port) %>
+  with <%= @popular_port_month_count %> installs. <br />
 <% end %>
-</table>
+
+<%# Most popular port this year %>
+<% unless @popular_port_year.nil? %>
+  <% port = @popular_port_year %>
+  Most popular port this year (<%= @year %>) is <%= link_to port.name, category_port_path(port.category, port) %>
+  with <%= @popular_port_year_count %> installs. <br />
+<% end %>
+
+<br />
+
+<%# Draw chart  %>
+<%= render :partial => '/partials/chart_draw', 
+    :locals => {:charts => [:top25],
+                :chart_width => 1000,
+                :chart_height => 1000} 
+%>
+
