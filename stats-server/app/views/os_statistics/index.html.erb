@@ -12,6 +12,8 @@
   <% controller.set_chart_type chart_name, "PieChart" %>
 <% end %>
 
+<br />
+
 <%# Order the charts %>
 <% ordered_charts = [:macports_version, 
                      :osx_version, 
@@ -21,14 +23,51 @@
                      :gcc_version,
                      :xcode_version] %>
 
+<h1> Operating System Statistics </h1>
+
+<%# Generate links %>
+<ul>
+<% ordered_charts.each do |chart|  %>
+<li> <%= link_to controller.chart_title(chart), :anchor => chart %> </li>
+<% end %>
+</ul>
+
+<br />
+
 <% ordered_charts.each do |chart| %>
-  <% options = {:width => 600, :height => 400, :html => {:class => "graph_chart"}} %>
-  <% options[:title] = controller.chart_title chart %>
+  <% title = controller.chart_title chart %>
+  <%# Set visualization options %>
+  <% vis_options = {:width => 600, :height => 400, :html => {:class => "graph_chart"}} %>
+  <% vis_options[:title] = title %>
+  
+  <%# Set table options %>
+  <% table_options = {:width => 600, :html => {:class => "graph_chart"}} %>
+  <% table_options[:title] = title %>
+  
   <% type = controller.chart_type chart %>
   
-  <% visualization chart, type, options do |visualization| %>
-    <% controller.populate_chart chart, visualization %>
+  <%# Anchor %>
+  <a name=<%= chart %>> </a>
+  <%# Title %>
+  <h2> <%= title %> </h2>
+  
+  
+  <% if not controller.dataset_empty? chart %>
+    <%# Draw visualization %>
+    <% visualization chart, type, vis_options do |visualization| %>
+      <% controller.populate_chart chart, visualization %>
+    <% end %>
+    
+    <%# Draw table %>
+    <% table = chart.to_s + "_table" %>
+    <% visualization table, "Table", table_options do |visualization| %>
+      <% controller.populate_chart chart, visualization %>
+    <% end %>
+  <% else %>
+    No data to display
   <% end %>
+  
+  
 <% end %>
 
 <br />
