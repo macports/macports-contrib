@@ -1,3 +1,5 @@
+<% controller.set_chart_title :participating_users, 'Number of Participating Users' %>
+<% controller.set_chart_type  :participating_users, "LineChart" %>
 <h1>MacPorts Statistics</h1>
 
 <ul>
@@ -5,6 +7,19 @@
 	<li> <%= link_to "User Installed Ports", installed_ports_path %> </li>
 </ul>
 
+Total number of participating users: <%= User.count %> <br />
+Number of users last month (<%= @last_month %>): <%= @users_last_month %> <br />
+
 
 <%= render :partial => '/partials/port_search' %>
 <%= link_to "Browse By Category", categories_path %> </li>
+
+<br />
+
+<%# Draw charts - no tables %>
+<%= render :partial => '/partials/chart_draw', 
+    :locals => {:charts => [:participating_users], :drawtables => false} 
+%>
+
+
+
