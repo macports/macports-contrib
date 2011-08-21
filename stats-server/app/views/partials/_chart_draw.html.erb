@@ -1,15 +1,51 @@
+<%# Set Defaults %>
+<% drawtables_default = true %>
+<% chart_width_default = 600 %>
+<% chart_height_default = 400 %>
+
+<%# Check if locals have been passed to this partial %>
+<%# Use them if available, otherwise use defaults %>
+
+<%# Avoid nil objects  %>
+<% if (defined? charts).nil? %>  
+  <% charts = Hash.new %>
+<% end %>
+
+<%# Draw tables as well as visualizations? %>
+<% if (defined? drawtables).nil? %>
+  <% drawtables = drawtables_default %>
+<% end %>
+
+<%# Get chart width %>
+<% if (defined? chart_width).nil? %>
+  <% chart_width = chart_width_default %>
+<% end %>
+
+<%# Get chart height %>
+<% if (defined? chart_height).nil? %>
+  <% chart_height = chart_height_default %>
+<% end %>
+
+<%# Set visualization options %>
+<% vis_options = {:width => chart_width, 
+                  :height => chart_height, 
+                  :html => {:class => "graph_chart"}} 
+%>
+
+<%# Set table options %>
+<% table_options = {:width => 600, 
+                    :html => {:class => "graph_chart"}} 
+%>
+
+
 <%# Draw charts %>
 <% charts.each do |chart| %>
   <% title = controller.chart_title chart %>
-  <%# Set visualization options %>
-  <% vis_options = {:width => 600, :height => 400, :html => {:class => "graph_chart"}} %>
-  <% vis_options[:title] = title %>
-
-  <%# Set table options %>
-  <% table_options = {:width => 600, :html => {:class => "graph_chart"}} %>
-  <% table_options[:title] = title %>
-  
   <% type = controller.chart_type chart %>
+
+  <%# Set titles %>
+  <% vis_options[:title] = title %>
+  <% table_options[:title] = title %>
 
   <%# Anchor %>
   <a name=<%= chart %>> </a>
@@ -23,10 +59,12 @@
       <% controller.populate_chart chart, visualization %>
     <% end %>
     
-    <%# Draw table %>
-    <% table = chart.to_s + "_table" %>
-    <% visualization table, "Table", table_options do |visualization| %>
-      <% controller.populate_chart chart, visualization %>
+    <% if drawtables %>
+      <%# Draw table %>
+      <% table = chart.to_s + "_table" %>
+      <% visualization table, "Table", table_options do |visualization| %>
+        <% controller.populate_chart chart, visualization %>
+        <% end %>
     <% end %>
     
   <% else %>
