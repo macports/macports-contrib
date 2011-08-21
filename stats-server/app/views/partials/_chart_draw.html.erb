@@ -1,0 +1,35 @@
+<%# Draw charts %>
+<% charts.each do |chart| %>
+  <% title = controller.chart_title chart %>
+  <%# Set visualization options %>
+  <% vis_options = {:width => 600, :height => 400, :html => {:class => "graph_chart"}} %>
+  <% vis_options[:title] = title %>
+
+  <%# Set table options %>
+  <% table_options = {:width => 600, :html => {:class => "graph_chart"}} %>
+  <% table_options[:title] = title %>
+  
+  <% type = controller.chart_type chart %>
+
+  <%# Anchor %>
+  <a name=<%= chart %>> </a>
+  <%# Title %>
+  <h2> <%= title %> </h2>
+ 
+
+  <% if not controller.dataset_empty? chart %>
+    <%# Draw visualization %>
+    <% visualization chart, type, vis_options do |visualization| %>
+      <% controller.populate_chart chart, visualization %>
+    <% end %>
+    
+    <%# Draw table %>
+    <% table = chart.to_s + "_table" %>
+    <% visualization table, "Table", table_options do |visualization| %>
+      <% controller.populate_chart chart, visualization %>
+    <% end %>
+    
+  <% else %>
+    No data to display
+  <% end %>  
+<% end %>
