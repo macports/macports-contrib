@@ -16,11 +16,11 @@
                      :version_count, 
                      :variant_count] %>
 
-<div id="content">
-  <p>
-    <strong>Name:</strong> <%= @port.name %>
-  </p>
+<h1> <%= @port.name %> </h1>
 
+<br />
+
+<div id="content">
   <p>
     <strong>Current Version:</strong> <%= @port.version %>
   </p>
@@ -48,15 +48,55 @@
     </p>
   <% end %>
 
+  </div>
+  
+  <br />
+  
+  <h2> Stats </h2>
+
+  <%# Generate links %>
+  <ul>
+  <% ordered_charts.each do |chart|  %>
+  <li> <%= link_to controller.chart_title(chart), :anchor => chart %> </li>
+  <% end %>
+  </ul>
+
+  <br />
+
   <%# Draw charts %>
   <% ordered_charts.each do |chart| %>
-    <% options = {:width => 600, :height => 400, :html => {:class => "graph_chart"}} %>
-    <% options[:title] = controller.chart_title chart %>
+    <% title = controller.chart_title chart %>
+    <%# Set visualization options %>
+    <% vis_options = {:width => 600, :height => 400, :html => {:class => "graph_chart"}} %>
+    <% vis_options[:title] = title %>
+
+    <%# Set table options %>
+    <% table_options = {:width => 600, :html => {:class => "graph_chart"}} %>
+    <% table_options[:title] = title %>
+    
     <% type = controller.chart_type chart %>
 
-    <% visualization chart, type, options do |visualization| %>
-      <% controller.populate_chart chart, visualization %>
-    <% end %>
+    <%# Anchor %>
+    <a name=<%= chart %>> </a>
+    <%# Title %>
+    <h2> <%= title %> </h2>
+   
+  
+    <% if not controller.dataset_empty? chart %>
+      <%# Draw visualization %>
+      <% visualization chart, type, vis_options do |visualization| %>
+        <% controller.populate_chart chart, visualization %>
+      <% end %>
+      
+      <%# Draw table %>
+      <% table = chart.to_s + "_table" %>
+      <% visualization table, "Table", table_options do |visualization| %>
+        <% controller.populate_chart chart, visualization %>
+      <% end %>
+      
+    <% else %>
+      No data to display
+    <% end %>  
   <% end %>
 
   <table border=1>
