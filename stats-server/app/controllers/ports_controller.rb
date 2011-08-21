@@ -17,7 +17,7 @@ class PortsController < ChartController
   # Populate the versions over time chart
   def populate_monthly_versions(chart_name, chart)
     chart.string "Month"
-    
+      
     # Add version columns
     column_order = []
     @top_versions.each do |version, count|
@@ -81,9 +81,9 @@ class PortsController < ChartController
     
     now = Time.now
     now_d = now.to_date
-    month_range = (0..11)
-        
-    for i in month_range
+    
+    # Iterate over months from 11 months ago to 0 months ago (current month)
+    11.downto(0) do |i|
       month = now.months_ago(i).to_date
       
       # Find InstalledPort entries for month
@@ -103,7 +103,8 @@ class PortsController < ChartController
       return
     end
     
-    key = month.at_beginning_of_month.to_s
+    # Key is the abbreviated month name and the year (eg: Aug 2011)
+    key = month.to_time.strftime("%b %Y")
     monthly_installs[key] = entries.size
   end
     
@@ -113,7 +114,8 @@ class PortsController < ChartController
     @top_versions.each do |version, count|
       version_entries = entries.where("version = ?", version)
       
-      key = month.at_beginning_of_month.to_s
+      # Key is the abbreviated month name and the year (eg: Aug 2011)
+      key = month.to_time.strftime("%b %Y")
       
       if monthly_versions[key].nil?
         monthly_versions[key] = Hash.new
