@@ -112,7 +112,8 @@ If the \texttt{submit} subaction is given then it will encode all the collected 
 \texttt{JSON} encoding is done though sub-procedures contained inside the procedure for the \texttt{port stats} action.
 
 \subsection{Changes to port/port-help.tcl}
-TODO
+
+Added help entry for the \texttt{port stats} action describing proper usage.
 
 \section{Data Format}
 
@@ -371,7 +372,19 @@ It has the following
 
 \subsection{Installed Ports Page}
 
-TODO
+This page shows summary information for installed ports such as:
+\begin{itemize}
+  \item The number of participating users
+  \item The number of ports in the MacPorts repository
+  \item Average number of ports installed port user
+  \item Most popular port this month and the number of installs
+  \item Most popular port this year and the number of installs
+  \item A bar chart of the top 25 most installed ports along with their install counts
+  \item A table of the top 25 most installed ports along with their install counts
+\end{itemize}
 
+\subsection{Home Page}
+The home has links to all other pages as well as a search area for ports. It also displays a line chart of the number of participating users over the past 12 months.
 
 \end{document}
+
