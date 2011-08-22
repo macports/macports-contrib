@@ -3,6 +3,9 @@
 ### Generate a valid seeds.rb for use in seeding the database with 
 ### valid ports and categories
 
+# Note - this file must be executed from inside RAILS_ROOT 
+# otherwise it won't be able to connect to the database
+
 require 'rubygems'
 require 'active_record'
 require 'fileutils'
