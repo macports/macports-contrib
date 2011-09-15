@@ -1,7 +1,6 @@
 class OsStatistic < ActiveRecord::Base
-  belongs_to :user
-  
-  attr_accessible :user_id
+  belongs_to :user, :validate => true
+
   attr_accessible :macports_version
   attr_accessible :osx_version
   attr_accessible :os_arch
@@ -9,8 +8,7 @@ class OsStatistic < ActiveRecord::Base
   attr_accessible :build_arch
   attr_accessible :gcc_version
   attr_accessible :xcode_version
-  
-  validates :user_id,           :presence => true
+
   validates :macports_version,  :presence => true
   validates :osx_version,       :presence => true
   validates :os_arch,           :presence => true
@@ -21,10 +19,10 @@ class OsStatistic < ActiveRecord::Base
 
   # Populate an OsStatistics row with data
   def self.add_os_data(user, os)
-    logger.debug "In OsStatistic.add_os_data"
-    
-    if os.nil?
-      return
+    # os and user must not be nil
+    # Also, user must not be a new record (i.e. it should be in the database)
+    if os.nil? || user.nil? || user.new_record?
+      return false
     end
     
     macports_version = os['macports_version']
@@ -52,10 +50,7 @@ class OsStatistic < ActiveRecord::Base
     os_stats[:gcc_version]      = gcc_version
     os_stats[:xcode_version]    = xcode_version
     
-    if not os_stats.save
-      logger.debug "Unable to save os_stats"
-      logger.debug "Error message: #{os_stats.errors.full_messages}"
-    end
+    return os_stats.save
   end
 
 end
