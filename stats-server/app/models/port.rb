@@ -1,8 +1,6 @@
 class Port < ActiveRecord::Base
-  has_one :category
   belongs_to :category
   has_many :installed_ports
-
 
   validates_presence_of :name, :version
 
