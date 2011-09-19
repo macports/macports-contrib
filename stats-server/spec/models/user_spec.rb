@@ -22,7 +22,7 @@ describe User do
   it "should only have a valid uuid" do
     @user.uuid = 'ABC-INVALID-UUID'
     @user.should be_invalid
-    @user.errors.on(:uuid).should == "uuid must be a valid universally unique identifier"
+    @user.errors[:uuid].should == ["uuid must be a valid universally unique identifier"]
             
     # A valid UUID - generated with uuidgen
     @user.uuid = 'BD5C379F-F485-4C89-A3DB-20A3476116F1'
