@@ -53,4 +53,31 @@ class OsStatistic < ActiveRecord::Base
     return os_stats.save
   end
 
+  # Returns a hash of frequency hashes with a key for each column
+  # The frequency hash contains counts of the number of times a value has 
+  # appeared in its column.
+  # e.g. If "2.0.0" appears 8 times in the "macports_version" column then
+  # frequencies["macports_version"]["2.0.0"] == 8
+  def self.frequencies
+                           
+    columns = { "macports_version" => Hash.new(0),
+                "osx_version" => Hash.new(0),
+                "os_arch" => Hash.new(0),
+                "os_platform" => Hash.new(0),
+                "build_arch" => Hash.new(0),
+                "gcc_version" => Hash.new(0),
+                "xcode_version" => Hash.new(0)
+              }
+    
+    OsStatistic.find_each do |os_stat|
+      # For each column in OsStatistics count the number of occurrences of a particular value
+      columns.each do |column, hash|
+        value = os_stat.attributes[column]
+        hash[value] = hash[value] + 1
+      end
+    end
+    
+    return columns
+  end
+
 end
