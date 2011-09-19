@@ -15,56 +15,42 @@ class OsStatisticsController < ChartController
     end
   end
   
-  # Gather all needed data from the model
-  def gather_frequencies(stats)
-    macports_version = Hash.new(0)
-    osx_version = Hash.new(0)
-    os_arch = Hash.new(0)
-    os_platform = Hash.new(0)
-    build_arch = Hash.new(0)
-    gcc_version = Hash.new(0)
-    xcode_version = Hash.new(0)
+  # Returns a hash of frequency hashes with a key for each column
+  # The frequency hash contains counts of the number of times a value has 
+  # appeared in its column.
+  # e.g. If "2.0.0" appears 8 times in the "macports_version" column then
+  # frequencies["macports_version"]["2.0.0"] == 8
+  def gather_frequencies
+                           
+    columns = { "macports_version" => Hash.new(0),
+                "osx_version" => Hash.new(0),
+                "os_arch" => Hash.new(0),
+                "os_platform" => Hash.new(0),
+                "build_arch" => Hash.new(0),
+                "gcc_version" => Hash.new(0),
+                "xcode_version" => Hash.new(0)
+              }
     
-    # For each column in OsStatistics count the number of unique entries
-    stats.each do |row|
-      key = row.macports_version.to_sym  
-      macports_version[key] = macports_version[key] + 1
-      
-      key = row.osx_version.to_sym  
-      osx_version[key] = osx_version[key] + 1
-    
-      key = row.os_arch.to_sym  
-      os_arch[key] = os_arch[key] + 1
-    
-      key = row.os_platform.to_sym  
-      os_platform[key] = os_platform[key] + 1
-      
-      key = row.build_arch.to_sym  
-      build_arch[key] = build_arch[key] + 1
-      
-      key = row.gcc_version.to_sym  
-      gcc_version[key] = gcc_version[key] + 1
-      
-  		key = row.xcode_version.to_sym  
-      xcode_version[key] = xcode_version[key] + 1    
+    OsStatistic.find_each do |os_stat|
+      # For each column in OsStatistics count the number of occurrences of a particular value
+      columns.each do |column, hash|
+        value = os_stat.attributes[column]
+        hash[value] = hash[value] + 1
+      end
     end
     
-    populate = method(:populate)
-    
-    add_chart :macports_version, macports_version, populate
-    add_chart :osx_version, osx_version, populate
-    add_chart :os_arch, os_arch, populate
-    add_chart :os_platform, os_platform, populate
-    add_chart :build_arch, build_arch, populate
-    add_chart :macports_version, macports_version, populate
-    add_chart :gcc_version, gcc_version, populate
-    add_chart :xcode_version, xcode_version, populate
+    return columns
   end
-    
+  
+  
   def index
-    @stats = OsStatistic.all
     @charts = Hash.new
-    gather_frequencies @stats
+    frequencies = gather_frequencies
+    
+    # Add charts for each type of data
+    frequencies.each do |column, data_hash|
+      add_chart column.to_sym, data_hash, method(:populate)
+    end
     
     respond_to do |format|
       format.html # index.html.erb
