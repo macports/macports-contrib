@@ -10,16 +10,16 @@
 
 set MY_VERSION 0.1
 
-set supportedGroups [list perl5 python25 python26 python27 python31 ruby]
+set supportedGroups [list perl5 python ruby]
 
 
 proc printUsage {} {
    puts "Usage: $::argv0 \[-h\] \[-g portgroup\] <portname> <portversion>"
-   puts "   -g   Specify a port group to use (perl5, python27, etc)"
+   puts "   -g   Specify a port group to use (perl5, python, etc)"
    puts "   -h   This help"
    puts ""
    puts "portname      name to use for the port; for group-based ports, don't"
-   puts "              use the prefix (py27-, p5-, etc) as this will add that"
+   puts "              use the prefix (py-, p5-, etc) as this will add that"
    puts "              for you when needed"
    puts "portversion   version to use for the port"
 }
@@ -74,31 +74,10 @@ switch ${groupCode} {
       puts "perl5.setup         ${portname} ${portversion}"
       puts "categories-append   replaceme"
    }
-   python25 {
-      puts "PortGroup           python25 1.0"
+   python {
+      puts "PortGroup           python 1.0"
       puts ""
-      puts "name                py25-${portname}"
-      puts "version             ${portversion}"
-      puts "categories-append   replaceme"
-   }
-   python26 {
-      puts "PortGroup           python26 1.0"
-      puts ""
-      puts "name                py26-${portname}"
-      puts "version             ${portversion}"
-      puts "categories-append   replaceme"
-   }
-   python27 {
-      puts "PortGroup           python27 1.0"
-      puts ""
-      puts "name                py27-${portname}"
-      puts "version             ${portversion}"
-      puts "categories-append   replaceme"
-   }
-   python31 {
-      puts "PortGroup           python31 1.0"
-      puts ""
-      puts "name                py31-${portname}"
+      puts "name                py-${portname}"
       puts "version             ${portversion}"
       puts "categories-append   replaceme"
    }
@@ -125,10 +104,7 @@ puts ""
 switch ${groupCode} {
    perl5 {
    }
-   python25 -
-   python26 -
-   python27 -
-   python31 {
+   python {
       puts "homepage            replaceme"
       puts "master_sites        replaceme"
       puts {distname            ${portname}-${version}}
@@ -145,12 +121,16 @@ puts "checksums           md5 12345 \\"
 puts "                    sha1 6789a \\"
 puts "                    rmd160 bcdef"
 switch ${groupCode} {
-   python25 {
-      puts "post-destroot {"
-      puts {   xinstall -m 755 -d ${destroot}${prefix}/share/doc/${name}}
-      puts "   xinstall -m 644 -W $\{worksrcpath\} replaceme \\"
-      puts {      ${destroot}${prefix}/share/doc/${name}}
+   python {
+      puts "python.versions      25 26 27"
+      puts "python.default_version 27"
+      puts ""
+      puts "if {\$subport != \$name} {"
+      puts "    post-destroot {"
+      puts {        xinstall -m 755 -d ${destroot}${prefix}/share/doc/${subport}}
+      puts "        xinstall -m 644 -W $\{worksrcpath\} replaceme \\"
+      puts {           ${destroot}${prefix}/share/doc/${subport}}
+      puts "    }"
       puts "}"
    }
 }
-
