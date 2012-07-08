@@ -65,6 +65,7 @@ syn match PortfilePhasesConf 	"configure\.\(cc\|cpp\|cxx\|objc\|fc\|f77\|f90\|ja
 syn match PortfilePhasesConf 	"configure\.\(perl\|python\|ruby\|install\|awk\|bison\)"
 syn match PortfilePhasesConf 	"configure\.\(pkg_config\(_path\)\?\)"
 syn match PortfilePhasesConf 	"configure.universal_\(args\|\(c\|cpp\|cxx\|ld\)flags\)"
+syn match PortfilePhasesConf	"compiler\.\(blacklist\|whitelist\|fallback\)"
 
 " Automake and Autoconf
 syn match PortfilePhasesAA 		"use_auto\(make\|\(re\)\?conf\)" nextgroup=PortfileYesNo skipwhite
@@ -114,22 +115,114 @@ syn keyword PortfileOptional 		distcheck.check
 syn keyword PortfilePhases		notes
 
 " Port Groups
+
+" App
+syn match	PortfileGroups			"app\.\(create\|name\|executable\|icon\|short_version_string\|version\|identifier\)"
+
+" Archcheck
+syn match	PortfileGroups			"archcheck\.files"
+
+" CMake
+" has no keywords
+
+" crossbinutils
+syn match	PortfileGroups			"crossbinutils\.\(target\|setup\)"
+
+" crossgcc
+syn match	PortfileGroups			"crossgcc\.\(target\|setup\|setup_libc\)"
+
+" github
+syn match	PortfileGroups			"github\.\(author\|project\|version\|tag_prefix\|homepage\|raw\|master_sites\|tarball_from\|setup\)"
+
 " Gnustep
 syn match 	PortfileGroups 			"gnustep\.\(post_flags\|cc\)"
 syn keyword PortfileGroups 			variant_with_docs gnustep_layout
 syn match 	PortfileGroups 			"set_\(gnustep_\(make\|env\)\|\(system\|local\)_library\)"
+
 " Haskell
 syn keyword PortfileGroups 			haskell.setup
+
+" hocbinding
+syn match	PortfileGroups			"hocbinding\.\(framework\|deps\|setup\)"
+
+" hunspelldict
+syn match	PortfileGroups			"hunspelldict\.\(locale\|setup\)"
+
+" KDE 4, versions 1.0 and 1.1
+" have no keywords
+
+" muniversal
+syn match	PortfileGroups			"merger_configure_\(env\|args\|compiler\|cppflags\|cflags\|cxxflags\|objcflags\|ldflags\)"
+syn match	PortfileGroups			"merger_build_\(env\|args\)"
+syn match	PortfileGroups			"merger_\(host\|arch_\(flag\|compiler\)\|destroot_env\|dont_diff\|must_run_binaries\|no_3_archs\)"
+syn match	PortfileGroups			"universal_archs_supported"
+
+" obsolete
+" has no keywords (other than replaced_by, and that should be elsewhere in
+" this file)
+
+" ocml
+" has no keywords
+
+" octave
+syn match	PortfileGroups			"octave\.\(module\|setup\)"
+
+" PEAR
+syn match	PortfileGroups			"pear\.\(env\|configure\.pre_args\|destroot\|installer\|sourceroot\|instpath\|pearpath\|cmd-pear\|cmd-phar\|cmd-php\|channel\|packagexml\|package\|packagefile\|setup\)"
+
 " Perl5
-syn match 	PortfileGroups 			"perl5\.\(setup\|version\|bin\|lib\|archlib\)"
+syn match	PortfileGroups 			"perl5\.\(setup\|branches\|default_branch\|version\|major\|arch\|bin\|lib\|bindir\|archlib\)"
+
+" PHP 1.0
+syn match	PortfileGroups			"php\.\(branch\(es\)\?\|build_dirs\|default_branch\|extension_ini\|extensions\|rootname\|type\|setup\)"
+syn match	PortfileGroups			"php\.\(config\|extension_dir\|ini\(_dir\)\?\|ize\|suffix\)"
+" PHP 1.1 (only adding those not already present in 1.0)
+syn match	PortfileGroups			"php\.\(rootname\|create_subports\|extensions\.zend\|build_dirs\|add_port_code\)"
+syn match	PortfileGroups			"php\.\(pecl\(_livecheck_stable\)\?\|pecl\.\(name\|prerelease\)\)"
+
+" PHP5 extension
+syn match	PortfileGroups			"php5extension\.\(setup\|build_dirs\|extensions\|extension_dir\|ini\|inidir\|php_ini\|phpize\|type\|source\)"
+
+" PHP5 PEAR
+syn match	PortfileGroups			"php5pear\.\(env\|configure\.pre_args\|destroot\|installer\|sourceroot\|instpath\|pearpath\|cmd-\(pear\|phar\|php\)\|channel\|packagexml\|package\|packagefile\|setup\)"
+
+" Pure
+syn match	PortfileGroups			"pure\.setup"
+
 " Python
-syn match 	PortfileGroups 			"python\.\(bin\|lib\|include\|pkgd\)"
+syn match	PortfileGroups			"python\.\(versions\|version\|default_version\|branch\|prefix\|bin\|lib\|libdir\|include\|pkgd\|add_archflags\|set_compiler\|link_binaries\(_suffix\)\?\)"
+" I'm not documenting the Python{24,25,26,27,31,32} groups. Don't use them.
+
+" Qt4
+syn match	PortfileGroups			"qt_\(name\|dir\|qmake_spec\|cmake_defines\|arch_types\)"
+syn match	PortfileGroups			"qt_\(qmake\|moc\|uic\|lrelease\)_cmd"
+syn match	PortfileGroups			"qt_\(docs\|plugins\|mkspecs\|imports\|includes\|libs\|frameworks\|bins\|apps\|data\|translations\|sysconf\|examples\|demos\|cmake_module\)_dir"
+
 " Ruby
-syn match 	PortfileGroups 			"ruby\.\(version\|bin\|lib\|arch\|archlib\)"
+syn match	PortfileGroups			"ruby\.\(version\|bin\|rdoc\|gem\|lib\|arch\|archlib\|setup\)"
+
+" Select
+syn match	PortfileGroups			"select\.\(group\|file\)"
+
+" TeX Live
+syn match	PortfileGroups			"texlive\.\(exclude\|binaries\|formats\|languages\|maps\|forceupdatecnf\|use_mktexlsr\(_on_deactivate\)\?\|texmfport\)"
+
+" X11 Font
+syn match	PortfileGroups			"x11font\.setup"
+
 " Xcode
-syn match 	PortfileGroups 			"xcode\.\(project\|configuration\|target\|build\.settings\)"
-syn match 	PortfileGroups 			"xcode\.destroot\.\(type\|path\|settings\)"
-syn match 	PortfileGroups 			"xcode\.universal\.\(sdk\|settings\)"
+syn match	PortfileGroups			"xcode\.\(project\|configuration\|target\|build\.settings\)"
+syn match	PortfileGroups			"xcode\.destroot\.\(type\|path\|settings\)"
+syn match	PortfileGroups			"xcode\.universal\.\(sdk\|settings\)"
+
+" Xcode version
+syn match	PortfileGroups			"minimum_xcodeversions"
+
+" Zope
+syn match	PortfileGroups			"zope\.\(need_subdir\|setup\)"
+
+" End of PortGroups
+
 
 " Tcl extensions
 syn keyword PortfileTcl		xinstall
