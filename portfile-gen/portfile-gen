@@ -117,9 +117,8 @@ switch ${groupCode} {
    }
 }
 puts ""
-puts "checksums           md5 12345 \\"
-puts "                    sha1 6789a \\"
-puts "                    rmd160 bcdef"
+puts "checksums           rmd160 12345 \\"
+puts "                    sha256 6789a"
 switch ${groupCode} {
    python {
       puts "python.versions      25 26 27"
