@@ -303,7 +303,7 @@ class PortPlugin < Plugin
 			when 2
 				return a.join(' and ')
 			else
-				return a.slice(0, sz-1).join(', ') + ', and ' + a[sz-1]
+				return a.slice(0, sz-1).join(', ') + ' and ' + a[sz-1]
 		end
 	end
 	
