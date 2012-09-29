@@ -122,7 +122,7 @@ set installedDate [registry::property_retrieve $regref date]
 
 # get the svn log since then
 array set portInfo [lindex $portSearchResult 1]
-set portSvnUrl http://svn.macosforge.org/repository/macports/trunk/dports/$portInfo(portdir)/Portfile
+set portSvnUrl http://svn.macports.org/repository/macports/trunk/dports/$portInfo(portdir)/Portfile
 if {[catch {set log [exec svn log -r "{[clock format $installedDate -format {%Y-%m-%dT%H:%M:%SZ} -gmt 1]}:HEAD" $portSvnUrl]}]} {
     puts "error getting svn log"
     exit 1
