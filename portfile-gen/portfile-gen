@@ -13,15 +13,15 @@ set MY_VERSION 0.1
 set supportedGroups [list perl5 python ruby]
 
 
-proc printUsage {} {
-   puts "Usage: $::argv0 \[-h\] \[-g portgroup\] <portname> <portversion>"
-   puts "   -g   Specify a port group to use (perl5, python, etc)"
-   puts "   -h   This help"
-   puts ""
-   puts "portname      name to use for the port; for group-based ports, don't"
-   puts "              use the prefix (py-, p5-, etc) as this will add that"
-   puts "              for you when needed"
-   puts "portversion   version to use for the port"
+proc printUsage {{channel stderr}} {
+   puts $channel "Usage: $::argv0 \[-h\] \[-g portgroup\] <portname> <portversion>"
+   puts $channel "   -g   Specify a port group to use (perl5, python, etc)"
+   puts $channel "   -h   This help"
+   puts $channel ""
+   puts $channel "portname      name to use for the port; for group-based ports, don't"
+   puts $channel "              use the prefix (py-, p5-, etc) as this will add that"
+   puts $channel "              for you when needed"
+   puts $channel "portversion   version to use for the port"
 }
 
 
@@ -30,7 +30,7 @@ while {[string index [lindex $::argv 0] 0] == "-"} {
    switch [string range [lindex $::argv 0] 1 end] {
       g {
          if {[llength $::argv] < 2} {
-            puts "-g needs a port group"
+            puts stderr "-g needs a port group"
             printUsage
             exit 1
          }
@@ -43,11 +43,11 @@ while {[string index [lindex $::argv 0] 0] == "-"} {
          set ::argv [lrange $::argv 1 end]
       }
       h {
-         printUsage
+         printUsage stdout
          exit 0
       }
       default {
-         puts "Unknown option [lindex $::argv 0]"
+         puts stderr "Unknown option [lindex $::argv 0]"
          printUsage
          exit 1
       }
@@ -56,7 +56,7 @@ while {[string index [lindex $::argv 0] 0] == "-"} {
 }
 
 if {[llength $::argv] != 2} {
-   puts "Error: missing portname or portversion"
+   puts stderr "Error: missing portname or portversion"
    printUsage
    exit 1
 }
