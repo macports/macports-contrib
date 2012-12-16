@@ -96,9 +96,9 @@ foreach i $ilist {
     set revision [lindex $i 2]
     set epoch [lindex $i 5]
     if { $version_selected == {} || $epoch > $epoch_selected ||
-            ($epoch == $epoch_selected && [rpm-vercomp $version $version_selected] > 0)
+            ($epoch == $epoch_selected && [vercmp $version $version_selected] > 0)
             || ($epoch == $epoch_selected
-                && [rpm-vercomp $version $version_selected] == 0
+                && [vercmp $version $version_selected] == 0
                 && $revision > $revision_selected)} {
         set version_selected $version
         set revision_selected $revision
