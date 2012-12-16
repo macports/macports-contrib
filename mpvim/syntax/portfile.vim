@@ -28,7 +28,7 @@ syn match PortfileGroup 		"{.\+}" contained
 syn match PortfileYesNo 		"\(yes\|no\)" contained
 
 syn keyword PortfileRequired 	PortSystem name version maintainers
-syn keyword PortfileRequired 	homepage master_sites categories platforms checksums
+syn keyword PortfileRequired 	homepage master_sites categories platforms
 syn match PortfileRequired 		"^\(long_\)\?description" nextgroup=PortfileDescription skipwhite
 syn region PortfileDescription 	matchgroup=Normal start="" skip="\\$" end="$" contained
 
@@ -37,7 +37,7 @@ syn keyword PortfileOptional 	use_automake use_autoconf use_configure
 syn keyword PortfileOptional 	patch_sites distfiles dist_subdir license conflicts
 syn keyword PortfileOptional 	replaced_by supported_archs
 
-syn keyword PortfileOptional 	checksums nextgroup=PortfileChecksums skipwhite
+syn match  PortfileOptional 	"checksums\(\-\(append\|delete\)\)\?" nextgroup=PortfileChecksums skipwhite
 syn region PortfileChecksums 	matchgroup=Normal start="" skip="\\$" end="$" contained contains=PortfileChecksumsType
 syn keyword PortfileChecksumsType md5 sha1 rmd160 sha256 contained
 
