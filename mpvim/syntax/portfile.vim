@@ -32,7 +32,7 @@ syn keyword PortfileRequired 	homepage master_sites categories platforms
 syn match PortfileRequired 		"^\(long_\)\?description" nextgroup=PortfileDescription skipwhite
 syn region PortfileDescription 	matchgroup=Normal start="" skip="\\$" end="$" contained
 
-syn keyword PortfileOptional 	PortGroup epoch revision worksrcdir distname platform
+syn keyword PortfileOptional 	PortGroup epoch revision worksrcdir distname
 syn keyword PortfileOptional 	use_automake use_autoconf use_configure
 syn keyword PortfileOptional 	patch_sites distfiles dist_subdir license conflicts
 syn keyword PortfileOptional 	replaced_by supported_archs
@@ -97,6 +97,12 @@ syn match PortfileVariantName 			"[a-zA-Z0-9_]\+" contained
 syn keyword PortfileOptional 			universal_variant nextgroup=PortfileYesNo skipwhite
 syn match PortfileOptional 				"default_variants\(-\(append\|delete\)\)\?" nextgroup=PortfileDefaultVariants skipwhite
 syn match PortfileDefaultVariants 		"\([+|\-][a-zA-Z0-9_]\+\s*\)\+" contained
+
+" Platform
+syn match PortfilePlatform 				"platform" nextgroup=PortfilePlatformName skipwhite
+syn match PortfilePlatformName 			"[a-z][a-zA-Z0-9_]\+" nextgroup=PortfilePlatformVersion contained skipwhite
+syn match PortfilePlatformVersion 		"[0-9]\+" nextgroup=PortfilePlatformArch contained skipwhite
+syn match PortfilePlatformArch 			"[a-z][a-zA-Z0-9_]\+" contained
 
 " Dependencies
 syn match PortfileDepends 			"depends_\(\(lib\|build\|run\|fetch\|extract\)\(-\(append\|delete\)\)\?\)" nextgroup=PortfileDependsEntries skipwhite
@@ -263,6 +269,12 @@ hi def link PortfileVariantDescription 	Statement
 hi def link PortfileVariantRequires 	Statement
 hi def link PortfileVariantName 		Identifier
 hi def link PortfileDefaultVariants 	Identifier
+
+hi def link PortfilePlatform 			Keyword
+hi def link PortfilePlatformName 		Identifier
+hi def link PortfilePlatformVersion 	tclNumber
+hi def link PortfilePlatformArch 		Identifier
+
 hi def link PortfileDepends 			Keyword
 hi def link PortfileDependsEntry 		Special
 hi def link PortfileGroups 				Keyword
