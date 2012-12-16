@@ -21,6 +21,8 @@ runtime! syntax/tcl.vim
 
 unlet b:current_syntax
 
+" Some custom extensions contain a dash (for example, fs-traverse)
+setlocal iskeyword+=-
 
 syn match PortfileGroup 		"{.\+}" contained
 syn match PortfileYesNo 		"\(yes\|no\)" contained
@@ -225,7 +227,9 @@ syn match	PortfileGroups			"zope\.\(need_subdir\|setup\)"
 
 
 " Tcl extensions
-syn keyword PortfileTcl		xinstall
+syn keyword PortfileTcl		xinstall system copy move ln
+syn keyword PortfileTcl		fs-traverse
+syn keyword PortfileTcl		vercmp
 " check whitespace, copied from python.vim
 if g:portfile_highlight_space_errors == 1
   " trailing whitespace
