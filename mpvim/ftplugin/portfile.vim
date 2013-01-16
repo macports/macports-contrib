@@ -1,29 +1,30 @@
-" ============================================================================
+" vim:fenc=utf-8:et:sw=4:ts=4:sts=4
+" ======================================================================
 " Vim filetype plugin for portfile
 " Maintainer: Maximilian Nickel <mnick@macports.org>
-" ============================================================================
+" ======================================================================
 
 if exists("b:did_ftplugin")
-	finish
+    finish
 endif
 let b:did_ftplugin = 1
 
 if !exists("g:did_mpftplugin") 
-	function PortfileGetErrors()
-		if !empty(getqflist())
-			exe "copen"
-		end
-	endfunction
+    function PortfileGetErrors()
+        if !empty(getqflist())
+            exe "copen"
+        end
+    endfunction
 
-	function TracPatch(url)
-		let patchfile="$TMPDIR/portfile.patch"
-		let url = substitute(a:url, "/attachment/", "/raw-attachment/", "")
-		let cmd = "!curl --progress-bar -o \"" . patchfile . "\" \"" . url . "\""
-		exe cmd
-		exe "diffpatch " . patchfile
-	endfunction
+    function TracPatch(url)
+        let patchfile="$TMPDIR/portfile.patch"
+        let url = substitute(a:url, "/attachment/", "/raw-attachment/", "")
+        let cmd = "!curl --progress-bar -o \"" . patchfile . "\" \"" . url . "\""
+        exe cmd
+        exe "diffpatch " . patchfile
+    endfunction
 
-	let g:did_mpftplugin = 1
+    let g:did_mpftplugin = 1
 endif
 
 au QuickFixCmdPre make exe "cclose"
