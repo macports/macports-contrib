@@ -1,8 +1,10 @@
+" vim:fenc=utf-8:et:sw=4:ts=4:sts=4
+
 " Vim compiler file
-" Author: 	Maximilian Nickel <mnick@macports.org>
+" Author: Maximilian Nickel <mnick@macports.org>
 
 if exists("current_compiler")
-	finish
+    finish
 endif
 let current_compiler = "portfile"
 
