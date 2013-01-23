@@ -30,12 +30,12 @@ syn match PortfileGroup         "{.\+}" contained
 syn match PortfileYesNo         "\(yes\|no\)" contained
 
 syn keyword PortfileRequired    PortSystem name version maintainers
-syn keyword PortfileRequired    homepage master_sites categories platforms
+syn keyword PortfileRequired    homepage master_sites platforms
+syn match PortfileRequired      "^categories\%(-\%(append\|delete\)\)\?"
 syn match PortfileRequired      "^\(long_\)\?description" nextgroup=PortfileDescription skipwhite
 syn region PortfileDescription  matchgroup=Normal start="" skip="\\$" end="$" contained
 
 syn keyword PortfileOptional    PortGroup epoch revision worksrcdir distname
-syn keyword PortfileOptional    use_automake use_autoconf use_configure
 syn keyword PortfileOptional    patch_sites distfiles dist_subdir license conflicts
 syn keyword PortfileOptional    replaced_by supported_archs
 
@@ -113,7 +113,7 @@ syn match PortfileDependsEntry      "\(port\|bin\|path\|lib\):" contained
 
 " StartupItems
 syn match PortfileStartupPid    "\(none\|auto\|clean\|manual\)" contained
-syn match PortfileOptional      "startupitem\.\(start\|stop\|restart\|init\|executable\)"
+syn match PortfileOptional      "startupitem\.\(start\|stop\|restart\|init\|executable\|logfile\)"
 syn match PortfileOptional      "startupitem\.\(create\|logevents\|netchange\)" nextgroup=PortfileYesNo skipwhite
 syn match PortfileOptional      "startupitem\.pidfile" nextgroup=PortfileStartupPid skipwhite
 
