@@ -235,9 +235,17 @@ syn match PortfileGroups    "zope\.\(need_subdir\|setup\)"
 
 
 " Tcl extensions
-syn keyword PortfileTcl     xinstall system copy move ln
-syn keyword PortfileTcl     fs-traverse
-syn keyword PortfileTcl     vercmp
+syn keyword PortfileTcl     xinstall fs-traverse readdir md5 vercmp
+syn keyword PortfileTcl     reinplace strsed
+syn keyword PortfileTcl     copy move delete touch ln system
+syn match PortfileTcl       "curl\s\+\%(fetch\|isnewer\)"
+syn match PortfileTcl       "\%(add\|exists\)\%(user\|group\)"
+syn keyword PortfileTcl     nextuid nextgid
+syn keyword PortfileTcl     variant_isset variant_set
+syn match PortfileTcl       "mk[sd]\?temp"
+syn keyword PortfileTcl     lpush lpop lunshift lshift ldindex
+syn keyword PortfileTcl     ui_debug ui_error ui_info ui_msg ui_warn
+
 " check whitespace, copied from python.vim
 if g:portfile_highlight_space_errors == 1
     " trailing whitespace
