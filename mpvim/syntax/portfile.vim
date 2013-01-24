@@ -31,15 +31,16 @@ syn match PortfileYesNo         "\(yes\|no\)" contained
 
 syn keyword PortfileRequired    PortSystem name version maintainers
 syn keyword PortfileRequired    homepage master_sites platforms
-syn match PortfileRequired      "^categories\%(-\%(append\|delete\)\)\?"
+syn match PortfileRequired      "^categories\%(-append\|-delete\)\?"
 syn match PortfileRequired      "^\(long_\)\?description" nextgroup=PortfileDescription skipwhite
 syn region PortfileDescription  matchgroup=Normal start="" skip="\\$" end="$" contained
 
 syn keyword PortfileOptional    PortGroup epoch revision worksrcdir distname
-syn keyword PortfileOptional    patch_sites distfiles dist_subdir license conflicts
+syn keyword PortfileOptional    patch_sites dist_subdir license conflicts
+syn match PortfileOptional      "distfiles\%(-append\|-delete\)\?"
 syn keyword PortfileOptional    replaced_by supported_archs
 
-syn match  PortfileOptional     "checksums\(-\(append\|delete\)\)\?" nextgroup=PortfileChecksums skipwhite
+syn match  PortfileOptional     "checksums\(-append\|-delete\)\?" nextgroup=PortfileChecksums skipwhite
 syn region PortfileChecksums    matchgroup=Normal start="" skip="\\$" end="$" contained contains=PortfileChecksumsType
 syn keyword PortfileChecksumsType md5 sha1 rmd160 sha256 contained
 
@@ -58,7 +59,7 @@ syn match PortfilePhasesExtract "use_\(7z\|bzip2\|lzma\|zip\|xz\)" nextgroup=Por
 
 " Patch phase options
 syn match PortfilePhasesPatch   "patch\.\(dir\|cmd\|args\(-\(append\|delete\)\)\?\)"
-syn match PortfilePhasesPatch   "patchfiles\(-\(append\|delete\)\)\?"
+syn match PortfilePhasesPatch   "patchfiles\(-append\|-delete\)\?"
 
 " Configure phase options
 syn keyword PortfilePhasesConf  use_configure nextgroup=PortfileYesNo skipwhite
