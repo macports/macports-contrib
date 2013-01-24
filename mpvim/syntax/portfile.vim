@@ -31,8 +31,8 @@ syn match PortfileYesNo         "\%(yes\|no\)" contained
 
 syn keyword PortfileRequired    PortSystem name version maintainers
 syn keyword PortfileRequired    homepage master_sites platforms
-syn match PortfileRequired      "^categories\%(-append\|-delete\)\?"
-syn match PortfileRequired      "^\%(long_\)\?description" nextgroup=PortfileDescription skipwhite
+syn match PortfileRequired      "categories\%(-append\|-delete\)\?"
+syn match PortfileRequired      "\%(long_\)\?description" nextgroup=PortfileDescription skipwhite
 syn region PortfileDescription  matchgroup=Normal start="" skip="\\$" end="$" contained
 
 syn keyword PortfileOptional    PortGroup epoch revision worksrcdir distname
@@ -92,7 +92,7 @@ syn match PortfilePhasesDest    "destroot\.\%(pre_\|post_\)\?args"
 syn match PortfilePhasesDest    "destroot\.target\%(-append\|-delete\)\?"
 
 " Variants
-syn region PortfileVariant              matchgroup=Keyword start="^variant" skip="\\$" end="$" contains=PortfileVariantName,PortfileVariantRequires,PortfileVariantDescription,PortfileVariantConflicts skipwhite
+syn region PortfileVariant              matchgroup=Keyword start="^\s*\zsvariant" skip="\\$" end="$" contains=PortfileVariantName,PortfileVariantRequires,PortfileVariantDescription,PortfileVariantConflicts skipwhite
 syn keyword PortfileVariantRequires     requires nextgroup=PortfileVariantName contained
 syn keyword PortfileVariantConflicts    conflicts nextgroup=PortfileVariantName contained
 syn keyword PortfileVariantDescription  description nextgroup=PortfileGroup contained skipwhite
@@ -201,7 +201,7 @@ syn match PortfileGroups    "php5pear\.\%(env\|configure\.pre_args\|destroot\|in
 syn match PortfileGroups    "pure\.setup"
 
 " Python
-syn match PortfileGroups    "python\.\%(versions\|version\|default_version\|branch\|prefix\|bin\|lib\|libdir\|include\|pkgd\|add_archflags\|set_compiler\|link_binaries\%(_suffix\)\?\)"
+syn match PortfileGroups    "python\.\%(versions\?\|default_version\|branch\|prefix\|bin\|lib\|libdir\|include\|pkgd\|add_archflags\|set_compiler\|link_binaries\%(_suffix\)\?\)"
 " I'm not documenting the Python{24,25,26,27,31,32} groups. Don't use them.
 
 " Qt4
