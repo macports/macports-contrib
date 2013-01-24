@@ -44,7 +44,7 @@ syn match  PortfileOptional     "checksums\(-append\|-delete\)\?" nextgroup=Port
 syn region PortfileChecksums    matchgroup=Normal start="" skip="\\$" end="$" contained contains=PortfileChecksumsType
 syn keyword PortfileChecksumsType md5 sha1 rmd160 sha256 contained
 
-syn match PortfilePhases        "\(\(pre\|post\)-\)\?\(fetch\|checksum\|extract\|patch\|configure\|build\|test\|destroot\|archive\|install\|activate\)\s" contains=PortfilePrePost
+syn match PortfilePhases        "\(pre-\|post-\)\?\(fetch\|checksum\|extract\|patch\|configure\|build\|test\|destroot\|archive\|install\|activate\)\s" contains=PortfilePrePost
 
 " Fetch phase options
 syn match PortfilePhasesFetch   "fetch\.\(type\|user\|password\|use_epsv\|ignore_sslcert\)"
@@ -54,17 +54,17 @@ syn match PortfilePhasesFetch   "git\.\(url\|branch\)"
 syn match PortfilePhasesFetch   "hg\.\(url\|tag\)"
 
 " Extract phase options
-syn match PortfilePhasesExtract "extract\.\(suffix\|mkdir\|cmd\|only\(-\(append\|delete\)\)\?\)"
+syn match PortfilePhasesExtract "extract\.\(suffix\|mkdir\|cmd\|only\(-append\|-delete\)\?\)"
 syn match PortfilePhasesExtract "use_\(7z\|bzip2\|lzma\|zip\|xz\)" nextgroup=PortfileYesNo skipwhite
 
 " Patch phase options
-syn match PortfilePhasesPatch   "patch\.\(dir\|cmd\|args\(-\(append\|delete\)\)\?\)"
+syn match PortfilePhasesPatch   "patch\.\(dir\|cmd\|args\(-append\|-delete\)\?\)"
 syn match PortfilePhasesPatch   "patchfiles\(-append\|-delete\)\?"
 
 " Configure phase options
 syn keyword PortfilePhasesConf  use_configure nextgroup=PortfileYesNo skipwhite
-syn match PortfilePhasesConf    "configure\.\(env\|\(c\|ld\|cpp\|cxx\|objc\|f\|fc\|f90\)flags\)\(-\(append\|delete\)\)\?"
-syn match PortfilePhasesConf    "configure\.\(\(pre\|post\)-\)\?args\(-\(\append\|delete\)\)\?" nextgroup=PortfileConfEntries skipwhite
+syn match PortfilePhasesConf    "configure\.\(env\|\(c\|ld\|cpp\|cxx\|objc\|f\|fc\|f90\)flags\)\(-append\|-delete\)\?"
+syn match PortfilePhasesConf    "configure\.\(pre-\|post-\)\?args\(-append\|-delete\)\?" nextgroup=PortfileConfEntries skipwhite
 syn region PortfileConfEntries  matchgroup=Normal start="" skip="\\$" end="$" contained
 syn match PortfilePhasesConf    "configure\.\(cc\|cpp\|cxx\|objc\|fc\|f77\|f90\|javac\|compiler\)"
 syn match PortfilePhasesConf    "configure\.\(perl\|python\|ruby\|install\|awk\|bison\)"
@@ -79,17 +79,17 @@ syn match PortfilePhasesAA      "auto\(make\|\(re\)\?conf\).\(env\|args\|dir\)"
 " Build phase options
 syn match PortfilePhasesBuild   "build\.\(cmd\|type\|dir\)"
 syn match PortfilePhasesBuild   "build\.\(\(pre\|post\)_\)\?args"
-syn match PortfilePhasesBuild   "build\.\(target\|env\)\(-\(append\|delete\)\)\?"
+syn match PortfilePhasesBuild   "build\.\(target\|env\)\(-append\|-delete\)\?"
 syn keyword PortfilePhasesBuild use_parallel_build nextgroup=PortfileYesNo skipwhite
 
 " Test phase options
 syn match PortfilePhasesTest    "test\.\(run\|cmd\|target\)"
-syn match PortfilePhasesTest    "test\.env\(-\(append\|delete\)\)\?"
+syn match PortfilePhasesTest    "test\.env\(-append\|-delete\)\?"
 
 " Test destroot options
 syn match PortfilePhasesDest    "destroot\.\(cmd\|type\|dir\|destdir\|umask\|keepdirs\|violate_mtree\)"
 syn match PortfilePhasesDest    "destroot\.\(\(pre\|post\)_\)\?args"
-syn match PortfilePhasesDest    "destroot\.target\(-\(append\|delete\)\)\?"
+syn match PortfilePhasesDest    "destroot\.target\(-append\|-delete\)\?"
 
 " Variants
 syn region PortfileVariant              matchgroup=Keyword start="^variant" skip="\\$" end="$" contains=PortfileVariantName,PortfileVariantRequires,PortfileVariantDescription,PortfileVariantConflicts skipwhite
@@ -98,7 +98,7 @@ syn keyword PortfileVariantConflicts    conflicts nextgroup=PortfileVariantName 
 syn keyword PortfileVariantDescription  description nextgroup=PortfileGroup contained skipwhite
 syn match PortfileVariantName           "[a-zA-Z0-9_]\+" contained
 syn keyword PortfileOptional            universal_variant nextgroup=PortfileYesNo skipwhite
-syn match PortfileOptional              "default_variants\(-\(append\|delete\)\)\?" nextgroup=PortfileDefaultVariants skipwhite
+syn match PortfileOptional              "default_variants\(-append\|-delete\)\?" nextgroup=PortfileDefaultVariants skipwhite
 syn match PortfileDefaultVariants       "\([+\-][a-zA-Z0-9_]\+\s*\)\+" contained
 
 " Platform
@@ -108,7 +108,7 @@ syn match PortfilePlatformVersion   "[0-9]\+" nextgroup=PortfilePlatformArch con
 syn match PortfilePlatformArch      "[a-z][a-zA-Z0-9_]\+" contained
 
 " Dependencies
-syn match PortfileDepends           "depends_\(\(lib\|build\|run\|fetch\|extract\)\(-\(append\|delete\)\)\?\)" nextgroup=PortfileDependsEntries skipwhite
+syn match PortfileDepends           "depends_\(\(lib\|build\|run\|fetch\|extract\)\(-append\|-delete\)\?\)" nextgroup=PortfileDependsEntries skipwhite
 syn region PortfileDependsEntries   matchgroup=Normal start="" skip="\\$" end="$" contains=PortfileDependsEntry contained
 syn match PortfileDependsEntry      "\(port\|bin\|path\|lib\):" contained
 
