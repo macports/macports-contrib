@@ -64,7 +64,7 @@ syn match PortfilePhasesPatch   "patchfiles\(-append\|-delete\)\?"
 " Configure phase options
 syn keyword PortfilePhasesConf  use_configure nextgroup=PortfileYesNo skipwhite
 syn match PortfilePhasesConf    "configure\.\(env\|\(c\|ld\|cpp\|cxx\|objc\|f\|fc\|f90\)flags\)\(-append\|-delete\)\?"
-syn match PortfilePhasesConf    "configure\.\(pre-\|post-\)\?args\(-append\|-delete\)\?" nextgroup=PortfileConfEntries skipwhite
+syn match PortfilePhasesConf    "configure\.\(pre_\|post_\)\?args\(-append\|-delete\)\?" nextgroup=PortfileConfEntries skipwhite
 syn region PortfileConfEntries  matchgroup=Normal start="" skip="\\$" end="$" contained
 syn match PortfilePhasesConf    "configure\.\(cc\|cpp\|cxx\|objc\|fc\|f77\|f90\|javac\|compiler\)"
 syn match PortfilePhasesConf    "configure\.\(perl\|python\|ruby\|install\|awk\|bison\)"
