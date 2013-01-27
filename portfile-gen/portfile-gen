@@ -145,7 +145,7 @@ switch ${groupCode} {
       puts "if {\${name} != \${subport}} {"
       puts "    depends_lib-append      replaceme"
       puts ""
-      puts "    configure.arsg-append   replaceme"
+      puts "    configure.args-append   replaceme"
       puts "}"
    }
    python {
