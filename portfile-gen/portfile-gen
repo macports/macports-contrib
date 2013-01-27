@@ -8,9 +8,9 @@
 #    ready for various uses
 #
 
-set MY_VERSION 0.1
+set MY_VERSION 0.2
 
-set supportedGroups [list perl5 python ruby]
+set supportedGroups [list perl5 php python ruby]
 
 
 proc printUsage {{channel stderr}} {
@@ -76,6 +76,13 @@ switch ${groupCode} {
       puts "perl5.setup         ${portname} ${portversion}"
       puts "categories-append   replaceme"
    }
+   php {
+      puts "PortGroup           php 1.1"
+      puts ""
+      puts "name                php-${portname}"
+      puts "version             ${portversion}"
+      puts "categories-append   replaceme"
+   }
    python {
       puts "PortGroup           python 1.0"
       puts ""
@@ -99,15 +106,24 @@ switch ${groupCode} {
 puts "platforms           darwin"
 puts "maintainers         replaceme"
 puts "license             replaceme"
+switch ${groupCode} {
+    php {
+        puts ""
+        puts {php.branches        5.3 5.4 5.5}
+        puts {php.pecl            yes}
+    }
+}
 puts ""
 puts "description         replaceme"
 puts ""
 puts "long_description    replaceme"
-puts ""
 switch ${groupCode} {
    perl5 {
    }
+   php {
+   }
    python {
+      puts ""
       puts "homepage            replaceme"
       puts "master_sites        replaceme"
       puts {distname            ${portname}-${version}}
@@ -115,6 +131,7 @@ switch ${groupCode} {
    ruby {
    }
    default {
+      puts ""
       puts "homepage            replaceme"
       puts "master_sites        replaceme"
    }
@@ -123,6 +140,14 @@ puts ""
 puts "checksums           rmd160  12345 \\"
 puts "                    sha256  6789a"
 switch ${groupCode} {
+   php {
+      puts ""
+      puts "if {\${name} != \${subport}} {"
+      puts "    depends_lib-append      replaceme"
+      puts ""
+      puts "    configure.arsg-append   replaceme"
+      puts "}"
+   }
    python {
       puts ""
       puts "python.versions     25 26 27"
