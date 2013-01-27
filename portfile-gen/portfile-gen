@@ -64,6 +64,7 @@ if {[llength $::argv] != 2} {
 set portname [lindex $::argv 0]
 set portversion [lindex $::argv 1]
 
+puts "# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4"
 puts "# \$Id\$"
 puts ""
 puts "PortSystem          1.0"
@@ -96,11 +97,12 @@ switch ${groupCode} {
    }
 }
 puts "platforms           darwin"
-puts "license             replaceme"
 puts "maintainers         replaceme"
+puts "license             replaceme"
+puts ""
 puts "description         replaceme"
-puts "long_description \\"
-puts "   replaceme"
+puts ""
+puts "long_description    replaceme"
 puts ""
 switch ${groupCode} {
    perl5 {
@@ -118,18 +120,19 @@ switch ${groupCode} {
    }
 }
 puts ""
-puts "checksums           rmd160 12345 \\"
-puts "                    sha256 6789a"
+puts "checksums           rmd160  12345 \\"
+puts "                    sha256  6789a"
 switch ${groupCode} {
    python {
-      puts "python.versions      25 26 27"
-      puts "python.default_version 27"
       puts ""
-      puts "if {\$subport != \$name} {"
+      puts "python.versions     25 26 27"
+      puts ""
+      puts "if {\${subport} != \${name}} {"
       puts "    post-destroot {"
-      puts {        xinstall -m 755 -d ${destroot}${prefix}/share/doc/${subport}}
+      puts {        set docdir ${prefix}/share/doc/${subport}}
+      puts {        xinstall -m 755 -d ${destroot}${docdir}}
       puts "        xinstall -m 644 -W $\{worksrcpath\} replaceme \\"
-      puts {           ${destroot}${prefix}/share/doc/${subport}}
+      puts {           ${destroot}${docdir}}
       puts "    }"
       puts "}"
    }
