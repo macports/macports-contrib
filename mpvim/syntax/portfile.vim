@@ -89,7 +89,7 @@ syn match PortfilePhasesTest    "test\.env\%(-append\|-delete\)\?"
 " Test destroot options
 syn match PortfilePhasesDest    "destroot\.\%(cmd\|type\|dir\|destdir\|umask\|keepdirs\|violate_mtree\)"
 syn match PortfilePhasesDest    "destroot\.\%(pre_\|post_\)\?args"
-syn match PortfilePhasesDest    "destroot\.target\%(-append\|-delete\)\?"
+syn match PortfilePhasesDest    "destroot\.\%(target\|env\)\%(-append\|-delete\)\?"
 
 " Variants
 syn region PortfileVariant              matchgroup=Keyword start="^\s*\zsvariant" skip="\\$" end="$" contains=PortfileVariantName,PortfileVariantRequires,PortfileVariantDescription,PortfileVariantConflicts skipwhite
