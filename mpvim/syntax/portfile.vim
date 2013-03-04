@@ -96,16 +96,16 @@ syn region PortfileVariant              matchgroup=Keyword start="^\s*\zsvariant
 syn keyword PortfileVariantRequires     requires nextgroup=PortfileVariantName contained
 syn keyword PortfileVariantConflicts    conflicts nextgroup=PortfileVariantName contained
 syn keyword PortfileVariantDescription  description nextgroup=PortfileGroup contained skipwhite
-syn match PortfileVariantName           "\<[a-zA-Z0-9_]\+\>" contained
+syn match PortfileVariantName           "\<\w\+\>" contained
 syn keyword PortfileOptional            universal_variant nextgroup=PortfileYesNo skipwhite
 syn match PortfileOptional              "\<default_variants\%(-append\|-delete\)\?\>" nextgroup=PortfileDefaultVariants skipwhite
-syn match PortfileDefaultVariants       "\%([+-][a-zA-Z0-9_]\+\s*\)\+" contained
+syn match PortfileDefaultVariants       "\<[+-]\w\+\%(\s\+[+-]\w\+\)*\>" contained
 
 " Platform
 syn match PortfilePlatform          "\<platform\>" nextgroup=PortfilePlatformName skipwhite
-syn match PortfilePlatformName      "\<[a-z][a-zA-Z0-9_]\+\>" nextgroup=PortfilePlatformVersion contained skipwhite
-syn match PortfilePlatformVersion   "\<[0-9]\+\>" nextgroup=PortfilePlatformArch contained skipwhite
-syn match PortfilePlatformArch      "\<[a-z][a-zA-Z0-9_]\+\>" contained
+syn match PortfilePlatformName      "\<\l\w\+\>" nextgroup=PortfilePlatformVersion contained skipwhite
+syn match PortfilePlatformVersion   "\<\d\+\>" nextgroup=PortfilePlatformArch contained skipwhite
+syn match PortfilePlatformArch      "\<\l\w\+\>" contained
 
 " Dependencies
 syn match PortfileDepends           "\<depends_\%(\%(lib\|build\|run\|fetch\|extract\)\%(-append\|-delete\)\?\)\>" nextgroup=PortfileDependsEntries skipwhite
