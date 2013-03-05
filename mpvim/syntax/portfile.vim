@@ -78,7 +78,7 @@ syn match PortfilePhasesAA      "\<auto\%(make\|\%(re\)\?conf\).\%(env\|args\|di
 
 " Build phase options
 syn match PortfilePhasesBuild   "\<build\.\%(cmd\|type\|dir\)\>"
-syn match PortfilePhasesBuild   "\<build\.\%(pre_\|post_\)\?args\>"
+syn match PortfilePhasesBuild   "\<build\.\%(pre_\|post_\)\?args\%(-append\|-delete\)\?\>"
 syn match PortfilePhasesBuild   "\<build\.\%(target\|env\)\%(-append\|-delete\)\?\>"
 syn keyword PortfilePhasesBuild use_parallel_build nextgroup=PortfileYesNo skipwhite
 
@@ -88,7 +88,7 @@ syn match PortfilePhasesTest    "\<test\.env\%(-append\|-delete\)\?\>"
 
 " Test destroot options
 syn match PortfilePhasesDest    "\<destroot\.\%(cmd\|type\|dir\|destdir\|umask\|keepdirs\|violate_mtree\)\>"
-syn match PortfilePhasesDest    "\<destroot\.\%(pre_\|post_\)\?args\>"
+syn match PortfilePhasesDest    "\<destroot\.\%(pre_\|post_\)\?args\%(-append\|-delete\)\?\>"
 syn match PortfilePhasesDest    "\<destroot\.\%(target\|env\)\%(-append\|-delete\)\?\>"
 
 " Variants
