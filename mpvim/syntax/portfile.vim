@@ -49,7 +49,7 @@ syn match PortfilePhases        "\<\%(pre-\|post-\)\?\%(fetch\|checksum\|extract
 " Fetch phase options
 syn match PortfilePhasesFetch   "\<fetch\.\%(type\|user\|password\|use_epsv\|ignore_sslcert\)\>"
 syn match PortfilePhasesFetch   "\<cvs\.\%(root\|password\|tag\|date\|module\)\>"
-syn match PortfilePhasesFetch   "\<svn\.\%(url\|revision\)\>"
+syn match PortfilePhasesFetch   "\<svn\.\%(url\|revision\|method\)\>"
 syn match PortfilePhasesFetch   "\<git\.\%(url\|branch\)\>"
 syn match PortfilePhasesFetch   "\<hg\.\%(url\|tag\)\>"
 
