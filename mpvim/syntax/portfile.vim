@@ -69,7 +69,7 @@ syn region PortfileConfEntries  matchgroup=Normal start="" skip="\\$" end="$" co
 syn match PortfilePhasesConf    "\<configure\.\%(cc\|cpp\|cxx\|objc\|fc\|f77\|f90\|javac\|compiler\)\>"
 syn match PortfilePhasesConf    "\<configure\.\%(perl\|python\|ruby\|install\|awk\|bison\)\>"
 syn match PortfilePhasesConf    "\<configure\.\%(pkg_config\%(_path\)\?\)\>"
-syn match PortfilePhasesConf    "\<configure.universal_\%(args\|\%(c\|cpp\|cxx\|ld\)flags\)\>"
+syn match PortfilePhasesConf    "\<configure.universal_\%(args\|\%(c\|cpp\|cxx\|ld\)flags\)\%(-append\|-delete\)\?\>"
 syn match PortfilePhasesConf    "\<compiler\.\%(blacklist\|whitelist\|fallback\)\>"
 
 " Automake and Autoconf
