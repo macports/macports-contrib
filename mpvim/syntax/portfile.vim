@@ -87,7 +87,8 @@ syn match PortfilePhasesTest    "\<test\.\%(run\|cmd\|target\)\>"
 syn match PortfilePhasesTest    "\<test\.env\%(-append\|-delete\)\?\>"
 
 " Test destroot options
-syn match PortfilePhasesDest    "\<destroot\.\%(cmd\|type\|dir\|destdir\|umask\|keepdirs\|violate_mtree\)\>"
+syn match PortfilePhasesDest    "\<destroot\.\%(cmd\|type\|dir\|destdir\|umask\|keepdirs\)\>"
+syn match PortfilePhasesDest    "\<destroot\.violate_mtree\>" nextgroup=PortfileYesNo skipwhite
 syn match PortfilePhasesDest    "\<destroot\.\%(pre_\|post_\)\?args\%(-append\|-delete\)\?\>"
 syn match PortfilePhasesDest    "\<destroot\.\%(target\|env\)\%(-append\|-delete\)\?\>"
 
