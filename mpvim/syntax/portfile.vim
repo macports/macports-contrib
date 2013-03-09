@@ -70,7 +70,7 @@ syn match PortfilePhasesConf    "\<configure\.\%(cc\|cpp\|cxx\|objc\|fc\|f77\|f9
 syn match PortfilePhasesConf    "\<configure\.\%(perl\|python\|ruby\|install\|awk\|bison\)\>"
 syn match PortfilePhasesConf    "\<configure\.\%(pkg_config\%(_path\)\?\)\>"
 syn match PortfilePhasesConf    "\<configure.universal_\%(args\|\%(c\|cpp\|cxx\|ld\)flags\)\%(-append\|-delete\)\?\>"
-syn match PortfilePhasesConf    "\<compiler\.\%(blacklist\|whitelist\|fallback\)\>"
+syn match PortfilePhasesConf    "\<compiler\.\%(blacklist\|whitelist\|fallback\)\%(-append\|-delete\)\?\>"
 
 " Automake and Autoconf
 syn match PortfilePhasesAA      "\<use_auto\%(make\|\%(re\)\?conf\)\>" nextgroup=PortfileYesNo skipwhite
