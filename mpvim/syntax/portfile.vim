@@ -35,8 +35,9 @@ syn match PortfileRequired      "\<categories\%(-append\|-delete\)\?\>"
 syn match PortfileRequired      "\<\%(long_\)\?description\>" nextgroup=PortfileDescription skipwhite
 syn region PortfileDescription  matchgroup=Normal start="" skip="\\$" end="$" contained
 
-syn keyword PortfileOptional    PortGroup epoch revision worksrcdir distname
-syn keyword PortfileOptional    patch_sites dist_subdir license conflicts
+syn keyword PortfileOptional    PortGroup epoch revision patch_sites
+syn keyword PortfileOptional    license conflicts license_noconflict
+syn keyword PortfileOptional    worksrcdir distname dist_subdir
 syn match PortfileOptional      "\<distfiles\%(-append\|-delete\)\?\>"
 syn keyword PortfileOptional    replaced_by supported_archs
 
