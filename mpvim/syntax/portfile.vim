@@ -30,7 +30,8 @@ syn match PortfileGroup         "{.\+}" contained
 syn match PortfileYesNo         "\<\%(yes\|no\)\>" contained
 
 syn keyword PortfileRequired    PortSystem name version maintainers
-syn keyword PortfileRequired    homepage master_sites platforms
+syn keyword PortfileRequired    homepage platforms
+syn match PortfileRequired      "\<master_sites\%(-append\|-delete\)\?\>"
 syn match PortfileRequired      "\<categories\%(-append\|-delete\)\?\>"
 syn match PortfileRequired      "\<\%(long_\)\?description\>" nextgroup=PortfileDescription skipwhite
 syn region PortfileDescription  matchgroup=Normal start="" skip="\\$" end="$" contained
