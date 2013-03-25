@@ -38,14 +38,15 @@ syn region PortfileDescription  matchgroup=Normal start="" skip="\\$" end="$" co
 
 syn keyword PortfileOptional    PortGroup epoch revision patch_sites
 syn keyword PortfileOptional    license conflicts license_noconflict
-syn keyword PortfileOptional    worksrcdir distname dist_subdir
-syn match PortfileOptional      "\<distfiles\%(-append\|-delete\)\?\>"
 syn keyword PortfileOptional    replaced_by supported_archs
+
+syn match PortfileOptional      "\<distfiles\%(-append\|-delete\)\?\>"
+syn keyword PortfileOptional    distname dist_subdir worksrcdir
 
 syn keyword PortfileOptional    installs_libs nextgroup=PortfileYesNo skipwhite
 syn match PortfileOptional      "\<depends_skip_archcheck\%(-append\|-delete\)\?\>"
 
-syn match  PortfileOptional     "\<checksums\%(-append\|-delete\)\?\>" nextgroup=PortfileChecksums skipwhite
+syn match PortfileOptional      "\<checksums\%(-append\|-delete\)\?\>" nextgroup=PortfileChecksums skipwhite
 syn region PortfileChecksums    matchgroup=Normal start="" skip="\\$" end="$" contained contains=PortfileChecksumsType
 syn keyword PortfileChecksumsType md5 sha1 rmd160 sha256 contained
 
