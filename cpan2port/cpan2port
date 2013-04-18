@@ -146,7 +146,7 @@ sub about {
         ( # file
             (.*)/          # cpan_path
             ([^/]+)-          # prefix
-            ((?:\d+\.?)+|v.*)     # version
+            ((?:\d+\.?)+|v(?:\d+\.?)+)     # version
             \.
             (tar\.gz|tgz)   # suffix
         )
