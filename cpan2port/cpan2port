@@ -146,7 +146,7 @@ sub about {
         ( # file
             (.*)/          # cpan_path
             ([^/]+)-          # prefix
-            ((?:\d+\.?)+)     # version
+            ((?:\d+\.?)+|v.*)     # version
             \.
             (tar\.gz|tgz)   # suffix
         )
@@ -279,6 +279,7 @@ perl5.setup         $$info{prefix} $$info{version}
 
 platforms           darwin
 maintainers         $$info{maintainers}
+#license             {Artistic-1 GPL}
 license             unknown
 
 # Uncomment this line if you know there will be no arch-specific code:
