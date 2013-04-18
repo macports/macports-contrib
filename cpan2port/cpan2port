@@ -181,7 +181,7 @@ sub checksums {
     my ($info) = shift;
     my $tarball = $$info{tarball} or die;
     my %check;
-    for my $k (qw( sha256 rmd160)) {
+    for my $k (qw( rmd160 sha256)) {
         my ($sum) = qx( openssl $k $tarball);
         my ($v)   = $sum =~ / (.*)/;
         $check{$k} = $v;
@@ -268,15 +268,19 @@ sub portfile {
 
     my $portfile = <<STOP;
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
-# \$Id\$
+# \$Id: \$
 
 PortSystem          1.0
 PortGroup           perl5 1.0
 
+perl5.branches      5.8 5.10 5.12 5.14 5.16
 perl5.setup         $$info{prefix} $$info{version}
 #perl5.setup         $$info{prefix} $$info{version} ../by-authors/id/$$info{cpan_path}
+
 platforms           darwin
 maintainers         $$info{maintainers}
+license             unknown
+
 # Uncomment this line if you know there will be no arch-specific code:
 #supported_archs     noarch
 
@@ -293,8 +297,9 @@ STOP
     $portfile .= <<STOP;
 $checksums
 
-$depends
 $build_depends
+
+$depends
 $use_module_build
 STOP
 
