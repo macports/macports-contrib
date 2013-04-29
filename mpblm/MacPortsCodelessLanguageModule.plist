@@ -11,25 +11,39 @@
 	<key>BBLMKeywordList</key>
 	<array>
 		<string>append</string>
+		<string>archcheck</string>
 		<string>args-append</string>
 		<string>args-delete</string>
 		<string>args</string>
 		<string>array</string>
+		<string>blacklist</string>
 		<string>break</string>
 		<string>build</string>
 		<string>case</string>
 		<string>catch</string>
+		<string>categories-append</string>
 		<string>categories</string>
+		<string>cc_archflags</string>
+		<string>cc</string>
 		<string>cd</string>
+		<string>cflags</string>
 		<string>check</string>
 		<string>checksums</string>
 		<string>close</string>
+		<string>cmd</string>
+		<string>compiler</string>
 		<string>concat</string>
 		<string>configure</string>
 		<string>conflicts</string>
 		<string>continue</string>
 		<string>cppflags-append</string>
+		<string>cppflags</string>
+		<string>cxx_archflags</string>
+		<string>cxxflags-append</string>
+		<string>cxxflags</string>
 		<string>default_variants</string>
+		<string>default_version</string>
+		<string>depends_build-append</string>
 		<string>depends_build</string>
 		<string>depends_lib-append</string>
 		<string>depends_lib-delete</string>
@@ -38,16 +52,23 @@
 		<string>description</string>
 		<string>destdir</string>
 		<string>destroot</string>
+		<string>dir</string>
+		<string>dist_subdir</string>
+		<string>distfiles</string>
 		<string>distname</string>
 		<string>else</string>
 		<string>elseif</string>
+		<string>env-append</string>
+		<string>env</string>
 		<string>eof</string>
 		<string>error</string>
 		<string>eval</string>
 		<string>exec</string>
 		<string>exit</string>
 		<string>expr</string>
+		<string>extract</string>
 		<string>file</string>
+		<string>files</string>
 		<string>flush</string>
 		<string>for</string>
 		<string>foreach</string>
@@ -61,8 +82,12 @@
 		<string>incr</string>
 		<string>info</string>
 		<string>join</string>
+		<string>keepdirs</string>
 		<string>lappend</string>
+		<string>ld_archflags</string>
+		<string>ldflags</string>
 		<string>library</string>
+		<string>license</string>
 		<string>lindex</string>
 		<string>linsert</string>
 		<string>list</string>
@@ -77,32 +102,46 @@
 		<string>master_sites</string>
 		<string>menu</string>
 		<string>name</string>
+		<string>notes</string>
+		<string>objc_archflags</string>
+		<string>only</string>
 		<string>open</string>
+		<string>patch</string>
 		<string>patchfiles</string>
 		<string>path</string>
 		<string>pid</string>
 		<string>platform</string>
 		<string>platforms</string>
 		<string>port</string>
+		<string>PortGroup</string>
 		<string>PortSystem</string>
 		<string>post-activate</string>
 		<string>post-build</string>
+		<string>post-configure</string>
 		<string>post-destroot</string>
+		<string>post-extract</string>
 		<string>post-install</string>
 		<string>post-patch</string>
+		<string>pre_args-delete</string>
+		<string>pre_args</string>
+		<string>pre-activate</string>
 		<string>pre-build</string>
+		<string>pre-configure</string>
+		<string>pre-destroot</string>
 		<string>pre-fetch</string>
 		<string>prefix</string>
 		<string>proc_doc</string>
 		<string>proc</string>
 		<string>puts</string>
 		<string>pwd</string>
+		<string>python</string>
 		<string>read</string>
 		<string>regex</string>
 		<string>regexp</string>
 		<string>regsub</string>
 		<string>reinplace</string>
 		<string>rename</string>
+		<string>replaced_by</string>
 		<string>return</string>
 		<string>revision</string>
 		<string>run</string>
@@ -115,6 +154,8 @@
 		<string>src_file</string>
 		<string>startupitem</string>
 		<string>string</string>
+		<string>suffix</string>
+		<string>supported_archs</string>
 		<string>switch</string>
 		<string>target</string>
 		<string>tell</string>
@@ -124,15 +165,26 @@
 		<string>trace</string>
 		<string>type</string>
 		<string>ui_msg</string>
+		<string>universal_args-delete</string>
+		<string>universal_cflags</string>
+		<string>universal_cppflags</string>
+		<string>universal_cxxflags</string>
+		<string>universal_ldflags</string>
+		<string>universal_variant</string>
 		<string>unknown</string>
 		<string>unset</string>
 		<string>uplevel</string>
 		<string>upvar</string>
 		<string>url</string>
+		<string>use_autoconf</string>
 		<string>use_bzip2</string>
+		<string>use_configure</string>
 		<string>use_parallel_build</string>
+		<string>use_xmkmf</string>
 		<string>variant</string>
 		<string>version</string>
+		<string>versions</string>
+		<string>violate_mtree</string>
 		<string>while</string>
 		<string>worksrcdir</string>
 		<string>worksrcpath</string>
