@@ -17,6 +17,7 @@
 		<string>args</string>
 		<string>array</string>
 		<string>blacklist</string>
+		<string>branches</string>
 		<string>break</string>
 		<string>build</string>
 		<string>case</string>
@@ -99,6 +100,7 @@
 		<string>lsearch</string>
 		<string>lsort</string>
 		<string>maintainers</string>
+		<string>major</string>
 		<string>master_sites</string>
 		<string>menu</string>
 		<string>name</string>
@@ -109,6 +111,7 @@
 		<string>patch</string>
 		<string>patchfiles</string>
 		<string>path</string>
+		<string>perl5</string>
 		<string>pid</string>
 		<string>platform</string>
 		<string>platforms</string>
@@ -149,6 +152,7 @@
 		<string>scancontext</string>
 		<string>seek</string>
 		<string>set</string>
+		<string>setup</string>
 		<string>source</string>
 		<string>split</string>
 		<string>src_file</string>
