@@ -2,8 +2,12 @@
 mpvim adds MacPorts support to vim. This currently includes syntax coloring for
 Portfiles and running lint from vim.
 
-=== Installation
-run 'make install' or copy the files in this directory into ~/.vim
+=== Manual installation
+Run 'make install' or copy the files in this directory into ~/.vim.
+
+=== Installation via MacPorts
+Run 'sudo port install mpvim'; the files will be placed into
+share/vim/vimfiles under the MacPorts prefix (/opt/local by default).
 
 === Usage
 * :make runs 'port lint' on the Portfile in the current buffer
