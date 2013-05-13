@@ -50,7 +50,7 @@ syn match PortfileOptional      "\<checksums\%(-append\|-delete\)\?\>" nextgroup
 syn region PortfileChecksums    matchgroup=Normal start="" skip="\\$" end="$" contained contains=PortfileChecksumsType
 syn keyword PortfileChecksumsType md5 sha1 rmd160 sha256 contained
 
-syn match PortfilePhases        "\<\%(pre-\|post-\)\?\%(fetch\|checksum\|extract\|patch\|configure\|build\|test\|destroot\|archive\|install\|activate\)\>" contains=PortfilePrePost
+syn match PortfilePhases        "\<\%(pre-\|post-\)\?\%(fetch\|checksum\|extract\|patch\|configure\|build\|test\|destroot\|archive\|install\|activate\|deactivate\)\>" contains=PortfilePrePost
 
 " Fetch phase options
 syn match PortfilePhasesFetch   "\<fetch\.\%(type\|user\|password\|use_epsv\|ignore_sslcert\)\>"
