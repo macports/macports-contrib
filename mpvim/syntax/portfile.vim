@@ -115,6 +115,10 @@ syn match PortfilePlatformName      "\<\l\w\+\>" nextgroup=PortfilePlatformVersi
 syn match PortfilePlatformVersion   "\<\d\+\>" nextgroup=PortfilePlatformArch contained skipwhite
 syn match PortfilePlatformArch      "\<\l\w\+\>" contained
 
+" Subports
+syn region PortfileSubport       matchgroup=Keyword start="^\s*\zssubport\>" skip="\\$" end="$" contains=PortfileSubportName
+syn match PortfileSubportName   "\<[\w\.-]\+\>" contained
+
 " Dependencies
 syn match PortfileDepends           "\<depends_\%(\%(lib\|build\|run\|fetch\|extract\)\%(-append\|-delete\)\?\)\>" nextgroup=PortfileDependsEntries skipwhite
 syn region PortfileDependsEntries   matchgroup=Normal start="" skip="\\$" end="$" contains=PortfileDependsEntry contained
@@ -293,6 +297,8 @@ hi def link PortfilePlatform            Keyword
 hi def link PortfilePlatformName        Identifier
 hi def link PortfilePlatformVersion     tclNumber
 hi def link PortfilePlatformArch        Identifier
+
+hi def link PortfileSubportName         Identifier
 
 hi def link PortfileDepends             Keyword
 hi def link PortfileDependsEntry        Special
