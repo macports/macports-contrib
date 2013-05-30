@@ -61,7 +61,7 @@ syn match PortfilePhasesFetch   "\<hg\.\%(url\|tag\)\>"
 
 " Extract phase options
 syn match PortfilePhasesExtract "\<extract\.\%(suffix\|mkdir\|cmd\|only\%(-append\|-delete\)\?\)\>"
-syn match PortfilePhasesExtract "\<use_\%(7z\|bzip2\|lzma\|zip\|xz\)\>" nextgroup=PortfileYesNo skipwhite
+syn match PortfilePhasesExtract "\<use_\%(7z\|bzip2\|dmg\|lzma\|xz\|zip\)\>" nextgroup=PortfileYesNo skipwhite
 
 " Patch phase options
 syn match PortfilePhasesPatch   "\<patch\.\%(dir\|cmd\|\%(pre_\|post_\)\?args\%(-append\|-delete\)\?\)\>"
