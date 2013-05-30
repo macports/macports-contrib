@@ -69,6 +69,7 @@ syn match PortfilePhasesPatch   "\<patchfiles\%(-append\|-delete\)\?\>"
 
 " Configure phase options
 syn keyword PortfilePhasesConf  use_configure nextgroup=PortfileYesNo skipwhite
+syn match PortfilePhasesConf    "\<configure\.cmd\>"
 syn match PortfilePhasesConf    "\<configure\.\%(env\|\%(c\|ld\|cpp\|cxx\|objc\|f\|fc\|f90\)flags\)\%(-append\|-delete\)\?\>"
 syn match PortfilePhasesConf    "\<configure\.\%(pre_\|post_\)\?args\%(-append\|-delete\)\?\>" nextgroup=PortfileConfEntries skipwhite
 syn region PortfileConfEntries  matchgroup=Normal start="" skip="\\$" end="$" contained
