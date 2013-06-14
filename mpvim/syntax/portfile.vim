@@ -91,8 +91,9 @@ syn keyword PortfilePhasesBuild use_parallel_build nextgroup=PortfileYesNo skipw
 
 " Test phase options
 syn match PortfilePhasesTest    "\<test\.run\>" nextgroup=PortfileYesNo skipwhite
-syn match PortfilePhasesTest    "\<test\.\%(cmd\|target\)\>"
-syn match PortfilePhasesTest    "\<test\.env\%(-append\|-delete\)\?\>"
+syn match PortfilePhasesTest    "\<test\.cmd\>"
+syn match PortfilePhasesTest    "\<test\.\%(pre_\|post_\)\?args\%(-append\|-delete\)\?\>"
+syn match PortfilePhasesTest    "\<test\.\%(target\|env\)\%(-append\|-delete\)\?\>"
 
 " Test destroot options
 syn match PortfilePhasesDest    "\<destroot\.\%(cmd\|type\|dir\|destdir\|umask\|keepdirs\)\>"
