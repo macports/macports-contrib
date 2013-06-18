@@ -11,6 +11,7 @@
 	<key>BBLMKeywordList</key>
 	<array>
 		<string>append</string>
+		<string>applications_dir</string>
 		<string>archcheck</string>
 		<string>args-append</string>
 		<string>args-delete</string>
@@ -56,6 +57,7 @@
 		<string>dir</string>
 		<string>dist_subdir</string>
 		<string>distfiles</string>
+		<string>distfiles-append</string>
 		<string>distname</string>
 		<string>else</string>
 		<string>elseif</string>
@@ -145,6 +147,7 @@
 		<string>reinplace</string>
 		<string>rename</string>
 		<string>replaced_by</string>
+		<string>require_active_variants</string>
 		<string>return</string>
 		<string>revision</string>
 		<string>run</string>
