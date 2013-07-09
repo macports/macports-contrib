@@ -19,6 +19,7 @@
         <string>array</string>
         <string>autoreconf</string>
         <string>blacklist</string>
+        <string>blacklist-append</string>
         <string>branches</string>
         <string>break</string>
         <string>build</string>
@@ -52,6 +53,7 @@
         <string>depends_lib-delete</string>
         <string>depends_lib</string>
         <string>depends_run</string>
+        <string>depends_skip_archcheck-append</string>
         <string>description</string>
         <string>destdir</string>
         <string>destroot</string>
@@ -136,6 +138,7 @@
         <string>pre-build</string>
         <string>pre-configure</string>
         <string>pre-destroot</string>
+        <string>pre-extract</string>
         <string>pre-fetch</string>
         <string>prefix</string>
         <string>proc_doc</string>
