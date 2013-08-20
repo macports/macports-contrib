@@ -33,7 +33,7 @@ syn keyword PortfileRequired    PortSystem name version maintainers
 syn keyword PortfileRequired    homepage platforms
 syn match PortfileRequired      "\<master_sites\%(-append\|-delete\)\?\>"
 syn match PortfileRequired      "\<categories\%(-append\|-delete\)\?\>"
-syn match PortfileRequired      "\<\%(long_\)\?description\>" nextgroup=PortfileDescription skipwhite
+syn match PortfileRequired      "\<\%(long_\)\?description\%(-append\)\?\>" nextgroup=PortfileDescription skipwhite
 syn region PortfileDescription  matchgroup=Normal start="" skip="\\$" end="$" contained
 
 syn keyword PortfileOptional    PortGroup epoch revision patch_sites
@@ -71,7 +71,7 @@ syn match PortfilePhasesPatch   "\<patchfiles\%(-append\|-delete\)\?\>"
 syn keyword PortfilePhasesConf  use_configure nextgroup=PortfileYesNo skipwhite
 syn match PortfilePhasesConf    "\<configure\.cmd\>"
 syn match PortfilePhasesConf    "\<configure\.\%(env\|\%(c\|ld\|cpp\|cxx\|objc\|f\|fc\|f90\)flags\)\%(-append\|-delete\)\?\>"
-syn match PortfilePhasesConf    "\<configure\.\%(pre_\|post_\)\?args\%(-append\|-delete\)\?\>" nextgroup=PortfileConfEntries skipwhite
+syn match PortfilePhasesConf    "\<configure\.\%(pre_\|post_\)\?args\%(-append\|-delete\|-replace\|-strsed\)\?\>" nextgroup=PortfileConfEntries skipwhite
 syn region PortfileConfEntries  matchgroup=Normal start="" skip="\\$" end="$" contained
 syn match PortfilePhasesConf    "\<configure\.\%(cc\|cpp\|cxx\|objc\|fc\|f77\|f90\|javac\|compiler\)\>"
 syn match PortfilePhasesConf    "\<configure\.\%(perl\|python\|ruby\|install\|awk\|bison\)\>"
@@ -85,7 +85,7 @@ syn match PortfilePhasesAA      "\<auto\%(make\|\%(re\)\?conf\).\%(env\|args\|di
 
 " Build phase options
 syn match PortfilePhasesBuild   "\<build\.\%(cmd\|type\|dir\)\>"
-syn match PortfilePhasesBuild   "\<build\.\%(pre_\|post_\)\?args\%(-append\|-delete\)\?\>"
+syn match PortfilePhasesBuild   "\<build\.\%(pre_\|post_\)\?args\%(-append\|-delete\|-replace\|-strsed\)\?\>"
 syn match PortfilePhasesBuild   "\<build\.\%(target\|env\)\%(-append\|-delete\)\?\>"
 syn keyword PortfilePhasesBuild use_parallel_build nextgroup=PortfileYesNo skipwhite
 
@@ -98,7 +98,7 @@ syn match PortfilePhasesTest    "\<test\.\%(target\|env\)\%(-append\|-delete\)\?
 " Test destroot options
 syn match PortfilePhasesDest    "\<destroot\.\%(cmd\|type\|dir\|destdir\|umask\|keepdirs\)\>"
 syn match PortfilePhasesDest    "\<destroot\.violate_mtree\>" nextgroup=PortfileYesNo skipwhite
-syn match PortfilePhasesDest    "\<destroot\.\%(pre_\|post_\)\?args\%(-append\|-delete\)\?\>"
+syn match PortfilePhasesDest    "\<destroot\.\%(pre_\|post_\)\?args\%(-append\|-delete\|-replace\|-strsed\)\?\>"
 syn match PortfilePhasesDest    "\<destroot\.\%(target\|env\)\%(-append\|-delete\)\?\>"
 
 " Variants
