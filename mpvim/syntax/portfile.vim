@@ -81,7 +81,7 @@ syn match PortfilePhasesConf    "\<compiler\.\%(blacklist\|whitelist\|fallback\)
 
 " Automake and Autoconf
 syn match PortfilePhasesAA      "\<use_auto\%(make\|\%(re\)\?conf\)\>" nextgroup=PortfileYesNo skipwhite
-syn match PortfilePhasesAA      "\<auto\%(make\|\%(re\)\?conf\).\%(env\|args\|dir\|cmd\)\>"
+syn match PortfilePhasesAA      "\<auto\%(make\|\%(re\)\?conf\).\%(env\|\%(pre_\|post_\)\?args\|dir\|cmd\)\%(-append\|-delete\)\?\>"
 
 " Build phase options
 syn match PortfilePhasesBuild   "\<build\.\%(cmd\|type\|dir\)\>"
