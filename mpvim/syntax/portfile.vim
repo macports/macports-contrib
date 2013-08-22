@@ -26,6 +26,7 @@ unlet b:current_syntax
 " Some custom extensions contain a dash (for example, fs-traverse)
 setlocal iskeyword+=-
 
+let s:portfile_commands = []
 let s:portfile_options = []
 
 syn match PortfileGroup         "{.\+}" contained
@@ -53,6 +54,7 @@ syn keyword PortfileChecksumsType md5 sha1 rmd160 sha256 contained
 syn match PortfilePhases        "\<\%(pre-\|post-\)\?\%(fetch\|checksum\|extract\|patch\|configure\|build\|test\|destroot\|archive\|install\|activate\|deactivate\)\>" contains=PortfilePrePost
 
 " Fetch phase options
+call extend(s:portfile_commands, ['bzr', 'cvs', 'svn'])
 call extend(s:portfile_options, [
             \ '\%(master\|patch\)_sites\%(\.mirror_subdir\)\?',
             \ '\%(dist\|patch\)files',
@@ -275,6 +277,11 @@ if g:portfile_highlight_space_errors == 1
     syn match PortfileSpaceError    display "\t\+ "
 endif
 
+for cmd in s:portfile_commands
+    call add(s:portfile_options, 'use_' . cmd)
+    let suffixes = ['args', 'cmd', 'dir', 'env', 'nice', 'post_args', 'pre_args', 'type']
+    call extend(s:portfile_options, map(suffixes, 'cmd . "." . v:val'))
+endfor
 execute 'syntax match PortfileOption'
             \ '"^\s*\zs\%(' .
             \ join(s:portfile_options, '\|') .
@@ -292,7 +299,6 @@ hi def link PortfileDescription         String
 hi def link PortfileChecksumsType       Special
 
 hi def link PortfilePhases              Keyword
-hi def link PortfilePhasesFetch         Keyword
 hi def link PortfilePhasesExtract       Keyword
 hi def link PortfilePhasesPatch         Keyword
 hi def link PortfilePhasesConf          Keyword
@@ -325,3 +331,5 @@ if g:portfile_highlight_space_errors == 1
 endif
 
 let b:current_syntax = "Portfile"
+
+unlet cmd
