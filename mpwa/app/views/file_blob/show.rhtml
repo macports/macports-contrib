@@ -1,5 +1,0 @@
-<% for column in FileBlob.content_columns %>
-<p>
-  <b><%= column.human_name %>:</b> <%=h @file_blob.send(column.name) %>
-</p>
-<% end %>

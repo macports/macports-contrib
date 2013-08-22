@@ -1,3 +1,0 @@
-class Repository
-    
-end
