@@ -26,17 +26,18 @@ unlet b:current_syntax
 " Some custom extensions contain a dash (for example, fs-traverse)
 setlocal iskeyword+=-
 
+let s:portfile_options = []
+
 syn match PortfileGroup         "{.\+}" contained
 syn match PortfileYesNo         "\<\%(yes\|no\)\>" contained
 
 syn keyword PortfileRequired    PortSystem name version maintainers
 syn keyword PortfileRequired    homepage platforms
-syn match PortfileRequired      "\<master_sites\%(-append\|-delete\)\?\>"
 syn match PortfileRequired      "\<categories\%(-append\|-delete\)\?\>"
 syn match PortfileRequired      "\<\%(long_\)\?description\%(-append\)\?\>" nextgroup=PortfileDescription skipwhite
 syn region PortfileDescription  matchgroup=Normal start="" skip="\\$" end="$" contained
 
-syn keyword PortfileOptional    PortGroup epoch revision patch_sites
+syn keyword PortfileOptional    PortGroup epoch revision
 syn keyword PortfileOptional    license conflicts license_noconflict
 syn keyword PortfileOptional    replaced_by supported_archs
 
@@ -53,15 +54,21 @@ syn keyword PortfileChecksumsType md5 sha1 rmd160 sha256 contained
 syn match PortfilePhases        "\<\%(pre-\|post-\)\?\%(fetch\|checksum\|extract\|patch\|configure\|build\|test\|destroot\|archive\|install\|activate\|deactivate\)\>" contains=PortfilePrePost
 
 " Fetch phase options
-syn match PortfilePhasesFetch   "\<fetch\.\%(type\|user\|password\|use_epsv\|ignore_sslcert\)\>"
-syn match PortfilePhasesFetch   "\<cvs\.\%(root\|password\|tag\|date\|module\)\>"
-syn match PortfilePhasesFetch   "\<svn\.\%(url\|revision\|method\)\>"
-syn match PortfilePhasesFetch   "\<git\.\%(url\|branch\)\>"
-syn match PortfilePhasesFetch   "\<hg\.\%(url\|tag\)\>"
+call extend(s:portfile_options, [
+            \ '\%(master\|patch\)_sites\%(\.mirror_subdir\)\?',
+            \ '\%(dist\|patch\)files',
+            \ 'dist_subdir',
+            \ 'use_\%(7z\|bzip2\|dmg\|lzma\|xz\|zip\)',
+            \ 'fetch\.\%(ignore_sslcert\|password\|type\|use_epsv\|user\)',
+            \ 'bzr\.\%(revision\|url\)',
+            \ 'cvs\.\%(date\|method\|module\|password\|root\|tag\)',
+            \ 'git\.\%(branch\|cmd\|url\)',
+            \ 'hg\.\%(cmd\|tag\|url\)',
+            \ 'svn\.\%(method\|revision\|url\)',
+            \ ])
 
 " Extract phase options
 syn match PortfilePhasesExtract "\<extract\.\%(suffix\|mkdir\|cmd\|only\%(-append\|-delete\)\?\)\>"
-syn match PortfilePhasesExtract "\<use_\%(7z\|bzip2\|dmg\|lzma\|xz\|zip\)\>" nextgroup=PortfileYesNo skipwhite
 
 " Patch phase options
 syn match PortfilePhasesPatch   "\<patch\.\%(dir\|cmd\|\%(pre_\|post_\)\?args\%(-append\|-delete\)\?\)\>"
@@ -269,6 +276,13 @@ if g:portfile_highlight_space_errors == 1
     syn match PortfileSpaceError    display " \+\t"
     syn match PortfileSpaceError    display "\t\+ "
 endif
+
+execute 'syntax match PortfileOption'
+            \ '"^\s*\zs\%(' .
+            \ join(s:portfile_options, '\|') .
+            \ '\)\%(-append\|-delete\|-replace\|-strsed\)\?\ze\%(\s\+\|$\)"'
+
+highlight default link PortfileOption   Keyword
 
 hi def link PortfileGroup               String
 hi def link PortfileYesNo               Special
