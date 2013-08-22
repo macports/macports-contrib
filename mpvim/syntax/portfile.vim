@@ -53,7 +53,7 @@ syn keyword PortfileChecksumsType md5 sha1 rmd160 sha256 contained
 
 syn match PortfilePhases        "\<\%(pre-\|post-\)\?\%(fetch\|checksum\|extract\|patch\|configure\|build\|test\|destroot\|archive\|install\|activate\|deactivate\)\>" contains=PortfilePrePost
 
-" Fetch phase options
+" Fetch phase options (from port1.0/portfetch.tcl)
 call extend(s:portfile_commands, ['bzr', 'cvs', 'svn'])
 call extend(s:portfile_options, [
             \ '\%(master\|patch\)_sites\%(\.mirror_subdir\)\?',
@@ -74,21 +74,25 @@ syn match PortfilePhasesExtract "\<extract\.\%(suffix\|mkdir\|cmd\|only\%(-appen
 " Patch phase options
 syn match PortfilePhasesPatch   "\<patch\.\%(dir\|cmd\|\%(pre_\|post_\)\?args\%(-append\|-delete\)\?\)\>"
 
-" Configure phase options
-syn keyword PortfilePhasesConf  use_configure nextgroup=PortfileYesNo skipwhite
-syn match PortfilePhasesConf    "\<configure\.cmd\>"
-syn match PortfilePhasesConf    "\<configure\.\%(env\|\%(c\|ld\|cpp\|cxx\|objc\|f\|fc\|f90\)flags\)\%(-append\|-delete\)\?\>"
-syn match PortfilePhasesConf    "\<configure\.\%(pre_\|post_\)\?args\%(-append\|-delete\|-replace\|-strsed\)\?\>" nextgroup=PortfileConfEntries skipwhite
-syn region PortfileConfEntries  matchgroup=Normal start="" skip="\\$" end="$" contained
-syn match PortfilePhasesConf    "\<configure\.\%(cc\|cpp\|cxx\|objc\|fc\|f77\|f90\|javac\|compiler\)\>"
-syn match PortfilePhasesConf    "\<configure\.\%(perl\|python\|ruby\|install\|awk\|bison\)\>"
-syn match PortfilePhasesConf    "\<configure\.\%(pkg_config\%(_path\)\?\)\>"
-syn match PortfilePhasesConf    "\<configure.universal_\%(args\|\%(c\|cpp\|cxx\|ld\)flags\)\%(-append\|-delete\)\?\>"
-syn match PortfilePhasesConf    "\<compiler\.\%(blacklist\|whitelist\|fallback\)\%(-append\|-delete\)\?\>"
+" Configure phase options (from port1.0/portconfigure.tcl)
+call extend(s:portfile_commands, ['auto\%(conf\|reconf\|make\)', 'xmkmf'])
+call extend(s:portfile_options, [
+            \ 'configure\.asroot',
+            \ 'configure\.\%(m32\|m64\|march\|mtune\)',
+            \ 'configure\.\%(c\|cpp\|cxx\|f\|f90\|fc\|ld\|objc\|objcxx\)flags',
+            \ 'configure\.\%(classpath\|libs\)',
+            \ 'configure\.\%(awk\|bison\|install\|perl\|pkg_config\%(_path\)\?\|python\|ruby\)',
+            \ 'configure\.\%(build_arch\|sdkroot\)',
+            \ 'configure\.\%(cc\|cxx\|f77\|f90\|fc\|ld\|objc\|objcxx\)_archflags',
+            \ 'configure\.universal_\%(archs\|args\)',
+            \ 'configure\.universal_\%(c\|cpp\|cxx\|ld\|objc\|objcxx\)flags',
+            \ 'configure\.\%(ccache\|distcc\|pipe\)',
+            \ 'configure\.\%(cc\|cpp\|cxx\|f77\|f90\|fc\|javac\|objc\|objcxx\)',
+            \ 'configure\.compiler\%(\.add_deps\)\?',
+            \ 'compiler\.\%(blacklist\|fallback\|whitelist\)',
+            \ ])
 
-" Automake and Autoconf
-syn match PortfilePhasesAA      "\<use_auto\%(make\|\%(re\)\?conf\)\>" nextgroup=PortfileYesNo skipwhite
-syn match PortfilePhasesAA      "\<auto\%(make\|\%(re\)\?conf\).\%(env\|\%(pre_\|post_\)\?args\|dir\|cmd\)\%(-append\|-delete\)\?\>"
+syn region PortfileConfEntries  matchgroup=Normal start="" skip="\\$" end="$" contained
 
 " Build phase options
 syn match PortfilePhasesBuild   "\<build\.\%(cmd\|type\|dir\)\>"
@@ -277,11 +281,13 @@ if g:portfile_highlight_space_errors == 1
     syn match PortfileSpaceError    display "\t\+ "
 endif
 
+let suffixes = ['args', 'cmd', 'dir', 'env', 'nice', 'post_args', 'pre_args', 'type']
 for cmd in s:portfile_commands
     call add(s:portfile_options, 'use_' . cmd)
-    let suffixes = ['args', 'cmd', 'dir', 'env', 'nice', 'post_args', 'pre_args', 'type']
-    call extend(s:portfile_options, map(suffixes, 'cmd . "." . v:val'))
+    call extend(s:portfile_options, map(copy(suffixes), 'cmd . "." . v:val'))
 endfor
+unlet cmd suffixes
+
 execute 'syntax match PortfileOption'
             \ '"^\s*\zs\%(' .
             \ join(s:portfile_options, '\|') .
@@ -331,5 +337,3 @@ if g:portfile_highlight_space_errors == 1
 endif
 
 let b:current_syntax = "Portfile"
-
-unlet cmd
