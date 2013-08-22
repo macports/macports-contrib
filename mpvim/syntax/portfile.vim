@@ -41,8 +41,7 @@ syn keyword PortfileOptional    PortGroup epoch revision
 syn keyword PortfileOptional    license conflicts license_noconflict
 syn keyword PortfileOptional    replaced_by supported_archs
 
-syn match PortfileOptional      "\<distfiles\%(-append\|-delete\)\?\>"
-syn keyword PortfileOptional    distname dist_subdir worksrcdir
+syn keyword PortfileOptional    distname worksrcdir
 
 syn keyword PortfileOptional    installs_libs nextgroup=PortfileYesNo skipwhite
 syn match PortfileOptional      "\<depends_skip_archcheck\%(-append\|-delete\)\?\>"
@@ -72,7 +71,6 @@ syn match PortfilePhasesExtract "\<extract\.\%(suffix\|mkdir\|cmd\|only\%(-appen
 
 " Patch phase options
 syn match PortfilePhasesPatch   "\<patch\.\%(dir\|cmd\|\%(pre_\|post_\)\?args\%(-append\|-delete\)\?\)\>"
-syn match PortfilePhasesPatch   "\<patchfiles\%(-append\|-delete\)\?\>"
 
 " Configure phase options
 syn keyword PortfilePhasesConf  use_configure nextgroup=PortfileYesNo skipwhite
