@@ -26,8 +26,18 @@ unlet b:current_syntax
 " Some custom extensions contain a dash (for example, fs-traverse)
 setlocal iskeyword+=-
 
-let s:portfile_commands = []
-let s:portfile_options = []
+function AddPortfileOptionPatterns(patterns)
+    execute 'syntax match PortfileOption'
+                \ '"^\s*\zs\%(' .
+                \ join(a:patterns, '\|') .
+                \ '\)\%(-append\|-delete\|-replace\|-strsed\)\?\ze\%(\s\+\|$\)"'
+endfunction
+
+function AddPortfileCommandPatterns(commands)
+    let suffixes = '\.\%(args\|cmd\|dir\|env\|nice\|\%(post\|pre\)_args\|type\)'
+    call AddPortfileOptionPatterns(map(copy(a:commands), '"use_" . v:val'))
+    call AddPortfileOptionPatterns(map(copy(a:commands), 'v:val . suffixes'))
+endfunction
 
 syn match PortfileGroup         "{.\+}" contained
 syn match PortfileYesNo         "\<\%(yes\|no\)\>" contained
@@ -36,7 +46,7 @@ syn keyword PortfileRequired    PortSystem
 syn keyword PortfileOptional    PortGroup
 
 " Main options (from port1.0/portmain.tcl)
-call extend(s:portfile_options,
+call AddPortfileOptionPatterns([
             \ 'add_users', 'altprefix', 'categories', 'conflicts',
             \ 'copy_log_files', 'default_variants', 'depends_skip_archcheck',
             \ 'description', 'distname', 'distpath', 'epoch', 'filesdir',
@@ -55,8 +65,8 @@ call extend(s:portfile_options,
 syn match PortfilePhases        "\<\%(pre-\|post-\)\?\%(fetch\|checksum\|extract\|patch\|configure\|build\|test\|destroot\|archive\|install\|activate\|deactivate\)\>" contains=PortfilePrePost
 
 " Fetch phase options (from port1.0/portfetch.tcl)
-call extend(s:portfile_commands, ['bzr', 'cvs', 'svn'])
-call extend(s:portfile_options, [
+call AddPortfileCommandPatterns(['bzr', 'cvs', 'svn'])
+call AddPortfileOptionPatterns([
             \ 'bzr\.\%(revision\|url\)',
             \ 'cvs\.\%(date\|method\|module\|password\|root\|tag\)',
             \ 'dist_subdir', 'distfiles',
@@ -71,19 +81,19 @@ call extend(s:portfile_options, [
             \ ])
 
 " Checksum phase options (from port1.0/portchecksum.tcl)
-call extend(s:portfile_options, ['checksums\%(\.skip\)\?'])
+call AddPortfileOptionPatterns(['checksums\%(\.skip\)\?'])
 
 " Extract phase options (from port1.0/portextract.tcl)
-call extend(s:portfile_commands, ['extract'])
-call extend(s:portfile_options, ['extract\.\%(asroot\|mkdir\|only\)'])
+call AddPortfileCommandPatterns(['extract'])
+call AddPortfileOptionPatterns(['extract\.\%(asroot\|mkdir\|only\)'])
 
 " Patch phase options (from port1.0/portpatch.tcl)
-call extend(s:portfile_commands, ['patch'])
-call extend(s:portfile_options, ['patch\.asroot'])
+call AddPortfileCommandPatterns(['patch'])
+call AddPortfileOptionPatterns(['patch\.asroot'])
 
 " Configure phase options (from port1.0/portconfigure.tcl)
-call extend(s:portfile_commands, ['configure', 'auto\%(conf\|reconf\|make\)', 'xmkmf'])
-call extend(s:portfile_options, [
+call AddPortfileCommandPatterns(['configure', 'auto\%(conf\|reconf\|make\)', 'xmkmf'])
+call AddPortfileOptionPatterns([
             \ 'configure\.asroot',
             \ 'configure\.\%(m32\|m64\|march\|mtune\)',
             \ 'configure\.\%(c\|cpp\|cxx\|f\|f90\|fc\|ld\|objc\|objcxx\)flags',
@@ -101,25 +111,25 @@ call extend(s:portfile_options, [
             \ ])
 
 " Build phase options (from port1.0/portbuild.tcl)
-call extend(s:portfile_commands, ['build'])
-call extend(s:portfile_options, [
+call AddPortfileCommandPatterns(['build'])
+call AddPortfileOptionPatterns([
             \ 'build\.\%(asroot\|jobs\|target\)',
             \ 'use_parallel_build',
             \])
 
 " Test phase options (from port1.0/porttest.tcl)
-call extend(s:portfile_commands, ['test'])
-call extend(s:portfile_options, ['test\.\%(run\|target\)'])
+call AddPortfileCommandPatterns(['test'])
+call AddPortfileOptionPatterns(['test\.\%(run\|target\)'])
 
 " Destroot phase options (from port1.0/portdestroot.tcl)
-call extend(s:portfile_commands, ['destroot'])
-call extend(s:portfile_options, [
+call AddPortfileCommandPatterns(['destroot'])
+call AddPortfileOptionPatterns([
             \ 'destroot\.\%(asroot\|clean\|delete_la_files\|destdir\)',
             \ 'destroot\.\%(keepdirs\|target\|umask\|violate_mtree\)',
             \])
 
 " StartupItem options (from port1.0/portdestroot.tcl)
-call extend(s:portfile_options, [
+call AddPortfileOptionPatterns([
             \ 'startupitem\.\%(autostart\|create\|executable\|init\)',
             \ 'startupitem\.\%(install\|location\|logevents\|logfile\)',
             \ 'startupitem\.\%(name\|netchange\|pidfile\|plist\|requires\)',
@@ -152,10 +162,10 @@ syn region PortfileDependsEntries   matchgroup=Normal start="" skip="\\$" end="$
 syn match PortfileDependsEntry      "\<\%(port\|bin\|path\|lib\):" contained
 
 " Livecheck / Distcheck
-call extend(s:portfile_options, [
+call AddPortfileOptionPatterns([
             \ 'distcheck\.check',
             \ 'livecheck\.\%(distname\|ignore_sslcert\|md5\|name\)',
-            \ 'livecheck\.\$(regex\|type\|url\|version\)',
+            \ 'livecheck\.\%(regex\|type\|url\|version\)',
             \])
 
 " Port Groups
@@ -288,18 +298,6 @@ if g:portfile_highlight_space_errors == 1
     syn match PortfileSpaceError    display " \+\t"
     syn match PortfileSpaceError    display "\t\+ "
 endif
-
-let suffixes = ['args', 'cmd', 'dir', 'env', 'nice', 'post_args', 'pre_args', 'type']
-for cmd in s:portfile_commands
-    call add(s:portfile_options, 'use_' . cmd)
-    call extend(s:portfile_options, map(copy(suffixes), 'cmd . "." . v:val'))
-endfor
-unlet cmd suffixes
-
-execute 'syntax match PortfileOption'
-            \ '"^\s*\zs\%(' .
-            \ join(s:portfile_options, '\|') .
-            \ '\)\%(-append\|-delete\|-replace\|-strsed\)\?\ze\%(\s\+\|$\)"'
 
 highlight default link PortfileOption   Keyword
 
