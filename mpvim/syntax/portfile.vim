@@ -307,13 +307,7 @@ hi def link PortfileDescription         String
 hi def link PortfileChecksumsType       Special
 
 hi def link PortfilePhases              Keyword
-hi def link PortfilePhasesExtract       Keyword
-hi def link PortfilePhasesPatch         Keyword
-hi def link PortfilePhasesConf          Keyword
 hi def link PortfilePhasesAA            Keyword
-hi def link PortfilePhasesBuild         Keyword
-hi def link PortfilePhasesTest          Keyword
-hi def link PortfilePhasesDest          Keyword
 
 hi def link PortfileVariantConflicts    Statement
 hi def link PortfileVariantDescription  Statement
