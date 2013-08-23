@@ -28,7 +28,7 @@ setlocal iskeyword+=-
 
 function AddPortfileOptionPatterns(patterns)
     execute 'syntax match PortfileOption'
-                \ '"^\s*\zs\%(' .
+                \ '"\%(^\|{\|\[\)\s*\zs\%(' .
                 \ join(a:patterns, '\|') .
                 \ '\)\%(-append\|-delete\|-replace\|-strsed\)\?\ze\%(\s\+\|$\)"'
 endfunction
