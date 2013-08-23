@@ -32,42 +32,46 @@ let s:portfile_options = []
 syn match PortfileGroup         "{.\+}" contained
 syn match PortfileYesNo         "\<\%(yes\|no\)\>" contained
 
-syn keyword PortfileRequired    PortSystem name version maintainers
-syn keyword PortfileRequired    homepage platforms
-syn match PortfileRequired      "\<categories\%(-append\|-delete\)\?\>"
-syn match PortfileRequired      "\<\%(long_\)\?description\%(-append\)\?\>" nextgroup=PortfileDescription skipwhite
-syn region PortfileDescription  matchgroup=Normal start="" skip="\\$" end="$" contained
+syn keyword PortfileRequired    PortSystem
+syn keyword PortfileOptional    PortGroup
 
-syn keyword PortfileOptional    PortGroup epoch revision
-syn keyword PortfileOptional    license conflicts license_noconflict
-syn keyword PortfileOptional    replaced_by supported_archs
-
-syn keyword PortfileOptional    distname worksrcdir
-
-syn keyword PortfileOptional    installs_libs nextgroup=PortfileYesNo skipwhite
-syn match PortfileOptional      "\<depends_skip_archcheck\%(-append\|-delete\)\?\>"
-
-syn match PortfileOptional      "\<checksums\%(-append\|-delete\)\?\>" nextgroup=PortfileChecksums skipwhite
-syn region PortfileChecksums    matchgroup=Normal start="" skip="\\$" end="$" contained contains=PortfileChecksumsType
-syn keyword PortfileChecksumsType md5 sha1 rmd160 sha256 contained
+" Main options (from port1.0/portmain.tcl)
+call extend(s:portfile_options,
+            \ 'add_users', 'altprefix', 'categories', 'conflicts',
+            \ 'copy_log_files', 'default_variants', 'depends_skip_archcheck',
+            \ 'description', 'distname', 'distpath', 'epoch', 'filesdir',
+            \ 'homepage', 'installs_libs', 'libpath', 'license',
+            \ 'license_noconflict', 'long_description',
+            \ 'macosx_deployment_target', 'maintainers', 'name', 'notes',
+            \ 'platforms', 'portdbpath', 'prefix', 'provides', 'replaced_by',
+            \ 'revision', 'sources_conf', 'supported_archs',
+            \ 'universal_variant', 'version', 'worksrcdir',
+            \ 'compiler\.\%(cpath\|library_path\)',
+            \ 'install\.\%(group\|user\)',
+            \ 'os\.\%(arch\|endian\|major\|platform\|subplatform\)', 
+            \ 'os\.\%(universal_supported\|version\)',
+            \])
 
 syn match PortfilePhases        "\<\%(pre-\|post-\)\?\%(fetch\|checksum\|extract\|patch\|configure\|build\|test\|destroot\|archive\|install\|activate\|deactivate\)\>" contains=PortfilePrePost
 
 " Fetch phase options (from port1.0/portfetch.tcl)
 call extend(s:portfile_commands, ['bzr', 'cvs', 'svn'])
 call extend(s:portfile_options, [
-            \ '\%(master\|patch\)_sites\%(\.mirror_subdir\)\?',
-            \ '\%(dist\|patch\)files',
-            \ 'dist_subdir',
-            \ 'use_\%(7z\|bzip2\|dmg\|lzma\|xz\|zip\)',
-            \ 'extract\.suffix',
-            \ 'fetch\.\%(ignore_sslcert\|password\|use_epsv\|user\)',
             \ 'bzr\.\%(revision\|url\)',
             \ 'cvs\.\%(date\|method\|module\|password\|root\|tag\)',
+            \ 'dist_subdir', 'distfiles',
+            \ 'extract\.suffix',
+            \ 'fetch\.\%(ignore_sslcert\|password\|use_epsv\|user\)',
             \ 'git\.\%(branch\|cmd\|url\)',
             \ 'hg\.\%(cmd\|tag\|url\)',
+            \ '\%(master\|patch\)_sites\%(\.mirror_subdir\)\?',
+            \ 'patchfiles',
             \ 'svn\.\%(method\|revision\|url\)',
+            \ 'use_\%(7z\|bzip2\|dmg\|lzma\|xz\|zip\)',
             \ ])
+
+" Checksum phase options (from port1.0/portchecksum.tcl)
+call extend(s:portfile_options, ['checksums\%(\.skip\)\?'])
 
 " Extract phase options (from port1.0/portextract.tcl)
 call extend(s:portfile_commands, ['extract'])
@@ -84,7 +88,8 @@ call extend(s:portfile_options, [
             \ 'configure\.\%(m32\|m64\|march\|mtune\)',
             \ 'configure\.\%(c\|cpp\|cxx\|f\|f90\|fc\|ld\|objc\|objcxx\)flags',
             \ 'configure\.\%(classpath\|libs\)',
-            \ 'configure\.\%(awk\|bison\|install\|perl\|pkg_config\%(_path\)\?\|python\|ruby\)',
+            \ 'configure\.\%(awk\|bison\|install\|pkg_config\%(_path\)\?\)',
+            \ 'configure\.\%(perl\|python\|ruby\)',
             \ 'configure\.\%(build_arch\|sdkroot\)',
             \ 'configure\.\%(cc\|cxx\|f77\|f90\|fc\|ld\|objc\|objcxx\)_archflags',
             \ 'configure\.universal_\%(archs\|args\)',
@@ -147,11 +152,11 @@ syn region PortfileDependsEntries   matchgroup=Normal start="" skip="\\$" end="$
 syn match PortfileDependsEntry      "\<\%(port\|bin\|path\|lib\):" contained
 
 " Livecheck / Distcheck
-syn match PortfileOptional      "\<livecheck\.\%(type\|name\|distname\|version\|url\|regex\|md5\)\>"
-syn keyword PortfileOptional    distcheck.check
-
-" Notes
-syn keyword PortfilePhases  notes
+call extend(s:portfile_options, [
+            \ 'distcheck\.check',
+            \ 'livecheck\.\%(distname\|ignore_sslcert\|md5\|name\)',
+            \ 'livecheck\.\$(regex\|type\|url\|version\)',
+            \])
 
 " Port Groups
 
@@ -304,7 +309,6 @@ hi def link PortfileYesNo               Special
 hi def link PortfileRequired            Keyword
 hi def link PortfileOptional            Keyword
 hi def link PortfileDescription         String
-hi def link PortfileChecksumsType       Special
 
 hi def link PortfilePhases              Keyword
 hi def link PortfilePhasesAA            Keyword
