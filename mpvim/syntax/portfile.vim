@@ -61,7 +61,7 @@ call extend(s:portfile_options, [
             \ 'dist_subdir',
             \ 'use_\%(7z\|bzip2\|dmg\|lzma\|xz\|zip\)',
             \ 'extract\.suffix',
-            \ 'fetch\.\%(ignore_sslcert\|password\|type\|use_epsv\|user\)',
+            \ 'fetch\.\%(ignore_sslcert\|password\|use_epsv\|user\)',
             \ 'bzr\.\%(revision\|url\)',
             \ 'cvs\.\%(date\|method\|module\|password\|root\|tag\)',
             \ 'git\.\%(branch\|cmd\|url\)',
@@ -98,7 +98,7 @@ call extend(s:portfile_options, [
 " Build phase options (from port1.0/portbuild.tcl)
 call extend(s:portfile_commands, ['build'])
 call extend(s:portfile_options, [
-            \ 'build\.\%(asroot\|jobs\|target\|type\)',
+            \ 'build\.\%(asroot\|jobs\|target\)',
             \ 'use_parallel_build',
             \])
 
