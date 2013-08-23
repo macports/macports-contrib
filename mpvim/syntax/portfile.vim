@@ -60,6 +60,7 @@ call extend(s:portfile_options, [
             \ '\%(dist\|patch\)files',
             \ 'dist_subdir',
             \ 'use_\%(7z\|bzip2\|dmg\|lzma\|xz\|zip\)',
+            \ 'extract\.suffix',
             \ 'fetch\.\%(ignore_sslcert\|password\|type\|use_epsv\|user\)',
             \ 'bzr\.\%(revision\|url\)',
             \ 'cvs\.\%(date\|method\|module\|password\|root\|tag\)',
@@ -68,14 +69,16 @@ call extend(s:portfile_options, [
             \ 'svn\.\%(method\|revision\|url\)',
             \ ])
 
-" Extract phase options
-syn match PortfilePhasesExtract "\<extract\.\%(suffix\|mkdir\|cmd\|only\%(-append\|-delete\)\?\)\>"
+" Extract phase options (from port1.0/portextract.tcl)
+call extend(s:portfile_commands, ['extract'])
+call extend(s:portfile_options, ['extract\.\%(asroot\|mkdir\|only\)'])
 
-" Patch phase options
-syn match PortfilePhasesPatch   "\<patch\.\%(dir\|cmd\|\%(pre_\|post_\)\?args\%(-append\|-delete\)\?\)\>"
+" Patch phase options (from port1.0/portpatch.tcl)
+call extend(s:portfile_commands, ['patch'])
+call extend(s:portfile_options, ['patch\.asroot'])
 
 " Configure phase options (from port1.0/portconfigure.tcl)
-call extend(s:portfile_commands, ['auto\%(conf\|reconf\|make\)', 'xmkmf'])
+call extend(s:portfile_commands, ['configure', 'auto\%(conf\|reconf\|make\)', 'xmkmf'])
 call extend(s:portfile_options, [
             \ 'configure\.asroot',
             \ 'configure\.\%(m32\|m64\|march\|mtune\)',
@@ -92,25 +95,31 @@ call extend(s:portfile_options, [
             \ 'compiler\.\%(blacklist\|fallback\|whitelist\)',
             \ ])
 
-syn region PortfileConfEntries  matchgroup=Normal start="" skip="\\$" end="$" contained
+" Build phase options (from port1.0/portbuild.tcl)
+call extend(s:portfile_commands, ['build'])
+call extend(s:portfile_options, [
+            \ 'build\.\%(asroot\|jobs\|target\|type\)',
+            \ 'use_parallel_build',
+            \])
 
-" Build phase options
-syn match PortfilePhasesBuild   "\<build\.\%(cmd\|type\|dir\)\>"
-syn match PortfilePhasesBuild   "\<build\.\%(pre_\|post_\)\?args\%(-append\|-delete\|-replace\|-strsed\)\?\>"
-syn match PortfilePhasesBuild   "\<build\.\%(target\|env\)\%(-append\|-delete\)\?\>"
-syn keyword PortfilePhasesBuild use_parallel_build nextgroup=PortfileYesNo skipwhite
+" Test phase options (from port1.0/porttest.tcl)
+call extend(s:portfile_commands, ['test'])
+call extend(s:portfile_options, ['test\.\%(run\|target\)'])
 
-" Test phase options
-syn match PortfilePhasesTest    "\<test\.run\>" nextgroup=PortfileYesNo skipwhite
-syn match PortfilePhasesTest    "\<test\.cmd\>"
-syn match PortfilePhasesTest    "\<test\.\%(pre_\|post_\)\?args\%(-append\|-delete\)\?\>"
-syn match PortfilePhasesTest    "\<test\.\%(target\|env\)\%(-append\|-delete\)\?\>"
+" Destroot phase options (from port1.0/portdestroot.tcl)
+call extend(s:portfile_commands, ['destroot'])
+call extend(s:portfile_options, [
+            \ 'destroot\.\%(asroot\|clean\|delete_la_files\|destdir\)',
+            \ 'destroot\.\%(keepdirs\|target\|umask\|violate_mtree\)',
+            \])
 
-" Test destroot options
-syn match PortfilePhasesDest    "\<destroot\.\%(cmd\|type\|dir\|destdir\|umask\|keepdirs\)\>"
-syn match PortfilePhasesDest    "\<destroot\.violate_mtree\>" nextgroup=PortfileYesNo skipwhite
-syn match PortfilePhasesDest    "\<destroot\.\%(pre_\|post_\)\?args\%(-append\|-delete\|-replace\|-strsed\)\?\>"
-syn match PortfilePhasesDest    "\<destroot\.\%(target\|env\)\%(-append\|-delete\)\?\>"
+" StartupItem options (from port1.0/portdestroot.tcl)
+call extend(s:portfile_options, [
+            \ 'startupitem\.\%(autostart\|create\|executable\|init\)',
+            \ 'startupitem\.\%(install\|location\|logevents\|logfile\)',
+            \ 'startupitem\.\%(name\|netchange\|pidfile\|plist\|requires\)',
+            \ 'startupitem\.\%(restart\|start\|stop\|type\|uniquename\)',
+            \])
 
 " Variants
 syn region PortfileVariant              matchgroup=Keyword start="^\s*\zsvariant" skip="\\$" end="$" contains=PortfileVariantName,PortfileVariantRequires,PortfileVariantDescription,PortfileVariantConflicts skipwhite
@@ -136,12 +145,6 @@ syn match PortfileSubportName   "\<[\w\.-]\+\>" contained
 syn match PortfileDepends           "\<depends_\%(\%(lib\|build\|run\|fetch\|extract\)\%(-append\|-delete\)\?\)\>" nextgroup=PortfileDependsEntries skipwhite
 syn region PortfileDependsEntries   matchgroup=Normal start="" skip="\\$" end="$" contains=PortfileDependsEntry contained
 syn match PortfileDependsEntry      "\<\%(port\|bin\|path\|lib\):" contained
-
-" StartupItems
-syn match PortfileStartupPid    "\<\%(none\|auto\|clean\|manual\)\>" contained
-syn match PortfileOptional      "\<startupitem\.\%(start\|stop\|restart\|init\|executable\|logfile\)\>"
-syn match PortfileOptional      "\<startupitem\.\%(create\|logevents\|netchange\)\>" nextgroup=PortfileYesNo skipwhite
-syn match PortfileOptional      "\<startupitem\.pidfile\>" nextgroup=PortfileStartupPid skipwhite
 
 " Livecheck / Distcheck
 syn match PortfileOptional      "\<livecheck\.\%(type\|name\|distname\|version\|url\|regex\|md5\)\>"
@@ -297,7 +300,6 @@ highlight default link PortfileOption   Keyword
 
 hi def link PortfileGroup               String
 hi def link PortfileYesNo               Special
-hi def link PortfileStartupPid          Special
 
 hi def link PortfileRequired            Keyword
 hi def link PortfileOptional            Keyword
