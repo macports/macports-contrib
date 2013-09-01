@@ -18,8 +18,8 @@
         <string>args</string>
         <string>array</string>
         <string>autoreconf</string>
-        <string>blacklist</string>
         <string>blacklist-append</string>
+        <string>blacklist</string>
         <string>branches</string>
         <string>break</string>
         <string>build</string>
@@ -48,10 +48,13 @@
         <string>default_variants</string>
         <string>default_version</string>
         <string>depends_build-append</string>
+        <string>depends_build-delete</string>
         <string>depends_build</string>
         <string>depends_lib-append</string>
         <string>depends_lib-delete</string>
         <string>depends_lib</string>
+        <string>depends_run-append</string>
+        <string>depends_run-delete</string>
         <string>depends_run</string>
         <string>depends_skip_archcheck-append</string>
         <string>description</string>
@@ -59,14 +62,15 @@
         <string>destroot</string>
         <string>dir</string>
         <string>dist_subdir</string>
-        <string>distfiles</string>
         <string>distfiles-append</string>
+        <string>distfiles</string>
         <string>distname</string>
         <string>else</string>
         <string>elseif</string>
         <string>env-append</string>
         <string>env</string>
         <string>eof</string>
+        <string>epoch</string>
         <string>error</string>
         <string>eval</string>
         <string>exec</string>
@@ -88,6 +92,7 @@
         <string>if</string>
         <string>incr</string>
         <string>info</string>
+        <string>installs_libs</string>
         <string>join</string>
         <string>keepdirs</string>
         <string>lappend</string>
@@ -115,8 +120,9 @@
         <string>only</string>
         <string>open</string>
         <string>patch</string>
-        <string>patchfiles</string>
         <string>patchfiles-append</string>
+        <string>patchfiles-delete</string>
+        <string>patchfiles</string>
         <string>path</string>
         <string>perl5</string>
         <string>pid</string>
@@ -167,6 +173,7 @@
         <string>src_file</string>
         <string>startupitem</string>
         <string>string</string>
+        <string>subport</string>
         <string>suffix</string>
         <string>supported_archs</string>
         <string>switch</string>
@@ -196,6 +203,7 @@
         <string>use_configure</string>
         <string>use_parallel_build</string>
         <string>use_xmkmf</string>
+        <string>use_xz</string>
         <string>variant</string>
         <string>version</string>
         <string>versions</string>
