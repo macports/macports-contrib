@@ -26,7 +26,7 @@ proc printUsage {{channel stderr}} {
 
 
 set groupCode ""
-while {[string index [lindex $::argv 0] 0] == "-"} {
+while {[string index [lindex $::argv 0] 0] eq "-"} {
    switch [string range [lindex $::argv 0] 1 end] {
       g {
          if {[llength $::argv] < 2} {
@@ -142,7 +142,7 @@ puts "                    sha256  6789a"
 switch ${groupCode} {
    php {
       puts ""
-      puts "if {\${name} != \${subport}} {"
+      puts "if {\${name} ne \${subport}} {"
       puts "    depends_lib-append      replaceme"
       puts ""
       puts "    configure.args-append   replaceme"
@@ -152,7 +152,7 @@ switch ${groupCode} {
       puts ""
       puts "python.versions     25 26 27"
       puts ""
-      puts "if {\${subport} != \${name}} {"
+      puts "if {\${name} ne \${subport}} {"
       puts "    post-destroot {"
       puts {        set docdir ${prefix}/share/doc/${subport}}
       puts {        xinstall -m 755 -d ${destroot}${docdir}}
