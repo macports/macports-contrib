@@ -1,15 +1,15 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.0.9'
+gem 'rails', '~>3.2'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
-gem "rake", "0.8.7"
+gem 'mysql2'
 gem 'sqlite3'
 gem 'json'
 gem 'uuid'
-gem 'will_paginate', '>= 3.0.pre2'
-gem 'gvis', :git => 'git://github.com/jeremyolliver/gvis.git'
+gem 'will_paginate'
+gem 'gvis'
 
 # Use unicorn as the web server
 # gem 'unicorn'
@@ -30,9 +30,9 @@ gem 'gvis', :git => 'git://github.com/jeremyolliver/gvis.git'
 # Bundle gems for the local environment. Make sure to
 # put test-only gems in this group so their generators
 # and rake tasks are available in development mode:
-group :development, :test do
-   gem 'rspec-rails', '2.6.1'
-   gem 'autotest'
-   gem 'shoulda'
-   #gem 'webrat'
-end
+#group :development, :test do
+#   gem 'rspec-rails', '2.6.1'
+#   gem 'autotest'
+#   gem 'shoulda'
+#   #gem 'webrat'
+#end
