@@ -33,8 +33,8 @@
 %>
 
 <%# Set table options %>
-<% table_options = {:width => 600, 
-                    :html => {:class => "graph_chart"}} 
+<% tbl_options = {:width => 600, 
+                  :html => {:class => "graph_chart"}} 
 %>
 
 
@@ -44,8 +44,9 @@
   <% type = controller.chart_type chart %>
 
   <%# Set titles %>
-  <% vis_options[:title] = title %>
-  <% table_options[:title] = title %>
+  <!-- Chart title: <%= title %> -->
+  <% local_vis_options = vis_options.merge({ :title => title }) %>
+  <% local_tbl_options = tbl_options.merge({ :title => title }) %>
 
   <%# Anchor %>
   <a name=<%= chart %>> </a>
@@ -55,14 +56,14 @@
 
   <% if not controller.dataset_empty? chart %>
     <%# Draw visualization %>
-    <% visualization chart.to_s, type, vis_options do |viz| %>
+    <% visualization chart.to_s, type, local_vis_options do |viz| %>
       <% controller.populate_chart chart, viz %>
     <% end %>
     
     <% if drawtables %>
       <%# Draw table %>
       <% table = chart.to_s + "_table" %>
-      <% visualization table, "Table", table_options do |viz| %>
+      <% visualization table, "Table", local_tbl_options do |viz| %>
         <% controller.populate_chart chart, viz %>
         <% end %>
     <% end %>
