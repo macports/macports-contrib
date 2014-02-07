@@ -1,0 +1,140 @@
+#!/bin/sh
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:filetype=tcl:et:sw=4:ts=4:sts=4
+# Run the Tcl interpreter \
+exec /usr/bin/tclsh "$0" "$@"
+
+catch {source \
+    [file join "/opt/local/share/macports/Tcl" macports1.0 macports_fastload.tcl]}
+package require macports
+package require Pextlib
+
+# Globals
+array set ui_options        [list]
+array set global_options    [list]
+array set global_variations [list]
+set port_options            [list]
+
+# Pass global options into mportinit
+mportinit ui_options global_options global_variations
+
+# Standard procedures
+proc print_usage args {
+    global argv0
+    puts "Usage: $argv0 \[-d\] -m <time> \<directory\>"
+    puts "-d:\tOutput debugging information"
+    puts "-m:\tOutput ports newer than the given mtime"
+}
+
+proc pindex {portdir} {
+    global target oldfd oldmtime qindex fd directory outdir \
+           ui_options port_options
+
+    # try to reuse the existing entry if it's still valid
+    if {[info exists qindex([string tolower [file tail $portdir]])]} {
+        try {
+            set mtime [file mtime [file join $directory $portdir Portfile]]
+            if {$oldmtime < $mtime} {
+                set offset $qindex([string tolower [file tail $portdir]])
+                seek $oldfd $offset
+                gets $oldfd line
+                set name [lindex $line 0]
+                set len [lindex $line 1]
+                set line [read $oldfd $len]
+                array set portinfo $line
+
+                if {[info exists ui_options(ports_debug)]} {
+                    puts "Found entry for $portdir"
+                }
+
+                foreach field [array names portinfo] {
+                    puts $fd "${field}: $portinfo($field)"
+                }
+                puts $fd ""
+
+                return
+            }
+        } catch {*} {
+            ui_warn "failed to open entry for ${portdir}"
+        }
+    }
+}
+
+if {[expr $argc > 4]} {
+    print_usage
+    exit 1
+}
+
+for {set i 0} {$i < $argc} {incr i} {
+    set arg [lindex $argv $i]
+    switch -regex -- $arg {
+        {^-.+} {
+            if {$arg == "-d"} { # Turn on debug output
+                set ui_options(ports_debug) yes
+            } elseif {$arg == "-m"} { # output ports newer than mtime
+                incr i
+                set oldmtime [lindex $argv $i]
+            } else {
+                puts stderr "Unknown option: $arg"
+                print_usage
+                exit 1
+            }
+        }
+        default {
+            set directory [file join [pwd] $arg]
+        }
+    }
+}
+
+if {![info exists directory]} {
+    set directory .
+}
+
+if {![info exists oldmtime]} {
+    set oldmtime 0
+}
+
+# cd to input directory
+if {[catch {cd $directory} result]} {
+    puts stderr "$result"
+    exit 1
+} else {
+    set directory [pwd]
+}
+
+# Set output directory to full path
+if {[info exists outdir]} {
+    if {[catch {file mkdir $outdir} result]} {
+        puts stderr "$result"
+        exit 1
+    }
+    if {[catch {cd $outdir} result]} {
+        puts stderr "$result"
+        exit 1
+    } else {
+        set outdir [pwd]
+    }
+} else {
+    set outdir $directory
+}
+
+set outpath [file join $outdir PortIndex]
+# open old index for comparison
+if {[file isfile $outpath] && [file isfile ${outpath}.quick]} {
+    if {![catch {set oldfd [open $outpath r]}] && ![catch {set quickfd [open ${outpath}.quick r]}]} {
+        if {![catch {set quicklist [read $quickfd]}]} {
+            foreach entry [split $quicklist "\n"] {
+                set qindex([lindex $entry 0]) [lindex $entry 1]
+            }
+        }
+        close $quickfd
+    }
+} else {
+    set newest 0
+}
+
+set fd stdout
+mporttraverse pindex $directory
+if {[info exists oldfd]} {
+    close $oldfd
+}
+close $fd

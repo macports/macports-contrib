@@ -1,0 +1,65 @@
+#!/usr/bin/env ruby
+
+### Generate a valid ports.py for use in populating the database with
+### sample submissions. ports.py will be used by populate.py
+
+# This file adapted from generate_seed which is adapted from add_ports from MPWA
+
+# Note - this file must be executed from inside RAILS_ROOT 
+# otherwise it won't be able to connect to the database
+
+require 'rubygems'
+require 'active_record'
+require 'fileutils'
+
+ROOT = File.expand_path(File.dirname(__FILE__) + "/../") 
+BIN_ROOT = "#{ROOT}/bin"
+RAILS_ROOT = "#{ROOT}/stats-server"
+require File.expand_path(RAILS_ROOT + '/app/models/port.rb',  __FILE__)
+
+$ports = Array.new
+$hashed_data = Hash.new
+
+db_info = YAML.load_file(File.expand_path(RAILS_ROOT + '/config/database.yml',  __FILE__))
+ActiveRecord::Base.establish_connection(db_info['development'])
+ 
+
+class String
+  # Escape single quotes
+  def escape_single_quotes
+    self.gsub(/'/, "\\\\'")
+  end
+end
+
+def esc(str)
+  if not str.nil?
+    str.escape_single_quotes
+  else
+    str
+  end
+end
+
+path = "#{BIN_ROOT}/ports.py"
+portfile = File.new(path, "w")
+
+if not portfile
+  puts "Unable to open #{path}" 
+end
+
+portfile.syswrite('port_list = [ ')
+
+# Output an array of dictionaries. Each dictionary represents a port
+# The dicts have the keys name, version, variants.
+
+# Load all ports
+ports = Port.all
+ports.each do | port |
+  # Write the port
+  portfile.syswrite('{')
+  portfile.syswrite("\'name\': \'#{port.name}\', \'version\': \'#{port.version}\', \'variants\': \'#{port.variants}'")
+  portfile.syswrite('},')
+end
+
+portfile.syswrite(']')
+
+portfile.close
