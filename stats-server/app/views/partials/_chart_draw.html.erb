@@ -55,15 +55,15 @@
 
   <% if not controller.dataset_empty? chart %>
     <%# Draw visualization %>
-    <% visualization chart, type, vis_options do |visualization| %>
-      <% controller.populate_chart chart, visualization %>
+    <% visualization chart.to_s, type, vis_options do |viz| %>
+      <% controller.populate_chart chart, viz %>
     <% end %>
     
     <% if drawtables %>
       <%# Draw table %>
       <% table = chart.to_s + "_table" %>
-      <% visualization table, "Table", table_options do |visualization| %>
-        <% controller.populate_chart chart, visualization %>
+      <% visualization table, "Table", table_options do |viz| %>
+        <% controller.populate_chart chart, viz %>
         <% end %>
     <% end %>
     
