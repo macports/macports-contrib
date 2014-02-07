@@ -20,9 +20,9 @@ mportinit ui_options global_options global_variations
 # Standard procedures
 proc print_usage args {
     global argv0
-    puts "Usage: $argv0 \[-d\] -m <time> \<directory\>"
-    puts "-d:\tOutput debugging information"
-    puts "-m:\tOutput ports newer than the given mtime"
+    puts stderr "Usage: $argv0 \[-d\] -m <time> \<directory\>"
+    puts stderr "-d:\tOutput debugging information"
+    puts stderr "-m:\tOutput ports newer than the given mtime"
 }
 
 proc pindex {portdir} {
@@ -38,18 +38,39 @@ proc pindex {portdir} {
                 seek $oldfd $offset
                 gets $oldfd line
                 set name [lindex $line 0]
-                set len [lindex $line 1]
+                set len  [lindex $line 1]
                 set line [read $oldfd $len]
                 array set portinfo $line
 
                 if {[info exists ui_options(ports_debug)]} {
-                    puts "Found entry for $portdir"
+                    puts stderr "Found entry for $portdir"
                 }
 
                 foreach field [array names portinfo] {
-                    puts $fd "${field}: $portinfo($field)"
+                    puts "${field}: $portinfo($field)"
                 }
-                puts $fd ""
+                puts ""
+
+                # continue if there are no subports
+                if {![info exists portinfo(subports)]} {
+                    return
+                }
+
+                # re-use the entries for its subports, too
+                foreach sub $portinfo(subports) {
+                    set offset $qindex([string tolower $sub])
+                    seek $oldfd $offset
+                    gets $oldfd line
+                    set name [lindex $line 0]
+                    set len  [lindex $line 1]
+                    set line [read $oldfd $len]
+                    array set subportinfo $line
+
+                    foreach field [array names subportinfo] {
+                        puts "${field}: $subportinfo($field)"
+                    }
+                    puts ""
+                }
 
                 return
             }
@@ -132,9 +153,7 @@ if {[file isfile $outpath] && [file isfile ${outpath}.quick]} {
     set newest 0
 }
 
-set fd stdout
 mporttraverse pindex $directory
 if {[info exists oldfd]} {
     close $oldfd
 }
-close $fd
