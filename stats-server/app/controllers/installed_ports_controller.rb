@@ -21,7 +21,8 @@ class InstalledPortsController < ChartController
       sum = sum + user.installed_ports.count
     end
     
-    average = sum / users.count
+    return 0 unless users.count > 0
+    average = sum / users.count unless users.count == 0
   end
   
   # Find the port that has been installed most this year
@@ -39,8 +40,12 @@ class InstalledPortsController < ChartController
                                
    # most populator port this year
    popular_port_year = top.first
-   @popular_port_year = Port.find(popular_port_year[0])
-   @popular_port_year_count = popular_port_year[1]
+   @popular_port_year = nil
+   @popular_port_year_count = 0
+   unless popular_port_year == nil
+     @popular_port_year = Port.find(popular_port_year[0])
+     @popular_port_year_count = popular_port_year[1]
+   end
   end
   
   # Most popular port this month
