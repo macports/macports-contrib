@@ -2,7 +2,7 @@
 
 <h2>Query Results</h2>
 <% unless @ports.empty? %>
-	<p><strong><%= ((@page.to_i - 1) * 50) + 1 %></strong> - <strong><%= @page.to_i * 50 %></strong> of <%= Port.count %> Portfiles selected</p>
+	<p>Displaying results <strong><%= ((@page.to_i - 1) * 50) + 1 %></strong> - <strong><%= [@ports.count, @page.to_i * 50].min %></strong> of <%= @ports.count %> total.</p>
 	<p><%= will_paginate @ports %></p>
 
 	<% @ports.each do |port| %>
