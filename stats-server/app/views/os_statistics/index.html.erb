@@ -1,11 +1,11 @@
 <%# Set titles for charts %>
-<% controller.set_chart_title :macports_version, "MacPorts Versions" %>
-<% controller.set_chart_title :osx_version, "OSX Versions" %>
-<% controller.set_chart_title :os_arch, "OS Arch" %>
-<% controller.set_chart_title :os_platform, "OS Platform" %>
-<% controller.set_chart_title :build_arch, "Build Arch" %>
-<% controller.set_chart_title :gcc_version, "gcc Versions" %>
-<% controller.set_chart_title :xcode_version, "XCode Versions" %>
+<% controller.set_chart_title :macports_version, "MacPorts version" %>
+<% controller.set_chart_title :osx_version, "OS X version" %>
+<% controller.set_chart_title :os_platform, "Platform" %>
+<% controller.set_chart_title :os_arch, "System Architecture" %>
+<% controller.set_chart_title :build_arch, "Build Architecture" %>
+<% controller.set_chart_title :gcc_version, "GCC version" %>
+<% controller.set_chart_title :xcode_version, "Xcode version" %>
 
 <%# All these charts are pie charts - set :type to PieChart %>
 <% @charts.each do |chart_name, chartdata| %>
