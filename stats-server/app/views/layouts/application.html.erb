@@ -25,16 +25,37 @@
 				<dt>Statistics</dt>
 				<dd>
 					<ul>
-						<li><%= link_to "Home", root_path %></li>
-						<li><%= link_to "System", os_statistics_path %></li>
-						<li><%= link_to "Installed Ports", installed_ports_path %></li>
+						<li class="<%= 'selected' if current_page?(root_path) %>">
+							<%= link_to "Home", root_path %>
+						</li>
+						<li class="<%= 'selected' if current_page?(:controller => 'os_statistics') %>">
+							<%= link_to "System Statistics", os_statistics_path %>
+						</li>
+						<li class="<%= 'selected' if current_page?(:controller => 'installed_ports') %>">
+							<%= link_to "Port Statistics", installed_ports_path %>
+						</li>
 					</ul>
 				</dd>
 				<dt>Browse Ports</dt>
 				<dd>
 					<ul>
-						<li><%= link_to "By Category", categories_path %></li>
-						<li><%= link_to "Complete List", ports_path %></li>
+						<li class="<%= 'selected' if current_page?(:controller => 'categories') %>">
+							<%= link_to "By Category", categories_path %>
+						</li>
+						<li class="<%= 'selected' if current_page?(:controller => 'ports') %>">
+							<%= link_to "Complete List", ports_path %>
+						</li>
+					</ul>
+				</dd>
+				<dt>About</dt>
+				<dd>
+					<ul>
+						<li class="<%= 'selected' if current_page?(:controller => 'static', :action => 'faq') %>">
+							<%= link_to "FAQ", :controller => 'static', :action => 'faq'  %>
+						</li>
+						<li class="<%= 'selected' if current_page?(:controller => 'static', :action => 'credits') %>">
+							<%= link_to "Credits", :controller => 'static', :action => 'credits'  %>
+						</li>
 					</ul>
 				</dd>
 			</dl>
