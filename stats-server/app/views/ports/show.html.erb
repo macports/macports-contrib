@@ -4,7 +4,7 @@
 <% controller.set_chart_title :variant_count, 'All Variants' %>
 <% controller.set_chart_type :variant_count, 'PieChart' %>
 
-<% controller.set_chart_title :versions_over_time, 'Top Versions in use Over Last 12 Months' %>
+<% controller.set_chart_title :versions_over_time, 'Top Versions Over Last 12 Months' %>
 <% controller.set_chart_type :versions_over_time, 'LineChart' %>
 
 <% controller.set_chart_title :installs_over_time, 'Installations Over Last 12 Months' %>
@@ -16,75 +16,36 @@
                      :version_count, 
                      :variant_count] %>
 
-<h1> <%= @port.name %> </h1>
+<h2><%= @port.name %> Metadata</h2>
+<dl>
+	<dt>Current Version</dt>
+	<dd><%= @port.version %></dd>
+	<% unless @port.description.nil? %>
+		<dt>Description</dt>
+		<dd><%= @port.description %></dd>
+	<% end %>
+	<% unless @port.licenses.nil? %>
+		<dt>Licenses</dt>
+		<dd><%= @port.licenses %></dd>
+	<% end %>
+	<% unless @port.categories.nil? %>
+		<dt>Categories</dt>
+		<dd><%= @port.categories %></dd>
+	<% end %>
+	<% unless @port.variants.nil? %>
+		<dt>Variants</dt>
+		<dd><%= @port.variants %></dd>
+	<% end %>
+</dl>
 
-<br />
+<h2><%= @port.name %> Statistics</h2>
+<%# Generate links %>
+<ul>
+	<% ordered_charts.each do |chart|  %>
+		<li><%= link_to controller.chart_title(chart), :anchor => chart %></li>
+	<% end %>
+</ul>
 
-<div id="content">
-  <p>
-    <strong>Current Version:</strong> <%= @port.version %>
-  </p>
+<%# Draw charts %>
 
-  <% unless @port.description.nil? %>
-    <p>
-      <strong>Description:</strong> <%= @port.description %>
-    </p>
-  <% end %>
-
-  <% unless @port.licenses.nil? %>
-    <p>
-      <strong>Licenses:</strong> <%= @port.licenses %>
-    </p>
-  <% end %>
-
-  <p>
-    <strong>Categories</strong>
-    <%=h @port.categories %>
-  </p>
-
-  <% unless @port.variants.nil? %>
-    <p>
-      <strong>Variants:</strong> <%=h @port.variants %>
-    </p>
-  <% end %>
-
-  </div>
-  
-  <br />
-  
-  <h2> Stats </h2>
-
-  <%# Generate links %>
-  <ul>
-  <% ordered_charts.each do |chart|  %>
-  <li> <%= link_to controller.chart_title(chart), :anchor => chart %> </li>
-  <% end %>
-  </ul>
-
-  <br />
-
-  <%# Draw charts %>
-  
-  <%= render :partial => '/partials/chart_draw', :locals => {:charts => ordered_charts} %>
-
-  <table border=1>
-    <tr>
-      <th> ID </th>
-      <th> port_id </th>
-      <th> version </th>
-      <th> variants </th>
-      <th> modified_date </th>
-    </tr>
-
-  <% @installed.each do |row| %>
-    <tr>
-      <td> <%= row.id %> </td>
-      <td> <%= row.port_id %> </td>
-      <td> <%= row.version %></td>
-      <td> <%= row.variants %> </td>
-      <td> <%= row.updated_at %> </td>
-    </tr>
-  <% end %>
-  </table>
-  
-</div>
+<%= render :partial => '/partials/chart_draw', :locals => {:charts => ordered_charts, :headers => true} %>

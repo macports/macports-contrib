@@ -1,56 +1,196 @@
-body { background-color: #fff; color: #333; }
+body {
+	margin: 0;
+	padding: 30px 40px;
 
-body, p, ol, ul, td {
-  font-family: verdana, arial, helvetica, sans-serif;
-  font-size:   13px;
-  line-height: 18px;
+	background: url("//macports.org/img/top-backdrop.png") repeat-x #ededed;
+	color: #000;
+
+	font: 12px/1.2em Helvetica, Arial, sans-serif;
 }
 
-pre {
-  background-color: #eee;
-  padding: 10px;
-  font-size: 11px;
+.accessibility {
+	margin: 0;
+	display: block;
+	overflow: hidden;
+	width: 0;
+	height: 0;
 }
 
-a { color: #000; }
-a:visited { color: #666; }
-a:hover { color: #fff; background-color:#000; }
-
-div.field, div.actions {
-  margin-bottom: 10px;
+a:link {
+	color: #0155CD;
+	text-decoration: underline;
 }
 
-#notice {
-  color: green;
+a:visited {
+	color: #012567;
 }
 
-.field_with_errors {
-  padding: 2px;
-  background-color: red;
-  display: table;
+a:hover {
+	color: #3591ED;
 }
 
-#error_explanation {
-  width: 450px;
-  border: 2px solid red;
-  padding: 7px;
-  padding-bottom: 0;
-  margin-bottom: 20px;
-  background-color: #f0f0f0;
+h1, h2, h3 {
+	margin: 0;
+	color: white;
 }
 
-#error_explanation h2 {
-  text-align: left;
-  font-weight: bold;
-  padding: 5px 5px 5px 15px;
-  font-size: 12px;
-  margin: -7px;
-  margin-bottom: 0px;
-  background-color: #c00;
-  color: #fff;
+h1 {
+	float: left;
 }
 
-#error_explanation ul li {
-  font-size: 12px;
-  list-style: square;
+h1 a.title {
+	display: block;
+	float: left;
+	width: 183px;
+	height: 70px;
+	background: url("//macports.org/img/macports-logo-top.png");
+	background-size: 183px 73px;
+}
+
+h1 a.subtitle {
+	float: left;
+	font-size: 32px;
+	padding-top: 18px;
+	color: #0155cd;
+	text-decoration: none;
+}
+
+h2, h3 {
+	background: #8695B3;
+	padding: 0.2em;
+}
+
+h2 {
+	font: bold 24px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+#header {
+	height: 51px;
+	margin: 21px 0 17px 191px;
+	min-width: 250px;
+	max-width: 700px;
+}
+
+#header div, #header span {
+	float: right;
+}
+
+#navigation {
+	width: 183px;
+	float: left;
+	clear: left;
+	background: url("//macports.org/img/nav-header.png") top no-repeat #B1BACC;
+	line-height: 1.4em;
+}
+
+#navigation dl {
+	padding: 16px 0;
+	margin: 0;
+	background: url("//macports.org/img/nav-footer.png") bottom no-repeat;
+}
+
+#navigation dt {
+	margin: 0;
+	padding: 0 16px;
+	color: white;
+	font: bold 125% "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+#navigation dd {
+	margin: 0;
+	padding: 0;
+}
+
+#navigation ul {
+	margin: 0 0 1em 0;
+	padding: 0;
+}
+
+#navigation li {
+	display: block;
+	margin-bottom: 1px;
+	padding: 0 16px 0 28px;
+}
+
+#navigation a {
+	text-decoration: none;
+	color: #242933;
+}
+
+#navigation a:hover {
+	text-decoration: underline;
+}
+
+.selected {
+	background: #8898ab;
+	font-weight: bold;
+}
+
+.warnings {
+	background: #FCC;
+	border: 2px solid #F66;
+	padding: 6px;
+	margin: 7px 7px 7px 198px;
+	min-width: 320px;
+	max-width: 670px;
+}
+
+.warnings p {
+	margin: 1em 0 0 0;
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
+.warnings p:first-child {
+	margin: 0;
+}
+
+#content {
+	padding: 1px 0 40px 191px;
+	min-width: 350px;
+	max-width: 700px;
+}
+
+#content li {
+	margin-bottom: 0.7em;
+}
+
+#content li p {
+	margin: 0.6em 0 1.4em 0;
+	padding-left: 1.6em;
+}
+
+#content li ul {
+	margin-top: 0.7em;
+}
+
+
+#footer {
+	font-size: 90%;
+	clear: both;
+	text-align: center;
+}
+
+#footer img {
+	border: 0;
+	height: 31px;
+	width: 88px;
+}
+
+.graph_chart {
+	margin-bottom: 20px;
+}
+
+#content dl dt {
+	font-weight: bold;
+}
+
+#content .no-data {
+	margin: 10px auto;
+	text-align: center;
+	color: #8898ab;
+}
+
+.port-search form, .port-search p {
+	text-align: center;
 }

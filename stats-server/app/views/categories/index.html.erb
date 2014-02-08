@@ -1,19 +1,14 @@
-<div id="content">
+<%= render :partial => '/partials/port_search' %>
 
-  <%= render :partial => '/partials/port_search' %>
-
-  <h3>Port Categories</h3>
-
-  <div id="categories">
-
-  <% unless @categories.empty? %>
-    <ul>
-      <% @categories.each do |category| %>
-        <li><%= link_to category.name, category_ports_path(category.id) %></li>
-      <% end %>
-    </ul>
-  <% else %>
-    <p>No Categories found.</p>
-  <% end %>
-  </div>
+<h2>Port Categories</h2>
+<div id="categories">
+	<% unless @categories.empty? %>
+		<ul>
+			<% @categories.each do |category| %>
+				<li><%= link_to category.name, category_ports_path(category.id) %></li>
+			<% end %>
+		</ul>
+	<% else %>
+		<p>No categories found.</p>
+	<% end %>
 </div>

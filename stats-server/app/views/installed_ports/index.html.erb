@@ -1,33 +1,22 @@
-<% controller.set_chart_title :top25, 'Most popular ports this month' %>
-<% controller.set_chart_type  :top25, "BarChart" %>
+<h2>Port Statistics</h2>
+<p>The statistics server currently knows about <%= Port.count %> ports. On average, each participating user has <strong><%= @average_ports %></strong> of them installed.</p>
 
-<h1>Port Statistics</h1>
-
-Participating users: <%= User.count %> <br />
-Number of ports: <%= Port.count %> <br />
-Average number of ports installed per user: <%= @average_ports %><br />
-
-<br />
+<% unless @popular_port_month.nil? && @popular_port_year.nil? %>
+<h3>Popular Ports</h3>
+<% end %>
 <%# Most popular port this month %>
 <% unless @popular_port_month.nil? %>
-  <% port = @popular_port_month %>
-  Most popular port this month (<%= @month %>) is <%= link_to port.name, category_port_path(port.category, port) %>
-  with <%= @popular_port_month_count %> installs. <br />
+	<% port = @popular_port_month %>
+	<p>Most popular port this month (<%= @month %>) is <strong><%= link_to port.name, category_port_path(port.category, port) %></strong> with <strong><%= @popular_port_month_count %></strong> installs.</p>
 <% end %>
 
 <%# Most popular port this year %>
 <% unless @popular_port_year.nil? %>
-  <% port = @popular_port_year %>
-  Most popular port this year (<%= @year %>) is <%= link_to port.name, category_port_path(port.category, port) %>
-  with <%= @popular_port_year_count %> installs. <br />
+	<% port = @popular_port_year %>
+	<p>Most popular port this year (<%= @year %>) is <strong><%= link_to port.name, category_port_path(port.category, port) %></strong> with <strong><%= @popular_port_year_count %></strong> installs.</p>
 <% end %>
 
-<br />
-
 <%# Draw chart  %>
-<%= render :partial => '/partials/chart_draw', 
-    :locals => {:charts => [:top25],
-                :chart_width => 1000,
-                :chart_height => 1000} 
-%>
-
+<% controller.set_chart_title :top25, '25 top ports this month' %>
+<% controller.set_chart_type  :top25, "BarChart" %>
+<%= render :partial => '/partials/chart_draw', :locals => {:charts => [:top25], :chart_height => 850, :headers => true} %>

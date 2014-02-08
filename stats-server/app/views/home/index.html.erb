@@ -1,25 +1,11 @@
-<% controller.set_chart_title :participating_users, 'Number of Participating Users' %>
-<% controller.set_chart_type  :participating_users, "LineChart" %>
-<h1>MacPorts Statistics</h1>
-
-<ul>
-	<li> <%= link_to "User System Information", os_statistics_path %> </li>
-	<li> <%= link_to "User Installed Ports", installed_ports_path %> </li>
-</ul>
-
-Total number of participating users: <%= User.count %> <br />
-Number of users last month (<%= @last_month %>): <%= @users_last_month %> <br />
-
-
 <%= render :partial => '/partials/port_search' %>
-<%= link_to "Browse By Category", categories_path %> </li>
 
-<br />
+<div id="metastatistics">
+	<h2>Participating Users</h2>
 
-<%# Draw charts - no tables %>
-<%= render :partial => '/partials/chart_draw', 
-    :locals => {:charts => [:participating_users], :drawtables => false} 
-%>
-
-
-
+	<p>Our statistics know about <strong><%= User.count %></strong> users in total. Last month (<%= @last_month %>), <strong><%= @users_last_month %></strong> users have submitted statistics.</p>
+	
+	<% controller.set_chart_title :participating_users, 'Participating Users' %>
+	<% controller.set_chart_type  :participating_users, "LineChart" %>
+	<%= render :partial => '/partials/chart_draw', :locals => {:charts => [:participating_users], :drawtables => false, :headers => false} %>
+</div>

@@ -9,6 +9,40 @@
 		<%= render_visualizations %>
 	</head>
 	<body>
-		<%= yield %>
+		<h1>
+			<a href="//www.macports.org/" title="The MacPorts Project" class="title">
+				<span class="accessibility">The MacPorts Project</span>
+			</a>
+			<a href="/" title="MacPorts Project Statistics" class="subtitle">Statistics</a>
+		</h1>
+		<p class="accessibility">
+			<a href="#content">Skip to Content</a>
+		</p>
+		<div id="header">
+		</div>
+		<div id="navigation">
+			<dl>
+				<dt>Statistics</dt>
+				<dd>
+					<ul>
+						<li><%= link_to "Home", root_path %></li>
+						<li><%= link_to "System", os_statistics_path %></li>
+						<li><%= link_to "Installed Ports", installed_ports_path %></li>
+					</ul>
+				</dd>
+				<dt>Browse Ports</dt>
+				<dd>
+					<ul>
+						<li><%= link_to "By Category", categories_path %></li>
+						<li><%= link_to "Complete List", ports_path %></li>
+					</ul>
+				</dd>
+			</dl>
+		</div>
+		<div id="content">
+			<%= yield %>
+		</div>
+		<div id="footer">
+		</div>
 	</body>
 </html>

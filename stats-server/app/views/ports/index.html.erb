@@ -1,47 +1,33 @@
-<div id="content">
-  <%= render :partial => '/partials/port_search' %>
+<%= render :partial => '/partials/port_search' %>
 
-  <h3>Query Results</h3>
-
+<h2>Query Results</h2>
 <% unless @ports.empty? %>
-  <p>
-    <%= ((@page.to_i - 1) * 50) + 1 %> - <%= @page.to_i * 50 %> of <%= Port.count %> Portfiles Selected
-  </p>
-  <p>
-    <%= will_paginate @ports %>
-  </p>
+	<p><strong><%= ((@page.to_i - 1) * 50) + 1 %></strong> - <strong><%= @page.to_i * 50 %></strong> of <%= Port.count %> Portfiles selected</p>
+	<p><%= will_paginate @ports %></p>
 
-  <% @ports.each do |port| %>
-    <dl>
-      <dt><b><%= link_to port.name, category_port_path(port.category, port) %></b> <%= port.version %></dt>
-      <dd>
-        <% unless port.description.nil? %>
-          <%= port.description %><br />
-        <% end %>
-
-        <% unless port.maintainers.nil? %>
-          <i>Maintained by:</i> <b><span class="email"><%= port.maintainers %></span></b><br>
-        <% end %>
-
-        <% unless port.categories.nil? %>
-          <i>Categories:</i> <%= print_search_links(port, "categories") %><br />
-        <% end %>
-
-        <% unless port.platforms.nil? %>
-          <i>Platforms:</i> <%= print_search_links(port, "platforms") %><br />
-        <% end %>
-
-        <% unless port.variants.nil? %>
-          <i>Variants:</i> <%= print_search_links(port, "variants") %>
-        <% end %>
-      </dd>
-    </dl>
-  <% end %>
+	<% @ports.each do |port| %>
+		<dl>
+			<dt><strong><%= link_to port.name, category_port_path(port.category, port) %></strong> <%= port.version %></dt>
+			<dd>
+				<% unless port.description.nil? %>
+					<p><%= port.description %></p>
+				<% end %>
+				<% unless port.maintainers.nil? %>
+					<i>Maintained by:</i> <span class="email"><%= port.maintainers %></span><br />
+				<% end %>
+				<% unless port.categories.nil? %>
+					<i>Categories:</i> <%= print_search_links(port, "categories") %><br />
+				<% end %>
+				<% unless port.platforms.nil? %>
+					<i>Platforms:</i> <%= print_search_links(port, "platforms") %><br />
+				<% end %>
+				<% unless port.variants.nil? %>
+					<i>Variants:</i> <%= print_search_links(port, "variants") %>
+				<% end %>
+			</dd>
+		</dl>
+	<% end %>
+	<p><%= will_paginate @ports %></p>
 <% else %>
-  <p>No ports found.</p>
+	<p class="no-data">No ports matched your query.</p>
 <% end %>
-
-  <p>
-    <%= will_paginate @ports %>
-  </p>
-</div>

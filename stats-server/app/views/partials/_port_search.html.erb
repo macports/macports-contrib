@@ -1,16 +1,11 @@
-<h2 class="hdr">MacPorts Portfiles</h2> 
-
-
-
-<br />
-
-<p>
-  <%= form_tag(search_generate_path, {:method => :get}) do %>
-    <%= select_tag :criteria, options_for_select({"Software Title" => "name", "Category" => "categories", "Maintainer" => "maintainers", "variant" => "variants", "Platform" => "platforms"}) %>
-    <%= text_field_tag :val, "", {:size => 40} %>
-    <%= submit_tag "Search" %>
-  <% end %>
-</p>
-
-<p>Or view the complete <%= link_to "ports list (#{Port.count} ports)", ports_path %>.</p> 
-<br />
+<div class="port-search">
+	<h2>Search for Port Statistics</h2> 
+	<p>
+		<%= form_tag(search_generate_path, {:method => :get}) do %>
+			<%= select_tag :criteria, options_for_select({"Software Title" => "name", "Category" => "categories", "Maintainer" => "maintainers", "variant" => "variants", "Platform" => "platforms"}) %>
+			<%= text_field_tag :val, "", {:size => 40} %>
+			<%= submit_tag "Search" %>
+		<% end %>
+	</p>
+	<p>Or view the complete <%= link_to "port list (#{Port.count} ports)", ports_path %>. You can also <%= link_to "browse by category", categories_path %>.</p> 
+</div>

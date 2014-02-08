@@ -9,10 +9,8 @@
 
 <%# All these charts are pie charts - set :type to PieChart %>
 <% @charts.each do |chart_name, chartdata| %>
-  <% controller.set_chart_type chart_name, "PieChart" %>
+	<% controller.set_chart_type chart_name, "PieChart" %>
 <% end %>
-
-<br />
 
 <%# Order the charts %>
 <% ordered_charts = [:macports_version, 
@@ -23,16 +21,13 @@
                      :gcc_version,
                      :xcode_version] %>
 
-<h1> Operating System Statistics </h1>
-
+<h2>System Statistics</h2>
 <%# Generate links %>
-<ul>
-<% ordered_charts.each do |chart|  %>
-<li> <%= link_to controller.chart_title(chart), :anchor => chart %> </li>
-<% end %>
-</ul>
-
-<br />
+	<ul>
+		<% ordered_charts.each do |chart|  %>
+			<li><%= link_to controller.chart_title(chart), :anchor => chart %></li>
+		<% end %>
+	</ul>
 
 <%# Draw charts %>
-<%= render :partial => '/partials/chart_draw', :locals => {:charts => ordered_charts} %>
+<%= render :partial => '/partials/chart_draw', :locals => {:charts => ordered_charts, :headers => true} %>
