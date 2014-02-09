@@ -7,7 +7,14 @@
 
 	<% @ports.each do |port| %>
 		<dl>
-			<dt><strong><%= link_to port.name, category_port_path(port.category, port) %></strong> <%= port.version %></dt>
+			<dt>
+				<% unless port.categories.nil? %>
+					<strong><%= link_to port.name, category_port_path(port.category, port) %></strong>
+				<% else %>
+					<strong><%= port.name %></strong>
+				<% end %>
+				<%= port.version %>
+			</dt>
 			<dd>
 				<% unless port.description.nil? %>
 					<p><%= port.description %></p>
