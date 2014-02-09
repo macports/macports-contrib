@@ -1,23 +1,3 @@
-<h1>Listing submissions</h1>
+<h2>Submission Page</h2>
 
-<table>
-  <tr>
-    <th>Data</th>
-    <th></th>
-    <th></th>
-    <th></th>
-  </tr>
-
-<% @submissions.each do |submission| %>
-  <tr>
-    <td><%= submission.data %></td>
-    <td><%= link_to 'Show', submission %></td>
-    <td><%= link_to 'Edit', edit_submission_path(submission) %></td>
-    <td><%= link_to 'Destroy', submission, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
-</table>
-
-<br />
-
-<%= link_to 'New Submission', new_submission_path %>
+<p>Nothing to see here.</p>
