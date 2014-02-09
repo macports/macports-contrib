@@ -1,3 +1,3 @@
 module ApplicationHelper
-  include GoogleVisualization
+	include GoogleVisualization
 end
