@@ -15,7 +15,6 @@ class InstalledPortSweeper < ActionController::Caching::Sweeper
 
 	private
 	def expire_cache_for(port)
-		logger.debug "Expiring cache for #{port.category}/#{port.name}"
 		expire_page category_port_path(port.category, port)
 	end
 end
