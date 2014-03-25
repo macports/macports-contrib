@@ -28,13 +28,17 @@
 		<dt>Licenses</dt>
 		<dd><%= @port.licenses %></dd>
 	<% end %>
+	<% unless @port.maintainers.nil? %>
+		<dt>Maintainers</dt>
+		<dd><%= @port.maintainers %></dd>
+	<% end %>
 	<% unless @port.categories.nil? %>
 		<dt>Categories</dt>
-		<dd><%= @port.categories %></dd>
+		<dd><%= print_search_links(@port, "categories") %></dd>
 	<% end %>
 	<% unless @port.variants.nil? %>
 		<dt>Variants</dt>
-		<dd><%= @port.variants %></dd>
+		<dd><%= print_search_links(@port, "variants") %></dd>
 	<% end %>
 </dl>
 
