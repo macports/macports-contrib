@@ -1,5 +1,7 @@
-#!/usr/bin/tclsh
+#!/bin/sh
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# \
+if /usr/bin/which -s port-tclsh; then exec port-tclsh "$0" -i `which port-tclsh` "$@"; else exec /usr/bin/tclsh "$0" "$@"; fi
 #
 # Install a list of ports given in the form produced by 'port installed', in
 # correct dependency order so as to preserve the selected variants.
@@ -12,10 +14,10 @@
 set MY_VERSION 0.1
 
 proc printUsage {} {
-   puts "Usage: $::argv0 \[-hV\] \[-t macports-tcl-path\] \[filename\]"
+   puts "Usage: $::argv0 \[-hV\] \[-p macports-prefix\] \[filename\]"
    puts "   -h   This help"
-   puts "   -t   Give a different location for the base MacPorts Tcl"
-   puts "        file (defaults to /Library/Tcl)"
+   puts "   -p   Use a different MacPorts prefix"
+   puts "        (defaults to /opt/local)"
    puts "   -V   show version and MacPorts version being used"
 }
 
@@ -211,26 +213,29 @@ proc read_portlist {filename} {
 
 # Begin
 
-set macportsTclPath "/Library/Tcl"
-if {![file isfile ${macportsTclPath}/macports1.0/macports_fastload.tcl]} {
-    set macportsTclPath "/opt/local/share/macports/Tcl"
-}
+set macportsPrefix /opt/local
 set showVersion 0
 
+set origArgv $::argv
 while {[string index [lindex $::argv 0] 0] == "-" } {
    switch [string range [lindex $::argv 0] 1 end] {
       h {
          printUsage
          exit 0
       }
-      t {
+      i {
+         set interp_path [lindex $::argv 1]
+         set ::argv [lrange $::argv 1 end]
+      }
+      p {
          if {[llength $::argv] < 2} {
-            puts "-t needs a path"
+            puts "-p needs a path"
             printUsage
             exit 1
          }
-         set macportsTclPath [lindex $::argv 1]
+         set macportsPrefix [lindex $::argv 1]
          set ::argv [lrange $::argv 1 end]
+         set userPrefix 1
       }
       V {
          set showVersion 1
@@ -244,7 +249,27 @@ while {[string index [lindex $::argv 0] 0] == "-" } {
    set ::argv [lrange $::argv 1 end]
 }
 
-source ${macportsTclPath}/macports1.0/macports_fastload.tcl
+# check that default prefix exists
+if {![info exists userPrefix] && ![file isdirectory $macportsPrefix]} {
+    error "prefix '$macportsPrefix' does not exist; maybe you need to use the -p option?"
+}
+
+if {[info exists interp_path]} {
+    set prefixFromInterp [file dirname [file dirname $interp_path]]
+    # make sure we're running in the port-tclsh associated with the correct prefix
+    if {$prefixFromInterp ne $macportsPrefix} {
+        if {[file executable ${macportsPrefix}/bin/port-tclsh]} {
+            exec ${macportsPrefix}/bin/port-tclsh $argv0 -i ${macportsPrefix}/bin/port-tclsh {*}[lrange $origArgv 2 end] <@stdin >@stdout 2>@stderr
+        } else {
+            exec /usr/bin/tclsh $argv0 {*}[lrange $origArgv 2 end] <@stdin >@stdout 2>@stderr
+        }
+        exit 0
+    }
+} else {
+    # older base version
+    source ${macportsPrefix}/share/macports/Tcl/macports1.0/macports_fastload.tcl
+}
+
 package require macports
 package require Pextlib 1.0
 umask 022
