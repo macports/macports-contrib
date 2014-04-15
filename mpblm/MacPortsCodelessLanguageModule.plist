@@ -22,6 +22,7 @@
         <string>autoreconf</string>
         <string>blacklist-append</string>
         <string>blacklist</string>
+        <string>branch</string>
         <string>branches</string>
         <string>break</string>
         <string>build</string>
@@ -35,6 +36,7 @@
         <string>cflags</string>
         <string>check</string>
         <string>checksums</string>
+        <string>checksums-append</string>
         <string>choose</string>
         <string>close</string>
         <string>cmd</string>
@@ -82,13 +84,16 @@
         <string>exit</string>
         <string>expr</string>
         <string>extract</string>
+        <string>fetch</string>
         <string>file</string>
         <string>files</string>
+        <string>flat</string>
         <string>flush</string>
         <string>for</string>
         <string>foreach</string>
         <string>format</string>
         <string>gets</string>
+        <string>git</string>
         <string>github</string>
         <string>glob</string>
         <string>global</string>
@@ -125,6 +130,7 @@
         <string>objc_archflags</string>
         <string>only</string>
         <string>open</string>
+        <string>package</string>
         <string>patch</string>
         <string>patchfiles-append</string>
         <string>patchfiles-delete</string>
@@ -145,6 +151,7 @@
         <string>post-fetch</string>
         <string>post-install</string>
         <string>post-patch</string>
+        <string>post-pkg</string>
         <string>pre_args-delete</string>
         <string>pre_args</string>
         <string>pre-activate</string>
