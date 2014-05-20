@@ -15,16 +15,35 @@ def list_all():
     for package in list_packages:
         print package
 
-def search(str):
-    values=client.search({'name':str})[0]
-    for key in values.keys():
-        print key,'-->',values[key]
+def search(pkg_name):
+    print "\n"
+    values=client.search({'name':pkg_name})
+    for value in values:
+        for key in value.keys():
+            print key,'-->',value[key]
+        print "\n"
 
-def data(str):
-    version=client.search({'name':str})[0]['version']
-    values=client.release_data(str,version)
-    for key in values.keys():
-        print key,'-->',values[key]
+def data(pkg_name,pkg_versions=None):
+    print "\n"
+    if pkg_versions == None:
+        version = client.search({'name':pkg_name})[0]['version']
+        values = client.release_data(pkg_name,version)
+        if not values == None:
+            for key in values.keys():
+                print key,'-->',values[key]
+        else:
+            print "No such package found."
+            print "Please specify the exact package name."
+    else:
+        for version in pkg_versions:
+            values = client.release_data(pkg_name,version)
+            if not values == None:
+                for key in values.keys():
+                    print key,'-->',values[key]
+            else:
+                print "No such package found."
+                print "Please specify the exact package name."
+    print "\n"
 
 def main(args=None):
     parser = argparse.ArgumentParser(description='pip2port tester script.')
@@ -32,6 +51,9 @@ def main(args=None):
     parser.add_argument('package_name', 
                        metavar='package_name', type=str, nargs='?', 
                        help='Package_Name')
+    parser.add_argument('package_version', 
+                       metavar='package_version', type=str, nargs='*', 
+                       help='Package_Version')
     parser.add_argument('-l', '--list_packages', action='store_const', 
                        dest='action', const='list_packages', required=False,
                        help='List all packages')
@@ -44,7 +66,6 @@ def main(args=None):
     
 
     options=parser.parse_args()
-#    options=parser.parse_args('-s S1'.split())
 #    print options
 
     if options.action == 'list_packages':
@@ -52,13 +73,18 @@ def main(args=None):
         return
 
     if options.action == 'search':
-#        print options.package_name
-        search(options.package_name)
+        if options.package_name == None:
+            parser.error("No package name specified")
+        else:
+            search(options.package_name)
         return
 
     if options.action == 'data':
         data(options.package_name)
         return
+    else:
+#        parser.print_help()
+        parser.error("No input specified")
 
 
 if __name__ == "__main__":
