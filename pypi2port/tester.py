@@ -55,7 +55,7 @@ def main(args=None):
                        help='Package_Name')
     parser.add_argument('package_version', 
                        metavar='package_version', type=str, nargs='*', 
-                       help='Package_Version')
+                       help='Package_Version(s)')
     parser.add_argument('-l', '--list_packages', action='store_const', 
                        dest='action', const='list_packages', required=False,
                        help='List all packages')
@@ -82,7 +82,13 @@ def main(args=None):
         return
 
     if options.action == 'data':
-        data(options.package_name)
+        if options.package_name == None:
+            parser.error("No package name specified")
+        else:
+            if options.package_version == None:
+                data(options.package_name)
+            else:
+                data(options.package_name,options.package_version)
         return
     else:
 #        parser.print_help()
