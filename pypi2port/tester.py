@@ -25,10 +25,11 @@ def search(pkg_name):
 
 def data(pkg_name,pkg_versions=None):
     print "\n"
-    if pkg_versions == None:
+    if not pkg_versions:
         version = client.search({'name':pkg_name})[0]['version']
         values = client.release_data(pkg_name,version)
-        if not values == None:
+#        print values
+        if values:
             for key in values.keys():
                 print key,'-->',values[key]
         else:
@@ -37,7 +38,8 @@ def data(pkg_name,pkg_versions=None):
     else:
         for version in pkg_versions:
             values = client.release_data(pkg_name,version)
-            if not values == None:
+#            print values
+            if values:
                 for key in values.keys():
                     print key,'-->',values[key]
             else:
