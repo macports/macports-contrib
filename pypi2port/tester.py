@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 #! /usr/bin/env python
 
+import urllib
+import hashlib
 import argparse
 import sys
 try:
@@ -47,6 +49,20 @@ def data(pkg_name,pkg_versions=None):
                 print "Please specify the exact package name."
     print "\n"
 
+def fetch(url):
+    checksum_md5 = url.split('#')[-1].split('=')[-1]
+    dir = './sources/'
+    file_name = dir + url.split('/')[-1].split('#')[0]
+    urllib.urlretrieve(url,file_name)
+    checksum_md5_calc = hashlib.md5(open(file_name).read()).hexdigest()
+    print "HASHES"
+    print checksum_md5_calc
+    print checksum_md5
+    if str(checksum_md5_calc) == str(checksum_md5):
+        print 'CORRECT'
+    else:
+        print 'ABORT'
+
 def main(args=None):
     parser = argparse.ArgumentParser(description='pip2port tester script.')
 
@@ -56,6 +72,9 @@ def main(args=None):
     parser.add_argument('package_version', 
                        metavar='package_version', type=str, nargs='*', 
                        help='Package_Version(s)')
+    parser.add_argument('package_url', 
+                       metavar='package_url', type=str, nargs='?', 
+                       help='Package_Url')
     parser.add_argument('-l', '--list_packages', action='store_const', 
                        dest='action', const='list_packages', required=False,
                        help='List all packages')
@@ -65,6 +84,9 @@ def main(args=None):
     parser.add_argument('-d', '--data', action='store_const',
                        dest='action', const='data', required=False,
                        help='Releases data for a package by <package_name>')
+    parser.add_argument('-f', '--fetch', action='store_const',
+                       dest='action', const='fetch', required=False,
+                       help='Fetches distfile for a package by <package_url>')
     
 
     options=parser.parse_args()
@@ -90,8 +112,17 @@ def main(args=None):
             else:
                 data(options.package_name,options.package_version)
         return
+
+    if options.action == 'fetch':
+        print options,"\n"
+        if options.package_name == None:
+            parser.error("No url specified")
+        else:
+            print options
+            fetch(options.package_name)
+        return
     else:
-#        parser.print_help()
+        parser.print_help()
         parser.error("No input specified")
 
 
