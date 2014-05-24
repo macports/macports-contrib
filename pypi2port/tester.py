@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 #! /usr/bin/env python
 
-import urllib
+import urllib2
+#import urllib
 import hashlib
 import argparse
 import sys
 import os
+from progressbar import *
 try:
     import xmlrpclib
 except ImportError:
@@ -53,18 +55,40 @@ def data(pkg_name,pkg_versions=None):
 def fetch(pkg_name,url):
     checksum_md5 = url.split('#')[-1].split('=')[-1]
     parent_dir = './sources/'
-    src_dir = parent_dir +pkg_name+"/"
+    src_dir = parent_dir + "/"+pkg_name+"/"
     if not os.path.exists(parent_dir):
         os.makedirs(parent_dir)
         if not os.path.exists(src_dir):
             os.makedirs(src_dir)
 
     file_name = src_dir + url.split('/')[-1].split('#')[0]
-    urllib.urlretrieve(url,file_name)
+
+#    urllib.urlretrieve(url,file_name)
+    u = urllib2.urlopen(url)
+    f = open(file_name,'wb')
+    meta = u.info()
+    file_size = int(meta.getheaders("Content-Length")[0])
+
+    widgets = ['Fetching: ', Percentage(), ' ', Bar(marker=RotatingMarker(),left='[',right=']'), ' ', ETA(), ' ', FileTransferSpeed()]
+    pbar = ProgressBar(widgets=widgets, maxval=int(file_size))
+    pbar.start()
+
+    file_size_dl = 0
+    block_sz = 8192
+    while True:
+        buffer = u.read(block_sz)
+        if not buffer:
+            break
+
+        file_size_dl += len(buffer)
+        f.write(buffer)
+        pbar.update(file_size_dl)
+
+    pbar.finish()
+    print
+    f.close()
+
     checksum_md5_calc = hashlib.md5(open(file_name).read()).hexdigest()
-    print "HASHES"
-    print checksum_md5_calc
-    print checksum_md5
     if str(checksum_md5_calc) == str(checksum_md5):
         print 'Successfully fetched\n'
     else:
@@ -127,7 +151,7 @@ def main():
         return
 
     if options.action == 'fetch':
-        print options,"\n"
+#        print options,"\n"
         if options.package_name == None:
             if options.package_url == None:
                 parser.error("No package name and url specified")
@@ -136,7 +160,7 @@ def main():
         elif options.package_url == None:
             parser.error("No url specified")
         else:
-            print options
+#            print options
             fetch(options.package_name,options.package_url)
         return
     else:
