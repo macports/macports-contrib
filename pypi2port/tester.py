@@ -5,6 +5,7 @@ import urllib
 import hashlib
 import argparse
 import sys
+import os
 try:
     import xmlrpclib
 except ImportError:
@@ -49,29 +50,40 @@ def data(pkg_name,pkg_versions=None):
                 print "Please specify the exact package name."
     print "\n"
 
-def fetch(url):
+def fetch(pkg_name,url):
     checksum_md5 = url.split('#')[-1].split('=')[-1]
-    dir = './sources/'
-    file_name = dir + url.split('/')[-1].split('#')[0]
+    parent_dir = './sources/'
+    src_dir = parent_dir +pkg_name+"/"
+    if not os.path.exists(parent_dir):
+        os.makedirs(parent_dir)
+        if not os.path.exists(src_dir):
+            os.makedirs(src_dir)
+
+    file_name = src_dir + url.split('/')[-1].split('#')[0]
     urllib.urlretrieve(url,file_name)
     checksum_md5_calc = hashlib.md5(open(file_name).read()).hexdigest()
     print "HASHES"
     print checksum_md5_calc
     print checksum_md5
     if str(checksum_md5_calc) == str(checksum_md5):
-        print 'CORRECT'
+        print 'Successfully fetched\n'
     else:
-        print 'ABORT'
+        print 'Aborting due to inconsistency on checksums\n'
+        try:
+            os.remove(file_name)
+        except OSError, e:
+            print "Error: %s - %s." % (e.filename,e.strerror)
 
-def main(args=None):
+
+def main():
     parser = argparse.ArgumentParser(description='pip2port tester script.')
 
     parser.add_argument('package_name', 
                        metavar='package_name', type=str, nargs='?', 
                        help='Package_Name')
-    parser.add_argument('package_version', 
-                       metavar='package_version', type=str, nargs='*', 
-                       help='Package_Version(s)')
+#    parser.add_argument('package_version', 
+#                       metavar='package_version', type=str, nargs='*', 
+#                       help='Package_Version(s)')
     parser.add_argument('package_url', 
                        metavar='package_url', type=str, nargs='?', 
                        help='Package_Url')
@@ -107,19 +119,25 @@ def main(args=None):
         if options.package_name == None:
             parser.error("No package name specified")
         else:
-            if options.package_version == None:
-                data(options.package_name)
-            else:
-                data(options.package_name,options.package_version)
+#            if options.package_version == None:
+#                data(options.package_name)
+#            else:
+#                data(options.package_name,options.package_version)
+             data(options.package_name)
         return
 
     if options.action == 'fetch':
         print options,"\n"
         if options.package_name == None:
+            if options.package_url == None:
+                parser.error("No package name and url specified")
+            else:
+                parser.error("No package name specified")
+        elif options.package_url == None:
             parser.error("No url specified")
         else:
             print options
-            fetch(options.package_name)
+            fetch(options.package_name,options.package_url)
         return
     else:
         parser.print_help()
