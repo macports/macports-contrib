@@ -1,3 +1,9 @@
+#! /bin/sh
+""":"
+exec python $0 ${1+"$@"}
+"""
+__doc__ = """...Tester Script for pypi2port..."""
+
 # -*- coding: utf-8 -*-
 #! /usr/bin/env python
 
