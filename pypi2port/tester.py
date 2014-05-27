@@ -13,6 +13,7 @@ import hashlib
 import argparse
 import sys
 import os
+import zipfile
 from progressbar import *
 try:
     import xmlrpclib
@@ -80,7 +81,7 @@ def fetch(pkg_name,url):
     pbar.start()
 
     file_size_dl = 0
-    block_sz = 8192
+    block_sz = 1024
     while True:
         buffer = u.read(block_sz)
         if not buffer:
@@ -103,6 +104,65 @@ def fetch(pkg_name,url):
             os.remove(file_name)
         except OSError, e:
             print "Error: %s - %s." % (e.filename,e.strerror)
+
+
+
+def fetch_egg(url):
+    checksum_md5 = url.split('#')[-1].split('=')[-1]
+    parent_dir = './sources/'
+    pkg_name = url.split('/')[-2]
+    src_dir = parent_dir +pkg_name+"/"
+    if not os.path.exists(parent_dir):
+        os.makedirs(parent_dir)
+        if not os.path.exists(src_dir):
+            os.makedirs(src_dir)
+
+    file_name = src_dir + url.split('/')[-1].split('#')[0]
+    print file_name
+
+
+    u = urllib2.urlopen(url)
+    f = open(file_name,'wb')
+    meta = u.info()
+    file_size = int(meta.getheaders("Content-Length")[0])
+
+    widgets = ['Fetching: ', Percentage(), ' ', Bar(marker=RotatingMarker(),left='[',right=']'), ' ', ETA(), ' ', FileTransferSpeed()]
+    pbar = ProgressBar(widgets=widgets, maxval=int(file_size))
+    pbar.start()
+
+    file_size_dl = 0
+    block_sz = 1024
+    while True:
+        buffer = u.read(block_sz)
+        if not buffer:
+            break
+
+        file_size_dl += len(buffer)
+        f.write(buffer)
+        pbar.update(file_size_dl)
+
+    pbar.finish()
+    print
+    f.close()
+
+    checksum_md5_calc = hashlib.md5(open(file_name).read()).hexdigest()
+    if str(checksum_md5_calc) == str(checksum_md5):
+        print 'Successfully fetched\n'
+        zip = zipfile.ZipFile(file_name)
+        for name in zip.namelist():
+            if name.split("/")[0] == "EGG-INFO":
+                print name
+                zip.extract(name,src_dir)
+
+    else:
+        print 'Aborting due to inconsistency on checksums\n'
+        try:
+            os.remove(file_name)
+        except OSError, e:
+            print "Error: %s - %s." % (e.filename,e.strerror)
+
+    return
+
 
 
 def main():
@@ -128,6 +188,9 @@ def main():
                        help='Releases data for a package by <package_name>')
     parser.add_argument('-f', '--fetch', action='store_const',
                        dest='action', const='fetch', required=False,
+                       help='Fetches distfile for a package by <package_url>')
+    parser.add_argument('-fe', '--fetch_egg', action='store_const',
+                       dest='action', const='fetch_egg', required=False,
                        help='Fetches distfile for a package by <package_url>')
     
 
@@ -168,6 +231,15 @@ def main():
         else:
 #            print options
             fetch(options.package_name,options.package_url)
+        return
+
+    if options.action == 'fetch_egg':
+#        print options,"\n"
+        if options.package_name == None:
+            parser.error("No <package>.egg url specified")
+        else:
+#            print options
+            fetch_egg(options.package_name)
         return
     else:
         parser.print_help()
