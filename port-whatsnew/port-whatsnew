@@ -1,4 +1,4 @@
-#!/usr/bin/tclsh
+#!/usr/bin/env port-tclsh
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 #
 # Show the svn log of what changed since this port was installed.
@@ -55,7 +55,6 @@ while {[string index [lindex $::argv 0] 0] == "-" } {
     set ::argv [lrange $::argv 1 end]
 }
 
-source ${macportsTclPath}/macports1.0/macports_fastload.tcl
 package require macports
 mportinit
 
