@@ -4,7 +4,7 @@
 if test -x @prefix@/bin/port-tclsh; then exec @prefix@/bin/port-tclsh "$0" "$@"; else exec /usr/bin/tclsh "$0" "$@"; fi
 # $Id$
 
-set VERSION 0.1.3
+set VERSION 0.1.4
 set prefix "@prefix@"
 
 # - Procedures ---------------------------------------------------------------
