@@ -34,16 +34,43 @@ def search(pkg_name):
             print key,'-->',value[key]
         print "\n"
 
-def release_data(pkg_name,pkg_version=None):
+def release_data(pkg_name,pkg_version):
     print "\n"
-    values = client.release_data(pkg_name,pkg_version)
-    if values:
-        for key in values.keys():
-            print key,'-->',values[key]
-    else:
-        print "No such package found."
-        print "Please specify the exact package name."
+    if pkg_version:
+        values = client.release_data(pkg_name,pkg_version)
+        if values:
+            for key in values.keys():
+                print key,'-->',values[key]
+        else:
+            print "No such package found."
+            print "Please specify the exact package name."
+        print "\n"
+        return
+#    else :
+#        pkg_version = client.package_releases(pkg_name, True)
+#        print pkg_version
+#        return
+#    if not pkg_version:
+#        print "No release available"
+#        return
+#    value = {}
+#    for version in pkg_version:
+#        print version
+#        values = client.release_data(pkg_name,version)
+#        if value:
+#            for key in values.keys():
+#                if not value[key] or value[key]=="":
+#                    values.update(key,value[key])
+#        values.update(value) 
+#            value = values
+#    if values:
+#        for key in values.keys():
+#            print key,'-->',values[key]
+#    else:
+#        print "No such package found."
+#        print "Please specify the exact package name."
     print "\n"
+    return
 
 def fetch(pkg_name,dict):
     checksum_md5 = dict['md5_digest']
@@ -51,8 +78,8 @@ def fetch(pkg_name,dict):
     src_dir = parent_dir + '/' + pkg_name
     if not os.path.exists(parent_dir):
         os.makedirs(parent_dir)
-        if not os.path.exists(src_dir):
-            os.makedirs(src_dir)
+    if not os.path.exists(src_dir):
+        os.makedirs(src_dir)
 
     url = dict['url']
     file_name = src_dir + '/' + dict['filename']
@@ -107,6 +134,72 @@ def fetch_url(pkg_name,pkg_version=None):
         fetch(pkg_name,value)        
     print "\n"
 
+def checksum_md5(dict2):
+    for value in dict2:
+        if not value['filename'].split('.')[-1] == 'egg':
+            return value['md5_digest']
+    return
+
+def create_portfile(dict,file_name,dict2):
+    file = open(file_name, 'w')
+
+    file.write('# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4\n')
+    file.write('# $Id$\n\n')
+    file.write('PortSystem          1.0\n')
+    file.write('PortGroup           python 1.0\n\n')
+
+    file.write('name                '+dict['name']+'\n')
+    file.write('version             '+dict['version']+'\n')
+    file.write('categories-append   replaceme\n\n')
+
+    file.write('platforms           darwin\n')    
+    file.write('license             '+dict['license']+'\n')
+    if dict['maintainer']:
+        file.write('maintainer          ' + dict['maintainer'] + '\n\n')
+    else:
+        file.write('maintainer          nomaintainer\n\n')
+        
+    file.write('description         '+dict['summary']+'\n\n')
+    file.write('long_description    '+dict['description']+'\n\n')
+
+    file.write('homepage            '+dict['home_page']+'\n')
+    file.write('master_sites        '+dict['download_url']+'\n')
+    file.write('distname            py-'+dict['name']+dict['version']+'\n\n')
+
+    checksum = checksum_md5(dict2)
+    if checksum:
+        file.write('checksums           md5  '+checksum+'\n\n')
+
+    file.write('python.versions     25 26 27\n\n')
+#    file.write('if {${name} ne ${subport}} {\n')
+#    file.write('    post-destroot {\n')
+
+    file.close()
+
+
+def print_portfile(pkg_name,pkg_version=None):
+    print "\n"
+    root_dir = os.path.abspath("./sources")
+    home_dir = os.path.join(root_dir,pkg_name)
+    src_dir = os.path.join(home_dir,"PortFile")
+    if not os.path.exists(root_dir):
+        os.makedirs(root_dir)
+    if not os.path.exists(home_dir):
+        os.makedirs(home_dir)
+    if not os.path.exists(src_dir):
+        os.makedirs(src_dir)
+
+    dict = client.release_data(pkg_name,pkg_version)
+    dict2 = client.release_urls(pkg_name,pkg_version)
+
+    file_name = os.path.join(src_dir,"Test_Portfile")
+#    try:
+#        create_portfile(dict,file_name,dict2)
+#        print "SUCCESS\n"
+    create_portfile(dict,file_name,dict2)
+    print "SUCCESS\n"
+#    except:
+#        print "ERROR"
 
 def main(argv):
     parser = argparse.ArgumentParser(description="Pypi2Port Tester")
@@ -122,6 +215,9 @@ def main(argv):
     parser.add_argument('-f', '--fetch', action='store', type=str,
                         dest='package_fetch', nargs=2, required=False, 
                         help='Fetches distfiles for a package by <package_name> and <package_version>')
+    parser.add_argument('-p', '--portfile', action='store', type=str,
+                        dest='package_portfile', nargs=2, required=False, 
+                        help='Prints the portfile for a package by <package_name> and <package_version>')
     options = parser.parse_args()
 #    print options
 
@@ -138,10 +234,12 @@ def main(argv):
         pkg_name = options.packages_data[0]
         if len(options.packages_data) > 1:
             pkg_version = options.packages_data[1]
+            release_data(pkg_name,pkg_version)
         else:
             if client.package_releases(pkg_name):
                 pkg_version = client.package_releases(pkg_name)[0]
                 release_data(pkg_name,pkg_version)
+#            release_data(pkg_name)
         return
 
     if options.package_fetch:
@@ -153,6 +251,19 @@ def main(argv):
             if client.package_releases(pkg_name):
                 pkg_version = client.packages_releases(pkg_name)[0]
                 fetch_url(pkg_name,pkg_version)
+        return
+
+    if options.package_portfile:
+        pkg_name = options.package_portfile[0]
+        if len(options.package_portfile) > 1:
+            pkg_version = options.package_portfile[1]
+#            print "PORTFILE %s %s\n" % (pkg_name,pkg_version)
+            print_portfile(pkg_name,pkg_version)
+        else:
+            if client.package_releases(pkg_name):
+                pkg_version = client.packages_releases(pkg_name)[0]
+#                print "PORTFILE %s %s\n" % (pkg_name,pkg_version)
+                print_portfile(pkg_name,pkg_version)
         return
 
     parser.print_help()
