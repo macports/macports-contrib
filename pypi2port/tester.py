@@ -118,29 +118,57 @@ def fetch(pkg_name,dict):
                 if name.split("/")[0] == "EGG-INFO":
 #                    print name
                     zip.extract(name,src_dir)
-
+        print "\n"
+        return file_name
     else:
         print 'Aborting due to inconsistency on checksums\n'
         try:
             os.remove(file_name)
         except OSError, e:
             print "Error: %s - %s." % (e.filename,e.strerror)
+        print "\n"
+        return False
 
-
-def fetch_url(pkg_name,pkg_version=None):
-    print "\n"
+def fetch_url(pkg_name,pkg_version,checksum=False):
     values = client.release_urls(pkg_name,pkg_version)
-    for value in values:
-        fetch(pkg_name,value)        
-    print "\n"
+    if checksum:
+        for value in values:
+            if value['filename'].split('.')[-1] == 'gz':
+                return fetch(pkg_name,value)
+    else:
+        print "\n"
+        for value in values:
+            return fetch(pkg_name,value)        
 
-def checksum_md5(dict2):
-    for value in dict2:
-        if not value['filename'].split('.')[-1] == 'egg':
-            return value['md5_digest']
-    return
+def checksum_rmd160(pkg_name,pkg_version):
+    file_name = fetch_url(pkg_name,pkg_version,True)
+    print file_name
+    if file_name:
+        try:
+            h = hashlib.new('ripemd160')
+            f = open(file_name)
+            h.update(f.read())
+            checksum = h.hexdigest()
+            f.close()
+            return checksum
+        except:
+            print "Error\n"
+            return
 
-def create_portfile(dict,file_name,dict2):
+def checksum_sha256(pkg_name,pkg_version):
+    file_name = fetch_url(pkg_name,pkg_version,True)
+    print file_name
+    if file_name:
+        try:
+            f = open(file_name)
+            checksum = hashlib.sha256(f.read()).hexdigest()
+            f.close()
+            return checksum
+        except:
+            print "Error\n"
+            return
+
+def create_portfile(dict,file_name):
     file = open(file_name, 'w')
 
     file.write('# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4\n')
@@ -166,9 +194,8 @@ def create_portfile(dict,file_name,dict2):
     file.write('master_sites        '+dict['download_url']+'\n')
     file.write('distname            py-'+dict['name']+dict['version']+'\n\n')
 
-    checksum = checksum_md5(dict2)
-    if checksum:
-        file.write('checksums           md5  '+checksum+'\n\n')
+    file.write('checksums           rmd160  '+checksum_rmd160(dict['name'],dict['version'])+'\n\n')
+    file.write('                    sha256  '+checksum_sha256(dict['name'],dict['version'])+'\n\n')
 
     file.write('python.versions     25 26 27\n\n')
 #    file.write('if {${name} ne ${subport}} {\n')
@@ -190,13 +217,13 @@ def print_portfile(pkg_name,pkg_version=None):
         os.makedirs(src_dir)
 
     dict = client.release_data(pkg_name,pkg_version)
-    dict2 = client.release_urls(pkg_name,pkg_version)
+#    dict2 = client.release_urls(pkg_name,pkg_version)
 
     file_name = os.path.join(src_dir,"Test_Portfile")
 #    try:
 #        create_portfile(dict,file_name,dict2)
 #        print "SUCCESS\n"
-    create_portfile(dict,file_name,dict2)
+    create_portfile(dict,file_name)
     print "SUCCESS\n"
 #    except:
 #        print "ERROR"
