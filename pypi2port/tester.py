@@ -129,12 +129,31 @@ def fetch(pkg_name,dict):
         print "\n"
         return False
 
-def fetch_url(pkg_name,pkg_version,checksum=False):
+def dependencies(pkg_name,pkg_version,deps=False):
+    values = client.release_urls(pkg_name,pkg_version)
+    for value in values:
+        if not value['filename'].split('.')[-1] == 'gz':
+            fetch(pkg_name,value)
+    try:
+        f = open('./sources/'+pkg_name+'/EGG-INFO/requires.txt')
+        list = f.readlines()
+        list = [x.strip('\n') for x in list]
+        f.close()
+        return list
+    except:
+        return False
+
+def fetch_url(pkg_name,pkg_version,checksum=False,deps=False):
     values = client.release_urls(pkg_name,pkg_version)
     if checksum:
         for value in values:
             if value['filename'].split('.')[-1] == 'gz':
-                return fetch(pkg_name,value)
+                fetch(pkg_name,value)
+            
+#    elif deps:
+#        for value in values:
+#            if not value['filename'].split('.')[-1] == 'gz':
+#                return fetch(pkg_name,value)        
     else:
         print "\n"
         for value in values:
@@ -194,11 +213,19 @@ def create_portfile(dict,file_name):
     file.write('master_sites        '+dict['download_url']+'\n')
     file.write('distname            py-'+dict['name']+dict['version']+'\n\n')
 
-    file.write('checksums           rmd160  '+checksum_rmd160(dict['name'],dict['version'])+'\n\n')
-    file.write('                    sha256  '+checksum_sha256(dict['name'],dict['version'])+'\n\n')
+    rmd160 = checksum_rmd160(dict['name'],dict['version'])
+    sha256 = checksum_sha256(dict['name'],dict['version'])
+    if rmd160 and sha256:
+        file.write('checksums           rmd160  '+rmd160+'\n')
+        file.write('                    sha256  '+sha256+'\n\n')
 
     file.write('python.versions     25 26 27\n\n')
-#    file.write('if {${name} ne ${subport}} {\n')
+    file.write('if {${name} ne ${subport}} {\n')
+    file.write('    depends_build       port:py${python.version}-setuptools\n')
+    deps = dependencies(dict['name'],dict['version'])
+    if deps:
+        for dep in deps:
+            file.write('                        port:py-'+dep+'\n')
 #    file.write('    post-destroot {\n')
 
     file.close()
