@@ -18,6 +18,7 @@ try:
     import xmlrpclib
 except ImportError:
     import xmlrpc.client as xmlrpclib
+import textwrap
 
 client = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
 
@@ -130,6 +131,8 @@ def fetch(pkg_name,dict):
         return False
 
 def dependencies(pkg_name,pkg_version,deps=False):
+    if not deps:
+        return
     values = client.release_urls(pkg_name,pkg_version)
     for value in values:
         if not value['filename'].split('.')[-1] == 'gz':
@@ -148,7 +151,7 @@ def fetch_url(pkg_name,pkg_version,checksum=False,deps=False):
     if checksum:
         for value in values:
             if value['filename'].split('.')[-1] == 'gz':
-                fetch(pkg_name,value)
+                return fetch(pkg_name,value)
             
 #    elif deps:
 #        for value in values:
@@ -159,35 +162,37 @@ def fetch_url(pkg_name,pkg_version,checksum=False,deps=False):
         for value in values:
             return fetch(pkg_name,value)        
 
-def checksum_rmd160(pkg_name,pkg_version):
+def checksums(pkg_name,pkg_version):
     file_name = fetch_url(pkg_name,pkg_version,True)
     print file_name
     if file_name:
+        checksums = []
         try:
             h = hashlib.new('ripemd160')
             f = open(file_name)
             h.update(f.read())
-            checksum = h.hexdigest()
+            checksums.insert(0,h.hexdigest())
+            checksums.insert(1,hashlib.sha256(f.read()).hexdigest())
             f.close()
-            return checksum
+            return checksums
         except:
             print "Error\n"
             return
 
-def checksum_sha256(pkg_name,pkg_version):
-    file_name = fetch_url(pkg_name,pkg_version,True)
-    print file_name
-    if file_name:
-        try:
-            f = open(file_name)
-            checksum = hashlib.sha256(f.read()).hexdigest()
-            f.close()
-            return checksum
-        except:
-            print "Error\n"
-            return
+#def checksum_sha256(pkg_name,pkg_version):
+#    file_name = fetch_url(pkg_name,pkg_version,True)
+#    print file_name
+#    if file_name:
+#        try:
+#            f = open(file_name)
+#            checksum = hashlib.sha256(f.read()).hexdigest()
+#            f.close()
+#            return checksum
+#        except:
+#            print "Error\n"
+#            return
 
-def create_portfile(dict,file_name):
+def create_portfile(dict,file_name,dict2):
     file = open(file_name, 'w')
 
     file.write('# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4\n')
@@ -197,7 +202,7 @@ def create_portfile(dict,file_name):
 
     file.write('name                '+dict['name']+'\n')
     file.write('version             '+dict['version']+'\n')
-    file.write('categories-append   replaceme\n\n')
+#    file.write('categories-append   replaceme\n\n')
 
     file.write('platforms           darwin\n')    
     file.write('license             '+dict['license']+'\n')
@@ -205,19 +210,34 @@ def create_portfile(dict,file_name):
         file.write('maintainer          ' + dict['maintainer'] + '\n\n')
     else:
         file.write('maintainer          nomaintainer\n\n')
+
         
     file.write('description         '+dict['summary']+'\n\n')
-    file.write('long_description    '+dict['description']+'\n\n')
+#    file.write('long_description    '+dict['description']+'\n\n')
+    lines = textwrap.wrap(dict['description'],width=70)
+    file.write('long_description    ')
+    for line in lines:
+        if line:
+            if not lines.index(line)==0:
+                file.write('                    ')
+            if line == lines[-1]:
+                file.write(line+"\n")
+            else:
+                file.write(line + " \\\n")
 
     file.write('homepage            '+dict['home_page']+'\n')
-    file.write('master_sites        '+dict['download_url']+'\n')
-    file.write('distname            py-'+dict['name']+dict['version']+'\n\n')
 
-    rmd160 = checksum_rmd160(dict['name'],dict['version'])
-    sha256 = checksum_sha256(dict['name'],dict['version'])
-    if rmd160 and sha256:
-        file.write('checksums           rmd160  '+rmd160+'\n')
-        file.write('                    sha256  '+sha256+'\n\n')
+    master_site = '/'.join(dict2[0]['url'].split('/')[0:-1])
+
+    file.write('master_sites        '+master_site+'\n')
+    file.write('distname            py-'+dict['name']+dict['version']+'\n\n')
+#    rmd160 = checksum_rmd160(dict['name'],dict['version'])
+#    sha256 = checksum_sha256(dict['name'],dict['version'])
+    checksums_values = checksums(dict['name'],dict['version'])
+#    if rmd160 and sha256:
+    if checksums_values:
+        file.write('checksums           rmd160  '+checksums_values[0]+' \\\n')
+        file.write('                    sha256  '+checksums_values[1]+'\n\n')
 
     file.write('python.versions     25 26 27\n\n')
     file.write('if {${name} ne ${subport}} {\n')
@@ -226,7 +246,15 @@ def create_portfile(dict,file_name):
     if deps:
         for dep in deps:
             file.write('                        port:py-'+dep+'\n')
+    file.write('\n')
+    file.write('    livecheck.type      none\n')
+    file.write('} else {\n')
+    file.write('    livecheck.type      regex\n')
+    file.write('    livecheck.url       ${master_sites}\n')
+#    file.write('    livecheck.regex     \n')
+
 #    file.write('    post-destroot {\n')
+
 
     file.close()
 
@@ -244,13 +272,13 @@ def print_portfile(pkg_name,pkg_version=None):
         os.makedirs(src_dir)
 
     dict = client.release_data(pkg_name,pkg_version)
-#    dict2 = client.release_urls(pkg_name,pkg_version)
+    dict2 = client.release_urls(pkg_name,pkg_version)
 
     file_name = os.path.join(src_dir,"Test_Portfile")
 #    try:
 #        create_portfile(dict,file_name,dict2)
 #        print "SUCCESS\n"
-    create_portfile(dict,file_name)
+    create_portfile(dict,file_name,dict2)
     print "SUCCESS\n"
 #    except:
 #        print "ERROR"
