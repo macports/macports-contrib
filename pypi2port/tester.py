@@ -175,6 +175,7 @@ def dependencies(pkg_name,pkg_version,deps=False):
         return list
     except:
         try:
+            shutil.rmtree('./sources/'+pkg_name+'/EGG-INFO', ignore_errors=True)
             items = os.listdir('./sources/'+pkg_name)
             for item in items[:]:
                 if not item.split('.')[-1] == 'gz':
