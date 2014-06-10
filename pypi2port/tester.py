@@ -174,13 +174,16 @@ def dependencies(pkg_name,pkg_version,deps=False):
             print ""
         return list
     except:
-        items = os.listdir('./sources/'+pkg_name)
-        for item in items[:]:
-            if not item.split('.')[-1] == 'gz':
-                os.remove('./sources/'+pkg_name+'/'+item)
-                items.remove(item)
-        if not items:
-            os.rmdir('./sources/'+pkg_name)
+        try:
+            items = os.listdir('./sources/'+pkg_name)
+            for item in items[:]:
+                if not item.split('.')[-1] == 'gz':
+                    os.remove('./sources/'+pkg_name+'/'+item)
+                    items.remove(item)
+            if not items:
+                os.rmdir('./sources/'+pkg_name)
+        except:
+            print ""
         return False
 
 
