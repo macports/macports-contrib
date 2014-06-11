@@ -236,8 +236,13 @@ def create_portfile(dict,file_name,dict2):
 #    file.write('long_description    '+dict['description']+'\n\n')
     description = dict['description']
     if description:
-#        description = string.replace(description,'{',' ')
-        lines = textwrap.wrap(dict['description'],width=70)
+        description = string.replace(description,';',' ')
+        description = string.replace(description,'[',' ')
+        description = string.replace(description,']',' ')
+        description = string.replace(description,'{',' ')
+        description = string.replace(description,'}',' ')
+#        lines = textwrap.wrap(dict['description'],width=70)
+        lines = textwrap.wrap(description,width=70)
         file.write('long_description    ')
         for line in lines:
             if line:
