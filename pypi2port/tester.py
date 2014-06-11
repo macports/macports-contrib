@@ -21,6 +21,7 @@ except ImportError:
 import textwrap
 import string
 import shutil
+import re
 
 client = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
 
@@ -236,11 +237,12 @@ def create_portfile(dict,file_name,dict2):
 #    file.write('long_description    '+dict['description']+'\n\n')
     description = dict['description']
     if description:
-        description = string.replace(description,';',' ')
-        description = string.replace(description,'[',' ')
-        description = string.replace(description,']',' ')
-        description = string.replace(description,'{',' ')
-        description = string.replace(description,'}',' ')
+#        description = string.replace(description,';',' ')
+#        description = string.replace(description,'[',' ')
+#        description = string.replace(description,']',' ')
+#        description = string.replace(description,'{',' ')
+#        description = string.replace(description,'}',' ')
+        description = re.sub(r'[\[\]\{\}\;\:\$]',' ',description)
 #        lines = textwrap.wrap(dict['description'],width=70)
         lines = textwrap.wrap(description,width=70)
         file.write('long_description    ')
