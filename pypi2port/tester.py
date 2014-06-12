@@ -231,7 +231,7 @@ def create_portfile(dict,file_name,dict2):
         license = license.encode('utf-8')
         file.write('license             '+license+'\n')
     else:
-        file.write('license              \n')
+        file.write('license             None\n')
         
     if dict['maintainer']:
         file.write('maintainers         ' + ' '.join(dict['maintainer']) + '\n\n')
@@ -239,18 +239,26 @@ def create_portfile(dict,file_name,dict2):
         file.write('maintainers         nomaintainer\n\n')
 
     summary = dict['summary']
-    summary = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`]',' ',summary)        
+    if summary:
+        summary = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`]',' ',summary)
+        sum_lines = textwrap.wrap(summary,width=70)
+        file.write('description         ')
+        for sum_line in sum_lines:
+            if sum_line:
+                if not sum_lines.index(sum_line)==0:
+                    file.write('                    ')
+                if sum_line == sum_lines[-1]:
+                    file.write(sum_line+"\n")
+                else:
+                    file.write(sum_line + " \\\n")
+    else:
+        file.write('description         None\n\n')
 #    file.write('description         '+dict['summary']+'\n\n')
-    file.write('description         '+summary+'\n\n')
+#    file.write('description         '+summary+'\n\n')
 #    file.write('long_description    '+dict['description']+'\n\n')
     description = dict['description']
     if description:
         description = description.encode('utf-8')
-#        description = string.replace(description,';',' ')
-#        description = string.replace(description,'[',' ')
-#        description = string.replace(description,']',' ')
-#        description = string.replace(description,'{',' ')
-#        description = string.replace(description,'}',' ')
         description = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`]',' ',description)
 #        lines = textwrap.wrap(dict['description'],width=70)
         lines = textwrap.wrap(description,width=70)
