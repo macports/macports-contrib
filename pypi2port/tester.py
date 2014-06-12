@@ -44,7 +44,9 @@ def release_data(pkg_name,pkg_version):
         values = client.release_data(pkg_name,pkg_version)
         if values:
             for key in values.keys():
-                print key,'-->',values[key]
+                value = values[key]
+                value = value.encode('utf-8')
+                print key,'-->',value
         else:
             print "No such package found."
             print "Please specify the exact package name."
