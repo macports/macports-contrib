@@ -232,8 +232,10 @@ def create_portfile(dict,file_name,dict2):
     else:
         file.write('maintainers         nomaintainer\n\n')
 
-        
-    file.write('description         '+dict['summary']+'\n\n')
+    summary = dict['summary']
+    summary = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`]',' ',summary)        
+#    file.write('description         '+dict['summary']+'\n\n')
+    file.write('description         '+summary+'\n\n')
 #    file.write('long_description    '+dict['description']+'\n\n')
     description = dict['description']
     if description:
@@ -242,7 +244,7 @@ def create_portfile(dict,file_name,dict2):
 #        description = string.replace(description,']',' ')
 #        description = string.replace(description,'{',' ')
 #        description = string.replace(description,'}',' ')
-        description = re.sub(r'[\[\]\{\}\;\:\$]',' ',description)
+        description = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`]',' ',description)
 #        lines = textwrap.wrap(dict['description'],width=70)
         lines = textwrap.wrap(description,width=70)
         file.write('long_description    ')
