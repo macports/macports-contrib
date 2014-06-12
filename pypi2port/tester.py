@@ -226,7 +226,13 @@ def create_portfile(dict,file_name,dict2):
 #    file.write('categories-append   replaceme\n\n')
 
     file.write('platforms           darwin\n')
-    file.write('license             '+dict['license']+'\n')
+    license = dict['license']
+    if license:
+        license = license.encode('utf-8')
+        file.write('license             '+license+'\n')
+    else:
+        file.write('license              \n')
+        
     if dict['maintainer']:
         file.write('maintainers         ' + ' '.join(dict['maintainer']) + '\n\n')
     else:
@@ -239,6 +245,7 @@ def create_portfile(dict,file_name,dict2):
 #    file.write('long_description    '+dict['description']+'\n\n')
     description = dict['description']
     if description:
+        description = description.encode('utf-8')
 #        description = string.replace(description,';',' ')
 #        description = string.replace(description,'[',' ')
 #        description = string.replace(description,']',' ')
