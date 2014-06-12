@@ -45,7 +45,8 @@ def release_data(pkg_name,pkg_version):
         if values:
             for key in values.keys():
                 value = values[key]
-                value = value.encode('utf-8')
+                if value:
+                    value = value.encode('utf-8')
                 print key,'-->',value
         else:
             print "No such package found."
