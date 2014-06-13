@@ -5,7 +5,7 @@ exec python $0 ${1+"$@"}
 __doc__ = """...Tester Script for pypi2port..."""
 
 # -*- coding: utf-8 -*-
-#! /usr/bin/env python
+# !/usr/bin/env python
 
 import argparse
 import sys
@@ -25,61 +25,39 @@ import re
 
 client = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
 
+
 def list_all():
     list_packages = client.list_packages()
     for package in list_packages:
         print package
 
+
 def search(pkg_name):
     print "\n"
-    values=client.search({'name':pkg_name})
+    values = client.search({'name': pkg_name})
     for value in values:
         for key in value.keys():
-            print key,'-->',value[key]
+            print key, '-->', value[key]
         print "\n"
 
-def release_data(pkg_name,pkg_version):
+
+def release_data(pkg_name, pkg_version):
     print "\n"
     if pkg_version:
-        values = client.release_data(pkg_name,pkg_version)
+        values = client.release_data(pkg_name, pkg_version)
         if values:
             for key in values.keys():
-#                value = values[key]
-#                if value:
-#                    value = value.encode('utf-8')
-                print key,'-->',values[key]
+                print key, '-->', values[key]
         else:
             print "No such package found."
             print "Please specify the exact package name."
         print "\n"
         return
-#    else :
-#        pkg_version = client.package_releases(pkg_name, True)
-#        print pkg_version
-#        return
-#    if not pkg_version:
-#        print "No release available"
-#        return
-#    value = {}
-#    for version in pkg_version:
-#        print version
-#        values = client.release_data(pkg_name,version)
-#        if value:
-#            for key in values.keys():
-#                if not value[key] or value[key]=="":
-#                    values.update(key,value[key])
-#        values.update(value) 
-#            value = values
-#    if values:
-#        for key in values.keys():
-#            print key,'-->',values[key]
-#    else:
-#        print "No such package found."
-#        print "Please specify the exact package name."
     print "\n"
     return
 
-def fetch(pkg_name,dict):
+
+def fetch(pkg_name, dict):
     checksum_md5 = dict['md5_digest']
     parent_dir = './sources'
     src_dir = parent_dir + '/' + pkg_name
@@ -92,12 +70,13 @@ def fetch(pkg_name,dict):
     file_name = src_dir + '/' + dict['filename']
 
     u = urllib2.urlopen(url)
-#    f = open(file_name,'wb')
-    with open(file_name,'wb') as f:
+    with open(file_name, 'wb') as f:
         meta = u.info()
         file_size = int(meta.getheaders("Content-Length")[0])
 
-        widgets = ['Fetching: ', Percentage(), ' ', Bar(marker=RotatingMarker(),left='[',right=']'), ' ', ETA(), ' ', FileTransferSpeed()]
+        widgets = ['Fetching: ', Percentage(), ' ',
+                   Bar(marker=RotatingMarker(), left='[', right=']'),
+                   ' ', ETA(), ' ', FileTransferSpeed()]
         pbar = ProgressBar(widgets=widgets, maxval=int(file_size))
         pbar.start()
 
@@ -114,7 +93,6 @@ def fetch(pkg_name,dict):
 
         pbar.finish()
         print
-#    f.close()
 
     checksum_md5_calc = hashlib.md5(open(file_name).read()).hexdigest()
     if str(checksum_md5) == str(checksum_md5_calc):
@@ -124,8 +102,7 @@ def fetch(pkg_name,dict):
             zip = zipfile.ZipFile(file_name)
             for name in zip.namelist():
                 if name.split("/")[0] == "EGG-INFO":
-#                    print name
-                    zip.extract(name,src_dir)
+                    zip.extract(name, src_dir)
         print "\n"
         return file_name
     else:
@@ -133,55 +110,53 @@ def fetch(pkg_name,dict):
         try:
             os.remove(file_name)
         except OSError, e:
-            print "Error: %s - %s." % (e.filename,e.strerror)
+            print "Error: %s - %s." % (e.filename, e.strerror)
         print "\n"
         return False
 
-def fetch_url(pkg_name,pkg_version,checksum=False,deps=False):
-    values = client.release_urls(pkg_name,pkg_version)
+
+def fetch_url(pkg_name, pkg_version, checksum=False, deps=False):
+    values = client.release_urls(pkg_name, pkg_version)
     if checksum:
         for value in values:
             if value['filename'].split('.')[-1] == 'gz':
-                return fetch(pkg_name,value)
-            
-#    elif deps:
-#        for value in values:
-#            if not value['filename'].split('.')[-1] == 'gz':
-#                return fetch(pkg_name,value)        
+                return fetch(pkg_name, value)
     else:
         print "\n"
         for value in values:
-            return fetch(pkg_name,value)        
+            return fetch(pkg_name, value)
 
-def dependencies(pkg_name,pkg_version,deps=False):
+
+def dependencies(pkg_name, pkg_version, deps=False):
     if not deps:
         return
-    values = client.release_urls(pkg_name,pkg_version)
+    values = client.release_urls(pkg_name, pkg_version)
     for value in values:
         if not value['filename'].split('.')[-1] == 'gz':
-            fetch(pkg_name,value)
+            fetch(pkg_name, value)
     try:
- #       f = open('./sources/'+pkg_name+'/EGG-INFO/requires.txt')
-        with open('./sources/'+pkg_name+'/EGG-INFO/requires.txt') as f:
+        with open('./sources/' + pkg_name + '/EGG-INFO/requires.txt') as f:
             list = f.readlines()
             list = [x.strip('\n') for x in list]
         f.close()
         try:
-            shutil.rmtree('./sources/'+pkg_name+'/EGG-INFO', ignore_errors=True)
-            items = os.listdir('./sources/'+pkg_name)
+            shutil.rmtree('./sources/' + pkg_name + '/EGG-INFO',
+                          ignore_errors=True)
+            items = os.listdir('./sources/' + pkg_name)
             for item in items[:]:
                 if not item.split('.')[-1] == 'gz':
-                    os.remove('./sources/'+pkg_name+'/'+item)
+                    os.remove('./sources/' + pkg_name + '/' + item)
                     items.remove(item)
 
             if not items:
-                os.rmdir('./sources/'+pkg_name)
+                os.rmdir('./sources/' + pkg_name)
         except:
             print ""
         return list
     except:
         try:
-            shutil.rmtree('./sources/'+pkg_name+'/EGG-INFO', ignore_errors=True)
+            shutil.rmtree('./sources/'+pkg_name+'/EGG-INFO',
+                          ignore_errors=True)
             items = os.listdir('./sources/'+pkg_name)
             for item in items[:]:
                 if not item.split('.')[-1] == 'gz':
@@ -194,42 +169,40 @@ def dependencies(pkg_name,pkg_version,deps=False):
         return False
 
 
-def checksums(pkg_name,pkg_version):
-    file_name = fetch_url(pkg_name,pkg_version,True)
+def checksums(pkg_name, pkg_version):
+    file_name = fetch_url(pkg_name, pkg_version, True)
     print file_name
     if file_name:
         checksums = []
         try:
             h = hashlib.new('ripemd160')
-#            f = open(file_name)
-            with open(file_name) as f:            
+            with open(file_name) as f:
                 h.update(f.read())
-                checksums.insert(0,h.hexdigest())
-                checksums.insert(1,hashlib.sha256(f.read()).hexdigest())
-#            f.close()
+                checksums.insert(0, h.hexdigest())
+                checksums.insert(1, hashlib.sha256(f.read()).hexdigest())
             dir = '/'.join(file_name.split('/')[0:-1])
             os.remove(file_name)
             try:
                 os.rmdir(dir)
             except OSError as ex:
-                print 
+                print
             return checksums
         except:
             print "Error\n"
             return
 
 
-def create_portfile(dict,file_name,dict2):
-#    file = open(file_name, 'w')
+def create_portfile(dict, file_name, dict2):
     with open(file_name, 'w') as file:
-        file.write('# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4\n')
+        file.write('# -*- coding: utf-8; mode: tcl; tab-width: 4; ')
+        file.write('indent-tabs-mode: nil; c-basic-offset: 4 ')
+        file.write('-*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4\n')
         file.write('# $Id$\n\n')
         file.write('PortSystem          1.0\n')
         file.write('PortGroup           python 1.0\n\n')
 
         file.write('name                {0}\n'.format(dict['name']))
         file.write('version             {0}\n'.format(dict['version']))
-#        file.write('categories-append   replaceme\n\n')
 
         file.write('platforms           darwin\n')
         license = dict['license']
@@ -238,20 +211,22 @@ def create_portfile(dict,file_name,dict2):
             file.write('license             {0}\n'.format(license))
         else:
             file.write('license             None\n')
-        
+
         if dict['maintainer']:
-            file.write('maintainers         {0}\n\n'.format(' '.join(dict['maintainer'])))
+            maintainers = ' '.join(dict['maintainer'])
+            file.write('maintainers         {0}\n\n'.format(maintainers))
         else:
             file.write('maintainers         nomaintainer\n\n')
 
         summary = dict['summary']
         if summary:
-            summary = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`]',' ',summary)
-            sum_lines = textwrap.wrap(summary,width=70)
+            summary = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`]*',
+                             ' ', summary)
+            sum_lines = textwrap.wrap(summary, width=70)
             file.write('description         ')
             for sum_line in sum_lines:
                 if sum_line:
-                    if not sum_lines.index(sum_line)==0:
+                    if not sum_lines.index(sum_line) == 0:
                         file.write('                    ')
                     if sum_line == sum_lines[-1]:
                         file.write("{0}\n".format(sum_line))
@@ -259,19 +234,15 @@ def create_portfile(dict,file_name,dict2):
                         file.write("{0} \\\n".format(sum_line))
         else:
             file.write('description         None\n\n')
-#        file.write('description         '+dict['summary']+'\n\n')
-#        file.write('description         '+summary+'\n\n')
-#        file.write('long_description    '+dict['description']+'\n\n')
         description = dict['description']
         if description:
             description = description.encode('utf-8')
-            description = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`]',' ',description)
-#            lines = textwrap.wrap(dict['description'],width=70)
-            lines = textwrap.wrap(description,width=70)
+            description = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`]', ' ', description)
+            lines = textwrap.wrap(description, width=70)
             file.write('long_description    ')
             for line in lines:
                 if line:
-                    if not lines.index(line)==0:
+                    if not lines.index(line) == 0:
                         file.write('                    ')
                     if line == lines[-1]:
                         file.write("{0}\n".format(line))
@@ -279,7 +250,7 @@ def create_portfile(dict,file_name,dict2):
                         file.write("{0} \\\n".format(line))
         else:
             file.write('long_description    ${description}\n\n')
-    
+
         file.write('homepage            {0}\n'.format(dict['home_page']))
 
         if dict2:
@@ -287,24 +258,26 @@ def create_portfile(dict,file_name,dict2):
         else:
             master_site = ''
         file.write('master_sites        {0}\n'.format(master_site))
-        file.write('distname            py-{0}{1}\n\n'.format(dict['name'],dict['version']))
-#        rmd160 = checksum_rmd160(dict['name'],dict['version'])
-#        sha256 = checksum_sha256(dict['name'],dict['version'])
-        checksums_values = checksums(dict['name'],dict['version'])
-#        if rmd160 and sha256:
+        file.write('distname            py-{0}{1}\n\n'.format(
+                   dict['name'], dict['version']))
+        checksums_values = checksums(dict['name'], dict['version'])
         if checksums_values:
-            file.write('checksums           rmd160  {0} \\ \n'.format(checksums_values[0]))
-            file.write('                    sha256  {0}\n\n'.format(checksums_values[1]))
+            file.write('checksums           rmd160  {0} \\ \n'.format(
+                       checksums_values[0]))
+            file.write('                    sha256  {0}\n\n'.format(
+                       checksums_values[1]))
 
         python_vers = dict['requires_python']
         if python_vers:
-            file.write('python.versions     25 26 27 {0}\n\n'.format(dict['requires_python']))
+            file.write('python.versions     25 26 27 {0}\n\n'.format(
+                       dict['requires_python']))
         else:
             file.write('python.versions     25 26 27\n\n')
-    
+
         file.write('if {${name} ne ${subport}} {\n')
-        file.write('    depends_build       port:py${python.version}-setuptools\n')
-        deps = dependencies(dict['name'],dict['version'],True)
+        file.write('    depends_build       port:')
+        file.write('py${python.version}-setuptools\n')
+        deps = dependencies(dict['name'], dict['version'], True)
         if deps:
             for dep in deps:
                 file.write('                        port:py-{0}\n'.format(dep))
@@ -313,20 +286,14 @@ def create_portfile(dict,file_name,dict2):
         file.write('} else {\n')
         file.write('    livecheck.type      regex\n')
         file.write('    livecheck.url       ${master_sites}\n')
-#        file.write('    livecheck.regex     \n')
         file.write('}\n')
 
-#        file.write('    post-destroot {\n')
 
-
-
-
-def print_portfile(pkg_name,pkg_version=None):
+def print_portfile(pkg_name, pkg_version=None):
     print "\n"
     root_dir = os.path.abspath("./sources")
-    port_dir = os.path.join(root_dir,'Python')
-    home_dir = os.path.join(port_dir,pkg_name)
-#    src_dir = os.path.join(home_dir,"PortFile")
+    port_dir = os.path.join(root_dir, 'Python')
+    home_dir = os.path.join(port_dir, pkg_name)
     if not os.path.exists(root_dir):
         os.makedirs(root_dir)
     if not os.path.exists(port_dir):
@@ -334,17 +301,13 @@ def print_portfile(pkg_name,pkg_version=None):
     if not os.path.exists(home_dir):
         os.makedirs(home_dir)
 
-    dict = client.release_data(pkg_name,pkg_version)
-    dict2 = client.release_urls(pkg_name,pkg_version)
+    dict = client.release_data(pkg_name, pkg_version)
+    dict2 = client.release_urls(pkg_name, pkg_version)
 
-    file_name = os.path.join(home_dir,"Portfile")
-#    try:
-#        create_portfile(dict,file_name,dict2)
-#        print "SUCCESS\n"
-    create_portfile(dict,file_name,dict2)
+    file_name = os.path.join(home_dir, "Portfile")
+    create_portfile(dict, file_name, dict2)
     print "SUCCESS\n"
-#    except:
-#        print "ERROR"
+
 
 def main(argv):
     parser = argparse.ArgumentParser(description="Pypi2Port Tester")
@@ -352,21 +315,20 @@ def main(argv):
                         default=False, required=False,
                         help='List all packages')
     parser.add_argument('-s', '--search', action='store', type=str,
-                        dest='packages_search', nargs='*', required=False, 
-                        help='Search for a package by <package_name>')
+                        dest='packages_search', nargs='*', required=False,
+                        help='Search for a package')
     parser.add_argument('-d', '--data', action='store',
                         dest='packages_data', nargs='*', type=str,
-                        help='Releases data for a package by <package_name>')
+                        help='Releases data for a package')
     parser.add_argument('-f', '--fetch', action='store', type=str,
-                        dest='package_fetch', nargs='*', required=False, 
-                        help='Fetches distfiles for a package by <package_name> and <package_version>')
+                        dest='package_fetch', nargs='*', required=False,
+                        help='Fetches distfiles for a package')
     parser.add_argument('-p', '--portfile', action='store', type=str,
-                        dest='package_portfile', nargs='*', required=False, 
-                        help='Prints the portfile for a package by <package_name> and <package_version>')
+                        dest='package_portfile', nargs='*', required=False,
+                        help='Prints the portfile for a package')
     options = parser.parse_args()
-#    print options
 
-    if options.list == True:
+    if options.list:
         list_all()
         return
 
@@ -379,24 +341,25 @@ def main(argv):
         pkg_name = options.packages_data[0]
         if len(options.packages_data) > 1:
             pkg_version = options.packages_data[1]
-            release_data(pkg_name,pkg_version)
+            release_data(pkg_name, pkg_version)
         else:
             if client.package_releases(pkg_name):
                 pkg_version = client.package_releases(pkg_name)[0]
-                release_data(pkg_name,pkg_version)
-#            release_data(pkg_name)
+                release_data(pkg_name, pkg_version)
+            else:
+                print "No release found\n"
         return
 
     if options.package_fetch:
         pkg_name = options.package_fetch[0]
         if len(options.package_fetch) > 1:
             pkg_version = options.package_fetch[1]
-            fetch_url(pkg_name,pkg_version)
+            fetch_url(pkg_name, pkg_version)
         else:
-            releases =  client.package_releases(pkg_name)
+            releases = client.package_releases(pkg_name)
             if releases:
                 pkg_version = releases[0]
-                fetch_url(pkg_name,pkg_version)
+                fetch_url(pkg_name, pkg_version)
             else:
                 print "No release found\n"
         return
@@ -405,14 +368,14 @@ def main(argv):
         pkg_name = options.package_portfile[0]
         if len(options.package_portfile) > 1:
             pkg_version = options.package_portfile[1]
-#            print "PORTFILE %s %s\n" % (pkg_name,pkg_version)
-            print_portfile(pkg_name,pkg_version)
+            print_portfile(pkg_name, pkg_version)
         else:
             vers = client.package_releases(pkg_name)
             if vers:
                 pkg_version = vers[0]
-#                print "PORTFILE %s %s\n" % (pkg_name,pkg_version)
-                print_portfile(pkg_name,pkg_version)
+                print_portfile(pkg_name, pkg_version)
+            else:
+                print "No release found\n"
         return
 
     parser.print_help()
