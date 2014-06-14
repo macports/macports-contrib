@@ -206,23 +206,26 @@ def create_portfile(dict, file_name, dict2):
 
         file.write('platforms           darwin\n')
         license = dict['license']
-        if license:
+        if license and not license == "UNKNOWN":
             license = license.encode('utf-8')
             file.write('license             {0}\n'.format(license))
         else:
-            file.write('license             None\n')
+            file.write('license             {0}\n'.format(os.getenv('license','None')))
 
         if dict['maintainer']:
             maintainers = ' '.join(dict['maintainer'])
-            file.write('maintainers         {0}\n\n'.format(maintainers))
+            if not maintainers == "UNKNOWN": 
+                file.write('maintainers         {0}\n\n'.format(maintainers))
+            else:
+                file.write('maintainers         {0}\n\n'.format(os.getenv('maintainer','nomaintainer')))
         else:
-            file.write('maintainers         nomaintainer\n\n')
+            file.write('maintainers         {0}\n\n'.format(os.getenv('maintainer','nomaintainer')))
 
         summary = dict['summary']
         if summary:
-            summary = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`]*',
+            summary = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`]+',
                              ' ', summary)
-            sum_lines = textwrap.wrap(summary, width=70)
+            sum_lines = textwrap.wrap(summary)
             file.write('description         ')
             for sum_line in sum_lines:
                 if sum_line:
@@ -237,32 +240,39 @@ def create_portfile(dict, file_name, dict2):
         description = dict['description']
         if description:
             description = description.encode('utf-8')
-            description = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`]', ' ', description)
+            description = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`]+', ' ', description)
             lines = textwrap.wrap(description, width=70)
             file.write('long_description    ')
             for line in lines:
-                if line:
+                if line and lines.index(line)<4:
                     if not lines.index(line) == 0:
                         file.write('                    ')
-                    if line == lines[-1]:
+                    if lines.index(line)>=3:
+                        file.write("{0}...\n".format(line))
+                    elif line == lines[-1]:
                         file.write("{0}\n".format(line))
                     else:
                         file.write("{0} \\\n".format(line))
         else:
             file.write('long_description    ${description}\n\n')
-
-        file.write('homepage            {0}\n'.format(dict['home_page']))
+        home_page = dict['home_page']
+        
+        if home_page and not home_page == 'UNKNOWN':
+            file.write('homepage            {0}\n'.format(home_page))
+        else:
+            file.write('homepage            {0}\n'.format(os.getenv('home_page','')))
+            
 
         if dict2:
             master_site = '/'.join(dict2[0]['url'].split('/')[0:-1])
         else:
-            master_site = ''
+            master_site = os.getenv('master_site','')
         file.write('master_sites        {0}\n'.format(master_site))
         file.write('distname            py-{0}{1}\n\n'.format(
                    dict['name'], dict['version']))
         checksums_values = checksums(dict['name'], dict['version'])
         if checksums_values:
-            file.write('checksums           rmd160  {0} \\ \n'.format(
+            file.write('checksums           rmd160  {0} \\\n'.format(
                        checksums_values[0]))
             file.write('                    sha256  {0}\n\n'.format(
                        checksums_values[1]))
