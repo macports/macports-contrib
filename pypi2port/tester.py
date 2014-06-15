@@ -60,9 +60,12 @@ def release_data(pkg_name, pkg_version):
 def fetch(pkg_name, dict):
     checksum_md5 = dict['md5_digest']
     parent_dir = './sources'
-    src_dir = parent_dir + '/' + pkg_name
+    home_dir = parent_dir + '/' + 'python'
+    src_dir = home_dir + '/' + pkg_name
     if not os.path.exists(parent_dir):
         os.makedirs(parent_dir)
+    if not os.path.exists(home_dir):
+        os.makedirs(home_dir)
     if not os.path.exists(src_dir):
         os.makedirs(src_dir)
 
@@ -135,35 +138,35 @@ def dependencies(pkg_name, pkg_version, deps=False):
         if not value['filename'].split('.')[-1] == 'gz':
             fetch(pkg_name, value)
     try:
-        with open('./sources/' + pkg_name + '/EGG-INFO/requires.txt') as f:
+        with open('./sources/python/' + pkg_name + '/EGG-INFO/requires.txt') as f:
             list = f.readlines()
             list = [x.strip('\n') for x in list]
         f.close()
         try:
-            shutil.rmtree('./sources/' + pkg_name + '/EGG-INFO',
+            shutil.rmtree('./sources/python/' + pkg_name + '/EGG-INFO',
                           ignore_errors=True)
-            items = os.listdir('./sources/' + pkg_name)
+            items = os.listdir('./sources/python/' + pkg_name)
             for item in items[:]:
                 if not item.split('.')[-1] == 'gz':
-                    os.remove('./sources/' + pkg_name + '/' + item)
+                    os.remove('./sources/python/' + pkg_name + '/' + item)
                     items.remove(item)
 
             if not items:
-                os.rmdir('./sources/' + pkg_name)
+                os.rmdir('./sources/python/' + pkg_name)
         except:
             print ""
         return list
     except:
         try:
-            shutil.rmtree('./sources/'+pkg_name+'/EGG-INFO',
+            shutil.rmtree('./sources/python/'+pkg_name+'/EGG-INFO',
                           ignore_errors=True)
-            items = os.listdir('./sources/'+pkg_name)
+            items = os.listdir('./sources/python/'+pkg_name)
             for item in items[:]:
                 if not item.split('.')[-1] == 'gz':
-                    os.remove('./sources/'+pkg_name+'/'+item)
+                    os.remove('./sources/python/'+pkg_name+'/'+item)
                     items.remove(item)
             if not items:
-                os.rmdir('./sources/'+pkg_name)
+                os.rmdir('./sources/python/'+pkg_name)
         except:
             print ""
         return False
@@ -301,8 +304,8 @@ def create_portfile(dict, file_name, dict2):
 
 def print_portfile(pkg_name, pkg_version=None):
     print "\n"
-    root_dir = os.path.abspath("./sources")
-    port_dir = os.path.join(root_dir, 'Python')
+    root_dir = os.path.abspath("./dports")
+    port_dir = os.path.join(root_dir, 'python')
     home_dir = os.path.join(port_dir, pkg_name)
     if not os.path.exists(root_dir):
         os.makedirs(root_dir)
