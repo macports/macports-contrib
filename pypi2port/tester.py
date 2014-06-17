@@ -211,6 +211,8 @@ def create_portfile(dict, file_name, dict2):
         license = dict['license']
         if license and not license == "UNKNOWN":
             license = license.encode('utf-8')
+            license = license.split('\n')[0]
+            license = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`=]+',' ',license)
             file.write('license             {0}\n'.format(license))
         else:
             file.write('license             {0}\n'.format(os.getenv('license','None')))
@@ -226,7 +228,7 @@ def create_portfile(dict, file_name, dict2):
 
         summary = dict['summary']
         if summary:
-            summary = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`]+',
+            summary = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`=]+',
                              ' ', summary)
             sum_lines = textwrap.wrap(summary)
             file.write('description         ')
@@ -243,7 +245,7 @@ def create_portfile(dict, file_name, dict2):
         description = dict['description']
         if description:
             description = description.encode('utf-8')
-            description = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`]+', ' ', description)
+            description = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`=]+', ' ', description)
             lines = textwrap.wrap(description, width=70)
             file.write('long_description    ')
             for line in lines:
