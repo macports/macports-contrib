@@ -143,32 +143,34 @@ def dependencies(pkg_name, pkg_version, deps=False):
             list = [x.strip('\n') for x in list]
         f.close()
         try:
-            shutil.rmtree('./sources/python/' + pkg_name + '/EGG-INFO',
-                          ignore_errors=True)
-            items = os.listdir('./sources/python/' + pkg_name)
-            for item in items[:]:
-                if not item.split('.')[-1] == 'gz':
-                    os.remove('./sources/python/' + pkg_name + '/' + item)
-                    items.remove(item)
+#            shutil.rmtree('./sources/python/' + pkg_name + '/EGG-INFO',
+#                          ignore_errors=True)
+#            items = os.listdir('./sources/python/' + pkg_name)
+#            for item in items[:]:
+#                if not item.split('.')[-1] == 'gz':
+#                    os.remove('./sources/python/' + pkg_name + '/' + item)
+#                    items.remove(item)
+             print ""
 
-            if not items:
-                os.rmdir('./sources/python/' + pkg_name)
+#            if not items:
+#                os.rmdir('./sources/python/' + pkg_name)
         except:
-            print ""
+             print ""
         return list
     except:
         try:
-            shutil.rmtree('./sources/python/'+pkg_name+'/EGG-INFO',
-                          ignore_errors=True)
-            items = os.listdir('./sources/python/'+pkg_name)
-            for item in items[:]:
-                if not item.split('.')[-1] == 'gz':
-                    os.remove('./sources/python/'+pkg_name+'/'+item)
-                    items.remove(item)
-            if not items:
-                os.rmdir('./sources/python/'+pkg_name)
+#            shutil.rmtree('./sources/python/'+pkg_name+'/EGG-INFO',
+#                          ignore_errors=True)
+#            items = os.listdir('./sources/python/'+pkg_name)
+#            for item in items[:]:
+#                if not item.split('.')[-1] == 'gz':
+#                    os.remove('./sources/python/'+pkg_name+'/'+item)
+#                    items.remove(item)
+#            if not items:
+#                os.rmdir('./sources/python/'+pkg_name)
+             print ""
         except:
-            print ""
+             print ""
         return False
 
 
@@ -184,9 +186,10 @@ def checksums(pkg_name, pkg_version):
                 checksums.insert(0, h.hexdigest())
                 checksums.insert(1, hashlib.sha256(f.read()).hexdigest())
             dir = '/'.join(file_name.split('/')[0:-1])
-            os.remove(file_name)
+#            os.remove(file_name)
             try:
-                os.rmdir(dir)
+#                os.rmdir(dir)
+                print
             except OSError as ex:
                 print
             return checksums
@@ -212,7 +215,8 @@ def create_portfile(dict, file_name, dict2):
         if license and not license == "UNKNOWN":
             license = license.encode('utf-8')
             license = license.split('\n')[0]
-            license = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`=]+',' ',license)
+            license = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`\=(--)]+',' ',license)
+            license = re.sub(r'\s(\s)+',' ',license)
             file.write('license             {0}\n'.format(license))
         else:
             file.write('license             {0}\n'.format(os.getenv('license','None')))
@@ -228,8 +232,9 @@ def create_portfile(dict, file_name, dict2):
 
         summary = dict['summary']
         if summary:
-            summary = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`=]+',
+            summary = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`\=(--)]+',
                              ' ', summary)
+            summary = re.sub(r'\s(\s)+',' ',summary)
             sum_lines = textwrap.wrap(summary)
             file.write('description         ')
             for sum_line in sum_lines:
@@ -245,7 +250,8 @@ def create_portfile(dict, file_name, dict2):
         description = dict['description']
         if description:
             description = description.encode('utf-8')
-            description = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`=]+', ' ', description)
+            description = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`\=(--)]+', ' ', description)
+            description = re.sub(r'\s(\s)+', ' ', description)
             lines = textwrap.wrap(description, width=70)
             file.write('long_description    ')
             for line in lines:
@@ -272,9 +278,10 @@ def create_portfile(dict, file_name, dict2):
             master_site = '/'.join(dict2[0]['url'].split('/')[0:-1])
         else:
             master_site = os.getenv('master_site','')
-        file.write('master_sites        {0}\n'.format(master_site))
-        file.write('distname            py-{0}{1}\n\n'.format(
-                   dict['name'], dict['version']))
+        if master_site:
+            file.write('master_sites        {0}\n'.format(master_site))
+#        file.write('distname            py-{0}{1}\n\n'.format(
+#                   dict['name'], dict['version']))
         checksums_values = checksums(dict['name'], dict['version'])
         if checksums_values:
             file.write('checksums           rmd160  {0} \\\n'.format(
