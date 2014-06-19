@@ -280,6 +280,9 @@ def create_portfile(dict, file_name, dict2):
             master_site = os.getenv('master_site','')
         if master_site:
             file.write('master_sites        {0}\n'.format(master_site))
+            master_site_exists = True
+        else:
+            master_site_exists = False
 #        file.write('distname            py-{0}{1}\n\n'.format(
 #                   dict['name'], dict['version']))
         checksums_values = checksums(dict['name'], dict['version'])
@@ -305,10 +308,13 @@ def create_portfile(dict, file_name, dict2):
                 file.write('                        port:py-{0}\n'.format(dep))
         file.write('\n')
         file.write('    livecheck.type      none\n')
-        file.write('} else {\n')
-        file.write('    livecheck.type      regex\n')
-        file.write('    livecheck.url       ${master_sites}\n')
-        file.write('}\n')
+        if master_site_exists:
+            file.write('} else {\n')
+            file.write('    livecheck.type      regex\n')
+            file.write('    livecheck.url       ${master_sites}\n')
+            file.write('}\n')
+        else:
+            file.write('}\n')
 
 
 def print_portfile(pkg_name, pkg_version=None):
