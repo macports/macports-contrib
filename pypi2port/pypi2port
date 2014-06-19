@@ -217,6 +217,8 @@ def create_portfile(dict, file_name, dict2):
             license = license.split('\n')[0]
             license = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`\=(--)]+',' ',license)
             license = re.sub(r'\s(\s)+',' ',license)
+            license = re.sub(r'([A-Z]*)([a-z]*)([\s]*)([0-9]\.*[0-9]*)',r'\1\2-\4',license)
+            license = re.sub(r'v-','-',license)
             file.write('license             {0}\n'.format(license))
         else:
             file.write('license             {0}\n'.format(os.getenv('license','None')))
