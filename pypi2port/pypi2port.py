@@ -273,11 +273,13 @@ def create_portfile(dict, file_name, dict2):
         else:
             file.write('homepage            {0}\n'.format(os.getenv('home_page','')))
             
-
-        if dict2:
-            master_site = '/'.join(dict2[0]['url'].split('/')[0:-1])
-        else:
-            master_site = os.getenv('master_site','')
+        try:
+            master_site = dict['release_url']
+        except:
+            if dict2:
+                master_site = '/'.join(dict2[0]['url'].split('/')[0:-1])
+            else:
+                master_site = os.getenv('master_site','')
         if master_site:
             file.write('master_sites        {0}\n'.format(master_site))
             master_site_exists = True
