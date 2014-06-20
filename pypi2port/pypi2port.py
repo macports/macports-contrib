@@ -139,8 +139,7 @@ def dependencies(pkg_name, pkg_version, deps=False):
         if not value['filename'].split('.')[-1] == 'gz':
             fetch(pkg_name, value)
     try:
-        with open('./sources/python/' + pkg_name + '/EGG-INFO/requires.txt')
-        as f:
+        with open('./sources/python/' + pkg_name + '/EGG-INFO/requires.txt') as f:
             list = f.readlines()
             list = [x.strip('\n') for x in list]
         f.close()
