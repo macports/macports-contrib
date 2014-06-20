@@ -131,6 +131,7 @@ def fetch_url(pkg_name, pkg_version, checksum=False, deps=False):
 
 
 def dependencies(pkg_name, pkg_version, deps=False):
+    flag = False
     if not deps:
         return
     values = client.release_urls(pkg_name, pkg_version)
@@ -138,43 +139,46 @@ def dependencies(pkg_name, pkg_version, deps=False):
         if not value['filename'].split('.')[-1] == 'gz':
             fetch(pkg_name, value)
     try:
-        with open('./sources/python/' + pkg_name + '/EGG-INFO/requires.txt') as f:
+        with open('./sources/python/' + pkg_name + '/EGG-INFO/requires.txt')
+        as f:
             list = f.readlines()
             list = [x.strip('\n') for x in list]
         f.close()
         try:
-#            shutil.rmtree('./sources/python/' + pkg_name + '/EGG-INFO',
-#                          ignore_errors=True)
-#            items = os.listdir('./sources/python/' + pkg_name)
-#            for item in items[:]:
-#                if not item.split('.')[-1] == 'gz':
-#                    os.remove('./sources/python/' + pkg_name + '/' + item)
-#                    items.remove(item)
-             print ""
-
-#            if not items:
-#                os.rmdir('./sources/python/' + pkg_name)
+            if flag:
+                shutil.rmtree('./sources/python/' + pkg_name + '/EGG-INFO',
+                              ignore_errors=True)
+                items = os.listdir('./sources/python/' + pkg_name)
+                for item in items[:]:
+                    if not item.split('.')[-1] == 'gz':
+                        os.remove('./sources/python/' + pkg_name + '/' + item)
+                        items.remove(item)
+                if not items:
+                    os.rmdir('./sources/python/' + pkg_name)
+            print ""
         except:
-             print ""
+            print ""
         return list
     except:
         try:
-#            shutil.rmtree('./sources/python/'+pkg_name+'/EGG-INFO',
-#                          ignore_errors=True)
-#            items = os.listdir('./sources/python/'+pkg_name)
-#            for item in items[:]:
-#                if not item.split('.')[-1] == 'gz':
-#                    os.remove('./sources/python/'+pkg_name+'/'+item)
-#                    items.remove(item)
-#            if not items:
-#                os.rmdir('./sources/python/'+pkg_name)
-             print ""
+            if flag:
+                shutil.rmtree('./sources/python/'+pkg_name+'/EGG-INFO',
+                              ignore_errors=True)
+                items = os.listdir('./sources/python/'+pkg_name)
+                for item in items[:]:
+                    if not item.split('.')[-1] == 'gz':
+                        os.remove('./sources/python/'+pkg_name+'/'+item)
+                        items.remove(item)
+                if not items:
+                    os.rmdir('./sources/python/'+pkg_name)
+            print ""
         except:
-             print ""
+            print ""
         return False
 
 
 def checksums(pkg_name, pkg_version):
+    flag = False
     file_name = fetch_url(pkg_name, pkg_version, True)
     print file_name
     if file_name:
@@ -186,9 +190,11 @@ def checksums(pkg_name, pkg_version):
                 checksums.insert(0, h.hexdigest())
                 checksums.insert(1, hashlib.sha256(f.read()).hexdigest())
             dir = '/'.join(file_name.split('/')[0:-1])
-#            os.remove(file_name)
+            if flag:
+                os.remove(file_name)
             try:
-#                os.rmdir(dir)
+                if flag:
+                    os.rmdir(dir)
                 print
             except OSError as ex:
                 print
@@ -215,28 +221,32 @@ def create_portfile(dict, file_name, dict2):
         if license and not license == "UNKNOWN":
             license = license.encode('utf-8')
             license = license.split('\n')[0]
-            license = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`\=(--)]+',' ',license)
-            license = re.sub(r'\s(\s)+',' ',license)
-            license = re.sub(r'([A-Z]*)([a-z]*)([\s]*)([0-9]\.*[0-9]*)',r'\1\2-\4',license)
-            license = re.sub(r'v-','-',license)
+            license = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`\=(--)]+', ' ', license)
+            license = re.sub(r'\s(\s)+', ' ', license)
+            license = re.sub(r'([A-Z]*)([a-z]*)([\s]*)([0-9]\.*[0-9]*)',
+                             r'\1\2-\4', license)
+            license = re.sub(r'v-', '-', license)
             file.write('license             {0}\n'.format(license))
         else:
-            file.write('license             {0}\n'.format(os.getenv('license','None')))
+            file.write('license             {0}\n'.format(
+                       os.getenv('license', 'None')))
 
         if dict['maintainer']:
             maintainers = ' '.join(dict['maintainer'])
-            if not maintainers == "UNKNOWN": 
+            if not maintainers == "UNKNOWN":
                 file.write('maintainers         {0}\n\n'.format(maintainers))
             else:
-                file.write('maintainers         {0}\n\n'.format(os.getenv('maintainer','nomaintainer')))
+                file.write('maintainers         {0}\n\n'.format(
+                           os.getenv('maintainer', 'nomaintainer')))
         else:
-            file.write('maintainers         {0}\n\n'.format(os.getenv('maintainer','nomaintainer')))
+            file.write('maintainers         {0}\n\n'.format(
+                       os.getenv('maintainer', 'nomaintainer')))
 
         summary = dict['summary']
         if summary:
             summary = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`\=(--)]+',
                              ' ', summary)
-            summary = re.sub(r'\s(\s)+',' ',summary)
+            summary = re.sub(r'\s(\s)+', ' ', summary)
             sum_lines = textwrap.wrap(summary)
             file.write('description         ')
             for sum_line in sum_lines:
@@ -252,15 +262,16 @@ def create_portfile(dict, file_name, dict2):
         description = dict['description']
         if description:
             description = description.encode('utf-8')
-            description = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`\=(--)]+', ' ', description)
+            description = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`\=(--)]+',
+                                 ' ', description)
             description = re.sub(r'\s(\s)+', ' ', description)
             lines = textwrap.wrap(description, width=70)
             file.write('long_description    ')
             for line in lines:
-                if line and lines.index(line)<4:
+                if line and lines.index(line) < 4:
                     if not lines.index(line) == 0:
                         file.write('                    ')
-                    if lines.index(line)>=3:
+                    if lines.index(line) >= 3:
                         file.write("{0}...\n".format(line))
                     elif line == lines[-1]:
                         file.write("{0}\n".format(line))
@@ -269,19 +280,20 @@ def create_portfile(dict, file_name, dict2):
         else:
             file.write('long_description    ${description}\n\n')
         home_page = dict['home_page']
-        
+
         if home_page and not home_page == 'UNKNOWN':
             file.write('homepage            {0}\n'.format(home_page))
         else:
-            file.write('homepage            {0}\n'.format(os.getenv('home_page','')))
-            
+            file.write('homepage            {0}\n'.format(
+                       os.getenv('home_page', '')))
+
         try:
             master_site = dict['release_url']
         except:
             if dict2:
                 master_site = '/'.join(dict2[0]['url'].split('/')[0:-1])
             else:
-                master_site = os.getenv('master_site','')
+                master_site = os.getenv('master_site', '')
         if master_site:
             file.write('master_sites        {0}\n'.format(master_site))
             master_site_exists = True
