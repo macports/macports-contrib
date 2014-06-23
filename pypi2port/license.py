@@ -5,6 +5,7 @@ exec python $0 ${1+"$@"}
 
 import xmlrpclib
 import sys
+#import pdb
 #from datetime import datetime
 
 #startTime = datetime.now()
@@ -22,9 +23,14 @@ for package_name in list_packages:
     if vers:
         data = client.release_data(package_name,vers[0])
         if data:
+#            pdb.set_trace()
             license = data['license']
-            license.encode('utf-8')
-            print package_name,vers,license
+            try:
+                license = license.decode('utf-8','ignore')
+                license = license.encode('utf-8','ignore')
+                print package_name,vers,license
+            except:
+                print package_name,vers
         else:
             print package_name,vers
     else:
