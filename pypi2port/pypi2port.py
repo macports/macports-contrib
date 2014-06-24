@@ -219,6 +219,7 @@ def create_portfile(dict, file_name, dict2):
         license = dict['license']
         if license and not license == "UNKNOWN":
             license = license.encode('utf-8')
+            license = filter(lambda x: x in string.printable, license)
             license = license.split('\n')[0]
             license = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`\=(--)]+', ' ', license)
             license = re.sub(r'\s(\s)+', ' ', license)
@@ -261,6 +262,7 @@ def create_portfile(dict, file_name, dict2):
         description = dict['description']
         if description:
             description = description.encode('utf-8')
+            description = filter(lambda x: x in string.printable, description)
             description = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`\=(--)]+',
                                  ' ', description)
             description = re.sub(r'\s(\s)+', ' ', description)

@@ -5,6 +5,7 @@ exec python $0 ${1+"$@"}
 
 import xmlrpclib
 import sys
+import string
 #import pdb
 #from datetime import datetime
 
@@ -25,12 +26,8 @@ for package_name in list_packages:
         if data:
 #            pdb.set_trace()
             license = data['license']
-            try:
-                license = license.decode('utf-8','ignore')
-                license = license.encode('utf-8','ignore')
-                print package_name,vers,license
-            except:
-                print package_name,vers
+            license = filter(lambda x: x in string.printable, license)
+            print package_name,vers,license
         else:
             print package_name,vers
     else:
