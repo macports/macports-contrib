@@ -223,7 +223,7 @@ def create_portfile(dict, file_name, dict2):
             license = license.split('\n')[0]
             license = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`\=(--)]+', ' ', license)
             license = re.sub(r'\s(\s)+', ' ', license)
-            license = re.sub(r'([A-Z]*)([a-z]*)([\s]+v*)([0-9]\.*[0-9]*)',
+            license = re.sub(r'([A-Z]*)([a-z]*)([\s]*v*)([0-9]\.*[0-9]*)',
                              r'\1\2-\4', license)
             license = re.sub(r'v(-*)([0-9])', r'\1\2', license)
             file.write('license             {0}\n'.format(license))
@@ -247,6 +247,8 @@ def create_portfile(dict, file_name, dict2):
             summary = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`\=(--)]+',
                              ' ', summary)
             summary = re.sub(r'\s(\s)+', ' ', summary)
+            summary = summary.encode('utf-8')
+            summary = filter(lambda x: x in string.printable, summary)
             sum_lines = textwrap.wrap(summary)
             file.write('description         ')
             for sum_line in sum_lines:
