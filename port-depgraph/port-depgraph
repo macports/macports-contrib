@@ -9,7 +9,7 @@ if /usr/bin/which -s port-tclsh; then exec port-tclsh "$0" -i `which port-tclsh`
 # $ port-depgraph apache2 | dot -Tpng -o apache2.png
 
 
-set MY_VERSION 0.1
+set MY_VERSION 0.2
 
 
 array set portsSeen {}
