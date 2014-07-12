@@ -23,13 +23,8 @@ proc printUsage {} {
     puts "  -v    verbose output, includes dependency labels"
     puts "  -V    show version and MacPorts version being used"
     puts ""
-    puts "port-name is the name of a port to show dependencies"
+    puts "port-name is the name of a port whose dependencies should be shown"
     puts "variants is the list of variants to enable/disable: +one -two..."
-    puts ""
-    puts "Dependency types are represented as follows:"
-    puts "  depends_run   is dashed"
-    puts "  depends_build is dotted"
-    puts "  depends_lib   is solid"
 }
 
 
@@ -45,7 +40,7 @@ proc dependenciesForPort {portName variantInfo} {
     array unset portInfo
     array set portInfo [mportinfo $mport]
     mportclose $mport
-    array set dependencyDictionary {depends_build build depends_lib lib depends_run run}
+    array set dependencyDictionary {depends_fetch fetch depends_extract extract depends_build build depends_lib lib depends_run run}
     foreach dependencyType [array names dependencyDictionary] {
         if {[info exists portInfo($dependencyType)] && [string length $portInfo($dependencyType)] > 0} {
             foreach dependency $portInfo($dependencyType) {
@@ -71,22 +66,26 @@ proc print_dependencies {dependencyArray portName verbose} {
         set aBy  [lindex $aList 1]
         set aPort [lindex $aList 2]
 
-        set style "solid"
-        if {$aType == "run"} {
-            set style "dashed"
+        set color "black"
+        if {$aType == "lus"} {
+            set color "#666666"
+        } elseif {$aType == "fetch"} {
+            set color "#ff00007f"
+        } elseif {$aType == "extract"} {
+            set color "#00ff007f"
         } elseif {$aType == "build"} {
-            set style "dotted"
+            set color "#0000ff7f"
         }
 
-        set color "black"
-        if {$aBy != "port"} {
-            set color "#708090"
+        set style "solid"
+        if {$aBy == "bin" || $aBy == "lib"} {
+            set style "dashed"
         }
 
         if {!$verbose} {
-            puts [format {"%s" -> "%s" [style="%s"]} $portName $aPort $style]
+            puts [format {"%s" -> "%s" [style="%s", color="%s"]} $portName $aPort $style $color]
         } else {
-            puts [format {"%s" -> "%s" [style="%s", label="%s", color="%s"]} $portName $aPort $style $aBy $color]
+            puts [format {"%s" -> "%s" [style="%s", color="%s", label="%s"]} $portName $aPort $style $color $aBy]
         }
 
         print_dependencies portDependencies $aPort $verbose
@@ -114,11 +113,63 @@ proc find_all_dependencies {portName variantInfo verbose} {
     }
     set caption [format {Dependencies of %s} ${portSpec}]
 
+    set font "Helvetica Neue"
+    set fontBold "$font Bold"
+
     puts "strict digraph \"$portName\" \{"
-    puts [format {graph [label="%s"]} ${caption}]
+    puts [format {graph [fontname="%s" fontsize="14" label="%s"]} $fontBold $caption]
+    puts [format {node [fontname="%s"]} $font]
+    puts [format {edge [fontname="%s"]} $font]
 
     print_dependencies portDependencies $portName $verbose
 
+    puts [format {
+"graph legend" [shape=none fontsize="9" label=<
+    <table border="0" cellborder="1" cellpadding="6" cellspacing="0">
+        <tr>
+            <td colspan="2"><font face="%s">Legend</font></td>
+        </tr>
+        <tr>
+            <td>
+                <table border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td><font color="#000000" point-size="18">&#x2500;  </font></td>
+                        <td align="left">depends_lib</td>
+                    </tr>
+                    <tr>
+                        <td><font color="#666666" point-size="18">&#x2500;  </font></td>
+                        <td align="left">depends_run</td>
+                    </tr>
+                    <tr>
+                        <td><font color="#ff00007f" point-size="18">&#x2500;  </font></td>
+                        <td align="left">depends_fetch</td>
+                    </tr>
+                    <tr>
+                        <td><font color="#00ff007f" point-size="18">&#x2500;  </font></td>
+                        <td align="left">depends_extract</td>
+                    </tr>
+                    <tr>
+                        <td><font color="#0000ff7f" point-size="18">&#x2500;  </font></td>
+                        <td align="left">depends_build</td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td><font point-size="18">&#x2500;  </font></td>
+                        <td align="left" balign="left">port:<br/>path:</td>
+                    </tr>
+                    <tr>
+                        <td><font point-size="18">&#x2508;  </font></td>
+                        <td align="left" balign="left">bin:<br/>lib:</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+>]
+} $fontBold ]
     puts "\}"
 }
 
