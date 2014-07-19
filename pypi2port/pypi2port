@@ -22,6 +22,7 @@ import textwrap
 import string
 import shutil
 import re
+import difflib
 
 client = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
 
@@ -175,6 +176,33 @@ def dependencies(pkg_name, pkg_version, deps=False):
             print ""
         return False
 
+def create_diff(name, port):
+    diff_file = './dports/python/'+name+'/'+name+'.diff'
+    fromfile = './dports/python/'+name+'/Portfile'
+    tofile = '/opt/mports/trunk/dports/python/'+port+'/Portfile'
+    a = open(fromfile).readlines()
+    b = open(tofile).readlines()
+    diff_string = difflib.ndiff(a,b)
+    with open(diff_file, 'w') as d:
+        try:
+            while 1:
+                d.write(diff_string.next())
+        except:
+            pass
+
+
+def search_port(name):
+    for port in os.listdir('/opt/mports/trunk/dports/python'):
+        if '-' in port:
+            port = port.split('-')
+            prefix = port[0]
+            port = ''.join(port[1:])
+        if port == name:
+                if prefix:
+                    port = prefix+'-'+port
+                create_diff(name, port)
+                return True
+    return False
 
 def checksums(pkg_name, pkg_version):
     flag = False
@@ -334,6 +362,8 @@ def create_portfile(dict, file_name, dict2):
             file.write('}\n')
         else:
             file.write('}\n')
+
+    search_port(dict['name'])
 
 
 def print_portfile(pkg_name, pkg_version=None):
