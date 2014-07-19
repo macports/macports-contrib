@@ -319,10 +319,10 @@ def create_portfile(dict, file_name, dict2):
                        os.getenv('home_page', '')))
 
         try:
-            master_site = dict['release_url']
-        except:
-            if dict2:
                 master_site = '/'.join(dict2[0]['url'].split('/')[0:-1])
+        except:
+            if dict['release_url']:
+                master_site = dict['release_url']
             else:
                 master_site = os.getenv('master_site', '')
         if master_site:
