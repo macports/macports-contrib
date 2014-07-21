@@ -23,6 +23,7 @@ import string
 import shutil
 import re
 import difflib
+import subprocess
 
 client = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
 
@@ -176,13 +177,10 @@ def dependencies(pkg_name, pkg_version, deps=False):
             print ""
         return False
 
-def create_diff(name, port):
-    diff_file = './dports/python/'+name+'/'+name+'.diff'
-    fromfile = './dports/python/'+name+'/Portfile'
-    tofile = '/opt/mports/trunk/dports/python/'+port+'/Portfile'
-    a = open(fromfile).readlines()
-    b = open(tofile).readlines()
-    diff_string = difflib.ndiff(a,b)
+def create_diff(old_file, new_file, diff_file):
+    a = open(old_file).readlines()
+    b = open(new_file).readlines()
+    diff_string = difflib.unified_diff(a,b,"Portfile.orig","Portfile")
     with open(diff_file, 'w') as d:
         try:
             while 1:
@@ -192,17 +190,12 @@ def create_diff(name, port):
 
 
 def search_port(name):
-    for port in os.listdir('/opt/mports/trunk/dports/python'):
-        if '-' in port:
-            port = port.split('-')
-            prefix = port[0]
-            port = ''.join(port[1:])
-        if port == name:
-                if prefix:
-                    port = prefix+'-'+port
-                create_diff(name, port)
-                return True
-    return False
+    try:
+        command = "port file name:^py-" + name + "$"
+        existing_portfile = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).strip()
+        return existing_portfile
+    except Exception, e:
+        return False
 
 def checksums(pkg_name, pkg_version):
     flag = False
@@ -362,8 +355,12 @@ def create_portfile(dict, file_name, dict2):
             file.write('}\n')
         else:
             file.write('}\n')
-
-    search_port(dict['name'])
+    port_exists = search_port(dict['name'])
+    if port_exists:
+        old_file = port_exists
+        new_file = './dports/python/'+dict['name']+'/Portfile'
+        diff_file = './dports/python/'+dict['name']+'/patch.Portfile.diff'
+        create_diff(old_file, new_file, diff_file)
 
 
 def print_portfile(pkg_name, pkg_version=None):
