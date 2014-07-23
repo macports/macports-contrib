@@ -365,8 +365,8 @@ def create_portfile(dict, file_name, dict2):
     port_exists = search_port(dict['name'])
     if port_exists:
         old_file = port_exists
-        new_file = './dports/python/'+dict['name']+'/Portfile'
-        diff_file = './dports/python/'+dict['name']+'/patch.Portfile.diff'
+        new_file = './dports/python/py-'+dict['name']+'/Portfile'
+        diff_file = './dports/python/py-'+dict['name']+'/patch.Portfile.diff'
         create_diff(old_file, new_file, diff_file)
 
 
