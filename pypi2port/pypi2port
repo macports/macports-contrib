@@ -210,10 +210,10 @@ def checksums(pkg_name, pkg_version):
 #                checksums.insert(0, h.hexdigest())
 #                checksums.insert(1, hashlib.sha256(f.read()).hexdigest())
 
-            command = "openssl rmd160 "+file_name
+            command = "openssl dgst -rmd160 "+file_name
             checksums.insert(0,subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).split('=')[1].strip())
 
-            command = "openssl sha256 "+file_name
+            command = "openssl dgst -sha256 "+file_name
             checksums.insert(1,subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).split('=')[1].strip())
 
             dir = '/'.join(file_name.split('/')[0:-1])
@@ -330,8 +330,8 @@ def create_portfile(dict, file_name, dict2):
             master_site_exists = True
         else:
             master_site_exists = False
-#        file.write('distname            py-{0}{1}\n\n'.format(
-#                   dict['name'], dict['version']))
+        file.write('distname            {0}-{1}\n\n'.format(
+                   dict['name'], dict['version']))
         checksums_values = checksums(dict['name'], dict['version'])
         if checksums_values:
             file.write('checksums           rmd160  {0} \\\n'.format(
