@@ -204,11 +204,18 @@ def checksums(pkg_name, pkg_version):
     if file_name:
         checksums = []
         try:
-            h = hashlib.new('ripemd160')
-            with open(file_name) as f:
-                h.update(f.read())
-                checksums.insert(0, h.hexdigest())
-                checksums.insert(1, hashlib.sha256(f.read()).hexdigest())
+#            h = hashlib.new('ripemd160')
+#            with open(file_name) as f:
+#                h.update(f.read())
+#                checksums.insert(0, h.hexdigest())
+#                checksums.insert(1, hashlib.sha256(f.read()).hexdigest())
+
+            command = "openssl rmd160 "+file_name
+            checksums.insert(0,subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).split('=')[1].strip())
+
+            command = "openssl sha256 "+file_name
+            checksums.insert(1,subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).split('=')[1].strip())
+
             dir = '/'.join(file_name.split('/')[0:-1])
             if flag:
                 os.remove(file_name)
