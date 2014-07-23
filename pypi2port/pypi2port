@@ -347,8 +347,8 @@ def create_portfile(dict, file_name, dict2):
             file.write('python.versions     25 26 27\n\n')
 
         file.write('if {${name} ne ${subport}} {\n')
-        file.write('    depends_build       port:')
-        file.write('py${python.version}-setuptools\n')
+        file.write('    depends_build-append \\\n')
+        file.write('                        port:py${python.version}-setuptools\n')
         deps = dependencies(dict['name'], dict['version'], True)
         if deps:
             for dep in deps:
