@@ -35,16 +35,13 @@ def list_all():
 
 
 def search(pkg_name):
-    print "\n"
     values = client.search({'name': pkg_name})
     for value in values:
         for key in value.keys():
             print key, '-->', value[key]
-        print "\n"
 
 
 def release_data(pkg_name, pkg_version):
-    print "\n"
     if pkg_version:
         values = client.release_data(pkg_name, pkg_version)
         if values:
@@ -53,13 +50,12 @@ def release_data(pkg_name, pkg_version):
         else:
             print "No such package found."
             print "Please specify the exact package name."
-        print "\n"
         return
-    print "\n"
     return
 
 
 def fetch(pkg_name, dict):
+    print "Fetching distfiles..."
     checksum_md5 = dict['md5_digest']
     parent_dir = './sources'
     home_dir = parent_dir + '/' + 'python'
@@ -101,14 +97,13 @@ def fetch(pkg_name, dict):
 
     checksum_md5_calc = hashlib.md5(open(file_name).read()).hexdigest()
     if str(checksum_md5) == str(checksum_md5_calc):
-        print 'Successfully fetched\n'
+        print 'Successfully fetched'
         ext = file_name.split('.')[-1]
         if ext == 'egg':
             zip = zipfile.ZipFile(file_name)
             for name in zip.namelist():
                 if name.split("/")[0] == "EGG-INFO":
                     zip.extract(name, src_dir)
-        print "\n"
         return file_name
     else:
         print 'Aborting due to inconsistency on checksums\n'
@@ -116,7 +111,6 @@ def fetch(pkg_name, dict):
             os.remove(file_name)
         except OSError, e:
             print "Error: %s - %s." % (e.filename, e.strerror)
-        print "\n"
         return False
 
 
@@ -127,7 +121,6 @@ def fetch_url(pkg_name, pkg_version, checksum=False, deps=False):
             if value['filename'].split('.')[-1] == 'gz':
                 return fetch(pkg_name, value)
     else:
-        print "\n"
         for value in values:
             return fetch(pkg_name, value)
 
@@ -141,6 +134,7 @@ def dependencies(pkg_name, pkg_version, deps=False):
         if not value['filename'].split('.')[-1] == 'gz':
             fetch(pkg_name, value)
     try:
+#        print "Finding dependencies..."
         with open('./sources/python/py-' + pkg_name + '/EGG-INFO/requires.txt') as f:
             list = f.readlines()
             list = [x.strip('\n') for x in list]
@@ -156,9 +150,8 @@ def dependencies(pkg_name, pkg_version, deps=False):
                         items.remove(item)
                 if not items:
                     os.rmdir('./sources/python/py-' + pkg_name)
-            print ""
         except:
-            print ""
+            pass
         return list
     except:
         try:
@@ -172,9 +165,8 @@ def dependencies(pkg_name, pkg_version, deps=False):
                         items.remove(item)
                 if not items:
                     os.rmdir('./sources/python/py-'+pkg_name)
-            print ""
         except:
-            print ""
+            pass
         return False
 
 def create_diff(old_file, new_file, diff_file):
@@ -199,8 +191,9 @@ def search_port(name):
 
 def checksums(pkg_name, pkg_version):
     flag = False
+    print "Attempting to fetch distfiles..."
     file_name = fetch_url(pkg_name, pkg_version, True)
-    print file_name
+#    print file_name
     if file_name:
         checksums = []
         try:
@@ -209,11 +202,11 @@ def checksums(pkg_name, pkg_version):
 #                h.update(f.read())
 #                checksums.insert(0, h.hexdigest())
 #                checksums.insert(1, hashlib.sha256(f.read()).hexdigest())
-
-            command = "openssl dgst -rmd160 "+file_name
+            print "Generating checksums..."
+            command = "openssl rmd160 "+file_name
             checksums.insert(0,subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).split('=')[1].strip())
 
-            command = "openssl dgst -sha256 "+file_name
+            command = "openssl sha256 "+file_name
             checksums.insert(1,subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT).split('=')[1].strip())
 
             dir = '/'.join(file_name.split('/')[0:-1])
@@ -256,6 +249,8 @@ def create_portfile(dict, file_name, dict2):
             license = re.sub(r'v(-*)([0-9])', r'\1\2', license)
             file.write('license             {0}\n'.format(license))
         else:
+            print "No license found..."
+            print "Looking for license in environment variables..."
             file.write('license             {0}\n'.format(
                        os.getenv('license', 'None')))
 
@@ -267,6 +262,8 @@ def create_portfile(dict, file_name, dict2):
                 file.write('maintainers         {0}\n\n'.format(
                            os.getenv('maintainer', 'nomaintainer')))
         else:
+            print "No maintainers found..."
+            print "Looking for maintainers in environment variables..."
             file.write('maintainers         {0}\n\n'.format(
                        os.getenv('maintainer', 'nomaintainer')))
 
@@ -315,6 +312,8 @@ def create_portfile(dict, file_name, dict2):
         if home_page and not home_page == 'UNKNOWN':
             file.write('homepage            {0}\n'.format(home_page))
         else:
+            print "No homepage found..."
+            print "Looking for homepage in environment variables..."
             file.write('homepage            {0}\n'.format(
                        os.getenv('home_page', '')))
 
@@ -324,14 +323,19 @@ def create_portfile(dict, file_name, dict2):
             if dict['release_url']:
                 master_site = dict['release_url']
             else:
+                print "No master site found..."
+                print "Looking for master site in environment variables..."
                 master_site = os.getenv('master_site', '')
         if master_site:
             file.write('master_sites        {0}\n'.format(master_site))
             master_site_exists = True
         else:
             master_site_exists = False
-        file.write('distname            {0}-{1}\n\n'.format(
-                   dict['name'], dict['version']))
+#        file.write('distname            py-{0}{1}\n\n'.format(
+#                   dict['name'], dict['version']))
+
+
+        print "Attempting to generate checksums for "+dict['name']+"..."
         checksums_values = checksums(dict['name'], dict['version'])
         if checksums_values:
             file.write('checksums           rmd160  {0} \\\n'.format(
@@ -346,6 +350,7 @@ def create_portfile(dict, file_name, dict2):
         else:
             file.write('python.versions     25 26 27\n\n')
 
+        print "Finding dependencies..."
         file.write('if {${name} ne ${subport}} {\n')
         file.write('    depends_build-append \\\n')
         file.write('                        port:py${python.version}-setuptools\n')
@@ -362,16 +367,18 @@ def create_portfile(dict, file_name, dict2):
             file.write('}\n')
         else:
             file.write('}\n')
+    print "Searching for existent port..."
     port_exists = search_port(dict['name'])
     if port_exists:
+        print "Creating diff..."
         old_file = port_exists
         new_file = './dports/python/py-'+dict['name']+'/Portfile'
         diff_file = './dports/python/py-'+dict['name']+'/patch.Portfile.diff'
         create_diff(old_file, new_file, diff_file)
-
+    else:
+        print "No port found."
 
 def print_portfile(pkg_name, pkg_version=None):
-    print "\n"
     root_dir = os.path.abspath("./dports")
     port_dir = os.path.join(root_dir, 'python')
     home_dir = os.path.join(port_dir, 'py-'+pkg_name)
@@ -382,10 +389,21 @@ def print_portfile(pkg_name, pkg_version=None):
     if not os.path.exists(home_dir):
         os.makedirs(home_dir)
 
-    dict = client.release_data(pkg_name, pkg_version)
+    print "Attempting to fetch data from pypi..."
+
+    dict = client.release_data(pkg_name, pkg_version)        
     dict2 = client.release_urls(pkg_name, pkg_version)
+    if dict and dict2:
+        print "Data fetched successfully."
+    elif dict:
+        print "Release Data fetched successfully."
+    elif dict2:
+        print "Release url fetched successfully."
+    else:
+        print "No data found."
 
     file_name = os.path.join(home_dir, "Portfile")
+    print "Creating Portfile for pypi package "+pkg_name+"..."
     create_portfile(dict, file_name, dict2)
     print "SUCCESS\n"
 
