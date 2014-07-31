@@ -331,7 +331,7 @@ def create_portfile(dict, file_name, dict2):
             master_site_exists = True
         else:
             master_site_exists = False
-        file.write('distname            {0}-{1}\n\n'.format(
+        file.write('distname            {0}-{1}.tar.gz\n\n'.format(
                    dict['name'], dict['version']))
 
 
@@ -375,6 +375,12 @@ def create_portfile(dict, file_name, dict2):
         new_file = './dports/python/py-'+dict['name']+'/Portfile'
         diff_file = './dports/python/py-'+dict['name']+'/patch.Portfile.diff'
         create_diff(old_file, new_file, diff_file)
+        print str(os.path.abspath(diff_file))+"\n"
+        with open(diff_file) as diff:
+            print diff.read()
+        print "\nIf you want to open a new ticket. Please visit"
+        print "https://trac.macports.org/auth/login/?next=/newticket"
+        print "to open a new ticket after logging in with your credentials."
     else:
         print "No port found."
 
