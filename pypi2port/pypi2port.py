@@ -331,8 +331,8 @@ def create_portfile(dict, file_name, dict2):
             master_site_exists = True
         else:
             master_site_exists = False
-#        file.write('distname            py-{0}{1}\n\n'.format(
-#                   dict['name'], dict['version']))
+        file.write('distname            {0}-{1}.tar.gz\n\n'.format(
+                   dict['name'], dict['version']))
 
 
         print "Attempting to generate checksums for "+dict['name']+"..."
