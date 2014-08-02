@@ -24,6 +24,7 @@ import shutil
 import re
 import difflib
 import subprocess
+import requests
 
 client = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
 
@@ -223,8 +224,20 @@ def checksums(pkg_name, pkg_version):
             print "Error\n"
             return
 
+def search_distfile(name,version):
+    try:
+        url = client.release_urls(name,version)[0]['url']
+        r = requests.get(url, verify=False)
+        if not r.status_code == 200:
+            raise Error('No distfile')
+    except:
+        print "No distfile found"
+        print "Please set a DISTFILE env var before generating the portfile"
+        sys.exit(0)
 
 def create_portfile(dict, file_name, dict2):
+    search_distfile(dict['name'],dict['version'])
+    print "Creating Portfile for pypi package "+dict['name']+"..."
     with open(file_name, 'w') as file:
         file.write('# -*- coding: utf-8; mode: tcl; tab-width: 4; ')
         file.write('indent-tabs-mode: nil; c-basic-offset: 4 ')
@@ -409,7 +422,6 @@ def print_portfile(pkg_name, pkg_version=None):
         print "No data found."
 
     file_name = os.path.join(home_dir, "Portfile")
-    print "Creating Portfile for pypi package "+pkg_name+"..."
     create_portfile(dict, file_name, dict2)
     print "SUCCESS\n"
 
