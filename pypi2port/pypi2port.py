@@ -235,6 +235,24 @@ def search_distfile(name,version):
         print "Please set a DISTFILE env var before generating the portfile"
         sys.exit(0)
 
+def search_license(license):
+    license = license.lower()
+    patterns = ['.*mit.*','.*apache.*2','.*apache.*','.*bsd.*','.*agpl.*3',
+               '.*agpl.*2','.*agpl.*','.*affero.*3','.*affero.*2','.*affero.*',
+               '.*lgpl.*3','.*lgpl.*2','.*lgpl.*','.*gpl.*3','.*gpl.*2','.*gpl.*',
+               '.*general.*public.*license.*3','.*general.*public.*license.*2',
+               '.*general.*public.*license.*','.*mpl.*3','.*mpl.*2','.*mpl.*',
+               '.*python.*license.*','^python$','.*']
+    licenses = ['MIT','Apache-2','Apache','BSD','AGPL-3','AGPL-2','AGPL','AGPL-3',
+               'AGPL-2','AGPL','LGPL-3','LGPL-2','LGPL','GPL-3','GPL-2','GPL',
+               'GPL-3','GPL-2','GPL','MPL-3','MPL-2','MPL','Python','Python','NULL']
+    for i in range(len(patterns)):
+        match = re.search(patterns[i],license)
+        if match:
+            return licenses[i]
+    
+
+
 def create_portfile(dict, file_name, dict2):
     search_distfile(dict['name'],dict['version'])
     print "Creating Portfile for pypi package "+dict['name']+"..."
@@ -251,21 +269,23 @@ def create_portfile(dict, file_name, dict2):
 
         file.write('platforms           darwin\n')
         license = dict['license']
-        if license and not license == "UNKNOWN":
-            license = license.encode('utf-8')
-            license = filter(lambda x: x in string.printable, license)
-            license = license.split('\n')[0]
-            license = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`\=(--)]+', ' ', license)
-            license = re.sub(r'\s(\s)+', ' ', license)
-            license = re.sub(r'([A-Z]*)([a-z]*)([\s]*v*)([0-9]\.*[0-9]*)',
-                             r'\1\2-\4', license)
-            license = re.sub(r'v(-*)([0-9])', r'\1\2', license)
-            file.write('license             {0}\n'.format(license))
-        else:
-            print "No license found..."
-            print "Looking for license in environment variables..."
-            file.write('license             {0}\n'.format(
-                       os.getenv('license', 'None')))
+#        if license and not license == "UNKNOWN":
+#            license = license.encode('utf-8')
+#            license = filter(lambda x: x in string.printable, license)
+#            license = license.split('\n')[0]
+#            license = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`\=(--)]+', ' ', license)
+#            license = re.sub(r'\s(\s)+', ' ', license)
+#            license = re.sub(r'([A-Z]*)([a-z]*)([\s]*v*)([0-9]\.*[0-9]*)',
+#                             r'\1\2-\4', license)
+#            license = re.sub(r'v(-*)([0-9])', r'\1\2', license)
+#            file.write('license             {0}\n'.format(license))
+#        else:
+#            print "No license found..."
+#            print "Looking for license in environment variables..."
+#            file.write('license             {0}\n'.format(
+#                       os.getenv('license', 'None')))
+        license = search_license(license) 
+        file.write('license             {0}\n'.format(license))
 
         if dict['maintainer']:
             maintainers = ' '.join(dict['maintainer'])
