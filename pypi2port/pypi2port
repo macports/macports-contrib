@@ -320,26 +320,27 @@ def create_portfile(dict, file_name, dict2):
         else:
             file.write('description         None\n\n')
         description = dict['description']
-        if description:
-            description = description.encode('utf-8')
-            description = filter(lambda x: x in string.printable, description)
-            description = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`\=(--)]+',
-                                 ' ', description)
-            description = re.sub(r'\s(\s)+', ' ', description)
-            lines = textwrap.wrap(description, width=70)
-            file.write('long_description    ')
-            for line in lines:
-                if line and lines.index(line) < 4:
-                    if not lines.index(line) == 0:
-                        file.write('                    ')
-                    if lines.index(line) >= 3:
-                        file.write("{0}...\n".format(line))
-                    elif line == lines[-1]:
-                        file.write("{0}\n".format(line))
-                    else:
-                        file.write("{0} \\\n".format(line))
-        else:
-            file.write('long_description    ${description}\n\n')
+#        if description:
+#            description = description.encode('utf-8')
+#            description = filter(lambda x: x in string.printable, description)
+#            description = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`\=(--)]+',
+#                                 ' ', description)
+#            description = re.sub(r'\s(\s)+', ' ', description)
+#            lines = textwrap.wrap(description, width=70)
+#            file.write('long_description    ')
+#            for line in lines:
+#                if line and lines.index(line) < 4:
+#                    if not lines.index(line) == 0:
+#                        file.write('                    ')
+#                    if lines.index(line) >= 3:
+#                        file.write("{0}...\n".format(line))
+#                    elif line == lines[-1]:
+#                        file.write("{0}\n".format(line))
+#                    else:
+#                        file.write("{0} \\\n".format(line))
+#        else:
+#            file.write('long_description    ${description}\n\n')
+        file.write('long_description    ${description}\n\n')
         home_page = dict['home_page']
 
         if home_page and not home_page == 'UNKNOWN':
