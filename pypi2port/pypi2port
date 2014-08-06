@@ -252,6 +252,106 @@ def search_license(license):
             return licenses[i]
     
 
+#def testing(name,portv=27,type="quiet"):
+    
+
+
+def port_fetch(name,portv=27,type="quiet"):
+    try:
+        command = "sudo port -t fetch dports/python/py-"+name+" subport=py"+portv+"-"name
+        if type=="quiet":
+            phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
+        else:
+            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
+        return phase_output
+    except Exception e:
+        return False
+
+
+def port_checksum(name,portv=27,type="quiet"):
+    try:
+        command = "sudo port -t checksum dports/python/py-"+name+" subport=py"+portv+"-"name
+        if type=="quiet":
+            phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
+        else:
+            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
+        return phase_output
+    except Exception e:
+        return False
+
+
+def port_extract(name,portv=27,type="quiet"):
+    try:
+        command = "sudo port -t extract dports/python/py-"+name+" subport=py"+portv+"-"name
+        if type=="quiet":
+            phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
+        else:
+            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
+        return phase_output
+    except Exception e:
+        return False
+
+
+def port_patch(name,portv=27,type="quiet"):
+    try:
+        command = "sudo port -t patch dports/python/py-"+name+" subport=py"+portv+"-"name
+        if type=="quiet":
+            phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
+        else:
+            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
+        return phase_output
+    except Exception e:
+        return False
+
+
+def port_configure(name,portv=27,type="quiet"):
+    try:
+        command = "sudo port -t configure dports/python/py-"+name+" subport=py"+portv+"-"name
+        if type=="quiet":
+            phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
+        else:
+            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
+        return phase_output
+    except Exception e:
+        return False
+
+
+def port_build(name,portv=27,type="quiet"):
+    try:
+        command = "sudo port -t build dports/python/py-"+name+" subport=py"+portv+"-"name
+        if type=="quiet":
+            phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
+        else:
+            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
+        return phase_output
+    except Exception e:
+        return False
+
+
+def port_destroot(name,portv=27,type="quiet"):
+    try:
+        command = "sudo port -t destroot dports/python/py-"+name+" subport=py"+portv+"-"name
+        if type=="quiet":
+            phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
+        else:
+            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
+        return phase_output
+    except Exception e:
+        return False
+	
+
+def port_clean(name,portv=27,type="quiet"):
+    try:
+        command = "sudo port -t clean dports/python/py-"+name+" subport=py"+portv+"-"name
+        if type=="quiet":
+            phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
+        else:
+            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
+        return phase_output
+    except Exception e:
+        return False
+
+
 
 def create_portfile(dict, file_name, dict2):
     search_distfile(dict['name'],dict['version'])
@@ -365,7 +465,7 @@ def create_portfile(dict, file_name, dict2):
             master_site_exists = True
         else:
             master_site_exists = False
-        file.write('distname            {0}-{1}\n\n'.format(
+        file.write('distname            {0}-{1}.tar.gz\n\n'.format(
                    dict['name'], dict['version']))
 
 
