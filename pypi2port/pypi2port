@@ -250,7 +250,7 @@ def search_license(license):
         match = re.search(patterns[i],license)
         if match:
             return licenses[i]
-    
+
 
 def port_testing(name,portv='27',type="quiet"):
     euid = os.geteuid()
@@ -272,7 +272,7 @@ def port_testing(name,portv='27',type="quiet"):
             args = ['sudo',sys.executable] + sys.argv + [os.environ]
             os.execlpe('sudo',*args)
 #    print port_fetch(name,portv,"verbose")
-        
+
 
 
 def port_fetch(name,portv='27',type="quiet"):
