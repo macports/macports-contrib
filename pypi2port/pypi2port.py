@@ -288,7 +288,7 @@ def port_testing(name,portv='27'):
         if euid:
             args = ['sudo',sys.executable] + sys.argv + [os.environ]
             os.execlpe('sudo',*args)
-#    print port_fetch(name,portv,"verbose")
+#    print port_fetch(name,portv)
         
 
 
@@ -298,7 +298,7 @@ def port_fetch(name,portv='27'):
 #    print command
     try:
         command = "sudo port -t fetch dports/python/py-"+name+" subport=py"+portv+"-"+name
-        phase_output = subprocess.call(command,shell=True,stderr=subprocess.STDOUT).strip()
+#        phase_output = subprocess.call(command,shell=True,stderr=subprocess.STDOUT).strip()
 #        if type == "quiet":
 #            phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
 #        else:
