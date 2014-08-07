@@ -539,7 +539,9 @@ def create_portfile(dict, file_name, dict2):
         deps = dependencies(dict['name'], dict['version'], True)
         if deps:
             for dep in deps:
-                file.write('                        port:py-{0}\n'.format(dep))
+                dep = dep.split('>')[0].split('=')[0]
+                if not dep == "setuptools":
+                    file.write('                        port:py-{0}\n'.format(dep))
         file.write('\n')
         file.write('    livecheck.type      none\n')
         if master_site_exists:
