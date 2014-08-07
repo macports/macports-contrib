@@ -252,103 +252,125 @@ def search_license(license):
             return licenses[i]
     
 
-#def testing(name,portv=27,type="quiet"):
-    
+def port_testing(name,portv='27',type="quiet"):
+    euid = os.geteuid()
+#    print euid
+    if not euid:
+        args = ['sudo',sys.executable] + sys.argv + [os.environ]
+        os.execlpe('sudo',*args)
+    for phase in [port_fetch,port_checksum,port_extract,port_configure,port_build,port_destroot,port_clean]:
+#        print phase.__name__
+        phase_output = phase(name,portv,type)
+        if not phase_output:
+            print phase.__name__+" FAILED"
+            print "Exiting"
+            break
+        else:
+            print phase.__name__+" - SUCCESS"
+        euid = os.geteuid()
+        if not euid:
+            args = ['sudo',sys.executable] + sys.argv + [os.environ]
+            os.execlpe('sudo',*args)
+#    print port_fetch(name,portv,"verbose")
+        
 
 
-def port_fetch(name,portv=27,type="quiet"):
+def port_fetch(name,portv='27',type="quiet"):
+#    print name,portv,type
+#    print command
     try:
-        command = "sudo port -t fetch dports/python/py-"+name+" subport=py"+portv+"-"name
-        if type=="quiet":
+        command = "sudo port -t fetch dports/python/py-"+name+" subport=py"+portv+"-"+name
+#        phase_output = subprocess.call(command,shell=True,stderr=subprocess.STDOUT).strip()
+        if type == "quiet":
             phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
         else:
             phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
         return phase_output
-    except Exception e:
+    except:
         return False
 
 
-def port_checksum(name,portv=27,type="quiet"):
+def port_checksum(name,portv='27',type="quiet"):
     try:
-        command = "sudo port -t checksum dports/python/py-"+name+" subport=py"+portv+"-"name
+        command = "sudo port -t checksum dports/python/py-"+name+" subport=py"+portv+"-"+name
         if type=="quiet":
             phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
         else:
             phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
         return phase_output
-    except Exception e:
+    except:
         return False
 
 
-def port_extract(name,portv=27,type="quiet"):
+def port_extract(name,portv='27',type="quiet"):
     try:
-        command = "sudo port -t extract dports/python/py-"+name+" subport=py"+portv+"-"name
+        command = "sudo port -t extract dports/python/py-"+name+" subport=py"+portv+"-"+name
         if type=="quiet":
             phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
         else:
             phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
         return phase_output
-    except Exception e:
+    except:
         return False
 
 
-def port_patch(name,portv=27,type="quiet"):
+def port_patch(name,portv='27',type="quiet"):
     try:
-        command = "sudo port -t patch dports/python/py-"+name+" subport=py"+portv+"-"name
+        command = "sudo port -t patch dports/python/py-"+name+" subport=py"+portv+"-"+name
         if type=="quiet":
             phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
         else:
             phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
         return phase_output
-    except Exception e:
+    except:
         return False
 
 
-def port_configure(name,portv=27,type="quiet"):
+def port_configure(name,portv='27',type="quiet"):
     try:
-        command = "sudo port -t configure dports/python/py-"+name+" subport=py"+portv+"-"name
+        command = "sudo port -t configure dports/python/py-"+name+" subport=py"+portv+"-"+name
         if type=="quiet":
             phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
         else:
             phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
         return phase_output
-    except Exception e:
+    except:
         return False
 
 
-def port_build(name,portv=27,type="quiet"):
+def port_build(name,portv='27',type="quiet"):
     try:
-        command = "sudo port -t build dports/python/py-"+name+" subport=py"+portv+"-"name
+        command = "sudo port -t build dports/python/py-"+name+" subport=py"+portv+"-"+name
         if type=="quiet":
             phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
         else:
             phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
         return phase_output
-    except Exception e:
+    except:
         return False
 
 
-def port_destroot(name,portv=27,type="quiet"):
+def port_destroot(name,portv='27',type="quiet"):
     try:
-        command = "sudo port -t destroot dports/python/py-"+name+" subport=py"+portv+"-"name
+        command = "sudo port -t destroot dports/python/py-"+name+" subport=py"+portv+"-"+name
         if type=="quiet":
             phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
         else:
             phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
         return phase_output
-    except Exception e:
+    except:
         return False
 	
 
-def port_clean(name,portv=27,type="quiet"):
+def port_clean(name,portv='27',type="quiet"):
     try:
-        command = "sudo port -t clean dports/python/py-"+name+" subport=py"+portv+"-"name
+        command = "sudo port -t clean dports/python/py-"+name+" subport=py"+portv+"-"+name
         if type=="quiet":
             phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
         else:
             phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
         return phase_output
-    except Exception e:
+    except:
         return False
 
 
@@ -564,6 +586,9 @@ def main(argv):
     parser.add_argument('-p', '--portfile', action='store', type=str,
                         dest='package_portfile', nargs='*', required=False,
                         help='Prints the portfile for a package')
+    parser.add_argument('-t', '--test', action='store', type=str,
+                        dest='package_test', nargs='*', required=False,
+                        help='Tests the portfile for a package for various phase tests')
     options = parser.parse_args()
 
     if options.list:
@@ -614,6 +639,14 @@ def main(argv):
                 print_portfile(pkg_name, pkg_version)
             else:
                 print "No release found\n"
+        return
+
+    if options.package_test:
+        if len(options.package_test) > 0:
+            pkg_name = options.package_test[0]
+            port_testing(pkg_name)
+        else:
+            print "No package name specified\n"
         return
 
     parser.print_help()
