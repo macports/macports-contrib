@@ -307,6 +307,7 @@ def port_fetch(name,portv='27'):
 #            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
         phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
 #        return phase_output
+        return True
     except:
         port_clean(name,portv)
         return False
@@ -321,6 +322,7 @@ def port_checksum(name,portv='27'):
 #            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
         phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
 #        return phase_output
+        return True
     except:
         port_clean(name,portv)
         return False
@@ -335,6 +337,7 @@ def port_extract(name,portv='27'):
 #            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
         phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
 #        return phase_output
+        return True
     except:
         port_clean(name,portv)
         return False
@@ -349,6 +352,7 @@ def port_patch(name,portv='27'):
 #            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
         phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
 #        return phase_output
+        return True
     except:
         port_clean(name,portv)
         return False
@@ -363,6 +367,7 @@ def port_configure(name,portv='27'):
 #            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
         phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
 #        return phase_output
+        return True
     except:
         port_clean(name,portv)
         return False
@@ -377,6 +382,7 @@ def port_build(name,portv='27'):
 #            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
         phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
 #        return phase_output
+        return True
     except:
         port_clean(name,portv)
         return False
@@ -391,6 +397,7 @@ def port_destroot(name,portv='27'):
 #            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
         phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
 #        return phase_output
+        return True
     except:
         port_clean(name,portv)
         return False
@@ -405,6 +412,7 @@ def port_clean(name,portv='27'):
 #            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
         phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
 #        return phase_output
+        return True
     except:
         return False
 
