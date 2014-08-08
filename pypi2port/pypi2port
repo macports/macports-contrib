@@ -271,7 +271,7 @@ def port_testing(name,portv='27'):
     for phase in [port_fetch,port_checksum,port_extract,port_configure,port_build,port_destroot,port_clean]:
         print phase.__name__
         phase_output = phase(name,portv)
-        if not phase_output:
+        if phase_output:
             print phase.__name__+" FAILED"
             print "Exiting"
             break
@@ -299,6 +299,7 @@ def port_fetch(name,portv='27'):
 #    print command
     try:
         command = "sudo port -t fetch dports/python/py-"+name+" subport=py"+portv+"-"+name
+#        command = "sudo port -d fetch dports/python/py-"+name+" subport=py"+portv+"-"+name
 #        phase_output = subprocess.call(command,shell=True,stderr=subprocess.STDOUT).strip()
 #        if type == "quiet":
 #            phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
