@@ -551,15 +551,25 @@ def create_portfile(dict, file_name, dict2):
 
         print "Finding dependencies..."
         file.write('if {${name} ne ${subport}} {\n')
-        file.write('    depends_build-append \\\n')
-        file.write('                        port:py${python.version}-setuptools\n')
+        file.write('    depends_lib-append \\\n')
+        file.write('                        port:py${python.version}-setuptools')
         deps = dependencies(dict['name'], dict['version'], True)
         if deps:
-            for dep in deps:
-                dep = dep.split('>')[0].split('=')[0]
-                dep = dep.replace('[','').replace(']','')
-                if not(dep == "setuptools" or dep == "\n" or dep == ""):
+            for item in ['setuptools','','\n']:
+                while deps.count(item) > 0:
+                    deps.remove(item)
+            if len(deps)>0:
+                file.write(" \\\n")
+                for dep in deps[:-1]:
+                    dep = dep.split('>')[0].split('=')[0]
+                    dep = dep.replace('[','').replace(']','')
+#                if not(dep == "setuptools" or dep == "\n" or dep == ""):
+#                    file.write('                        port:py${python.version}-'+dep+'\n')
+                    file.write('                        port:py${python.version}-'+dep+' \\\n')
+                else:
                     file.write('                        port:py${python.version}-'+dep+'\n')
+            else:
+                file.write("\n")        
         file.write('\n')
         file.write('    livecheck.type      none\n')
         if master_site_exists:
