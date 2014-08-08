@@ -277,6 +277,7 @@ def port_testing(name,portv='27'):
             break
         else:
             print phase.__name__+" - SUCCESS"
+#        port_clean(name,portv)
 
 #    print "Now swtiching back to the calling user: "+getpass.getuser()
 
@@ -306,6 +307,7 @@ def port_fetch(name,portv='27'):
         phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
         return phase_output
     except:
+        port_clean(name,portv)
         return False
 
 
@@ -319,6 +321,7 @@ def port_checksum(name,portv='27'):
         phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
         return phase_output
     except:
+        port_clean(name,portv)
         return False
 
 
@@ -332,6 +335,7 @@ def port_extract(name,portv='27'):
         phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
         return phase_output
     except:
+        port_clean(name,portv)
         return False
 
 
@@ -345,6 +349,7 @@ def port_patch(name,portv='27'):
         phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
         return phase_output
     except:
+        port_clean(name,portv)
         return False
 
 
@@ -358,6 +363,7 @@ def port_configure(name,portv='27'):
         phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
         return phase_output
     except:
+        port_clean(name,portv)
         return False
 
 
@@ -371,6 +377,7 @@ def port_build(name,portv='27'):
         phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
         return phase_output
     except:
+        port_clean(name,portv)
         return False
 
 
@@ -384,6 +391,7 @@ def port_destroot(name,portv='27'):
         phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
         return phase_output
     except:
+        port_clean(name,portv)
         return False
 	
 
