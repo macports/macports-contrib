@@ -557,8 +557,9 @@ def create_portfile(dict, file_name, dict2):
         if deps:
             for dep in deps:
                 dep = dep.split('>')[0].split('=')[0]
-                if not dep == "setuptools":
-                    file.write('                        port:py-{0}\n'.format(dep))
+                dep = dep.replace('[','').replace(']','')
+                if not(dep == "setuptools" or dep == "\n" or dep == ""):
+                    file.write('                        port:py${python.version}-'+dep+'\n')
         file.write('\n')
         file.write('    livecheck.type      none\n')
         if master_site_exists:
