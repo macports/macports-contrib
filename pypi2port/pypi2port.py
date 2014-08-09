@@ -269,7 +269,7 @@ def port_testing(name,portv='27'):
             print phase.__name__+" FAILED"
             port_clean(name,portv)
             print "Exiting"
-            break
+            sys.exit(1)
 
         euid = os.geteuid()
         if euid:
