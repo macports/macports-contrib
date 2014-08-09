@@ -500,7 +500,7 @@ def create_portfile(dict, file_name, dict2):
 #                    file.write('                        port:py${python.version}-'+dep+'\n')
                     file.write('                        port:py${python.version}-'+dep+' \\\n')
                 else:
-                    file.write('                        port:py${python.version}-'+dep+'\n')
+                    file.write('                        port:py${python.version}-'+deps[-1]+'\n')
             else:
                 file.write("\n")        
         file.write('\n')
