@@ -256,162 +256,95 @@ def search_license(license):
 
 def port_testing(name,portv='27'):
     euid = os.geteuid()
-#    print euid
     if euid:
         args = ['sudo',sys.executable] + sys.argv + [os.environ]
         os.execlpe('sudo',*args)
 
-#    if os.getuid():
-#        raise Exception("This program is not run as sudo or elevated this it will not work")
-#        print "This program is not run as sudo or elevated, thus It will not work"
-#        sys.exit(0)
-#    print "This script was called by: "+getpass.getuser()
-#    print "Now do something as 'root'..."
-#    subprocess.call(shlex.split('sudo id -nu'))
     for phase in [port_fetch,port_checksum,port_extract,port_configure,port_build,port_destroot,port_clean]:
         print phase.__name__
         phase_output = phase(name,portv)
         if phase_output:
+            print phase.__name__+" - SUCCESS"
+        else:
             print phase.__name__+" FAILED"
+            port_clean(name,portv)
             print "Exiting"
             break
-        else:
-            print phase.__name__+" - SUCCESS"
-#        port_clean(name,portv)
-
-#    print "Now swtiching back to the calling user: "+getpass.getuser()
-
-#        if os.getuid():
-#            print "This program is not run as sudo or elevated, thus It will not work"
-#            sys.exit(0)
 
         euid = os.geteuid()
         if euid:
             args = ['sudo',sys.executable] + sys.argv + [os.environ]
             os.execlpe('sudo',*args)
-#    print port_fetch(name,portv)
         
 
 
 def port_fetch(name,portv='27'):
-#    print name,portv,type
-#    command = "sudo port -t fetch dports/python/py-"+name+" subport=py"+portv+"-"+name
-#    print command
     try:
         command = "sudo port -t fetch dports/python/py-"+name+" subport=py"+portv+"-"+name
-#        command = "sudo port -d fetch dports/python/py-"+name+" subport=py"+portv+"-"+name
-#        phase_output = subprocess.call(command,shell=True,stderr=subprocess.STDOUT).strip()
-#        if type == "quiet":
-#            phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
-#        else:
-#            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
-        phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
-#        return phase_output
+        phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT)
         return True
     except:
-        port_clean(name,portv)
         return False
 
 
 def port_checksum(name,portv='27'):
     try:
         command = "sudo port -t checksum dports/python/py-"+name+" subport=py"+portv+"-"+name
-#        if type=="quiet":
-#            phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
-#        else:
-#            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
-        phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
-#        return phase_output
+        phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT)
         return True
     except:
-        port_clean(name,portv)
         return False
 
 
 def port_extract(name,portv='27'):
     try:
         command = "sudo port -t extract dports/python/py-"+name+" subport=py"+portv+"-"+name
-#        if type=="quiet":
-#            phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
-#        else:
-#            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
-        phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
-#        return phase_output
+        phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT)
         return True
     except:
-        port_clean(name,portv)
         return False
 
 
 def port_patch(name,portv='27'):
     try:
         command = "sudo port -t patch dports/python/py-"+name+" subport=py"+portv+"-"+name
-#        if type=="quiet":
-#            phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
-#        else:
-#            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
-        phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
-#        return phase_output
+        phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT)
         return True
     except:
-        port_clean(name,portv)
         return False
 
 
 def port_configure(name,portv='27'):
     try:
         command = "sudo port -t configure dports/python/py-"+name+" subport=py"+portv+"-"+name
-#        if type=="quiet":
-#            phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
-#        else:
-#            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
-        phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
-#        return phase_output
+        phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT)
         return True
     except:
-        port_clean(name,portv)
         return False
 
 
 def port_build(name,portv='27'):
     try:
         command = "sudo port -t build dports/python/py-"+name+" subport=py"+portv+"-"+name
-#        if type=="quiet":
-#            phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
-#        else:
-#            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
-        phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
-#        return phase_output
+        phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT)
         return True
     except:
-        port_clean(name,portv)
         return False
 
 
 def port_destroot(name,portv='27'):
     try:
         command = "sudo port -t destroot dports/python/py-"+name+" subport=py"+portv+"-"+name
-#        if type=="quiet":
-#            phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
-#        else:
-#            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
-        phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
-#        return phase_output
+        phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT)
         return True
     except:
-        port_clean(name,portv)
         return False
 	
 
 def port_clean(name,portv='27'):
     try:
         command = "sudo port -t clean dports/python/py-"+name+" subport=py"+portv+"-"+name
-#        if type=="quiet":
-#            phase_output = subprocess.check_output(command,shell=True,stderr=subprocess.STDOUT).strip()
-#        else:
-#            phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()            
-        phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT).strip()
-#        return phase_output
+        phase_output = subprocess.check_call(command,shell=True,stderr=subprocess.STDOUT)
         return True
     except:
         return False
