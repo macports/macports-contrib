@@ -32,10 +32,16 @@ import getpass
 client = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
 
 
+""" Lists all packages available in pypi database """
+
+
 def list_all():
     list_packages = client.list_packages()
     for package in list_packages:
         print package
+
+
+""" Searches for a particular package by the name classifier """
 
 
 def search(pkg_name):
@@ -43,6 +49,10 @@ def search(pkg_name):
     for value in values:
         for key in value.keys():
             print key, '-->', value[key]
+
+
+""" Fetches the release data for a paticular package based on
+    the package_name and package_version """
 
 
 def release_data(pkg_name, pkg_version):
@@ -56,6 +66,9 @@ def release_data(pkg_name, pkg_version):
             print "Please specify the exact package name."
         return
     return
+
+
+""" Fetches the distfile for a particular package name and release_url """
 
 
 def fetch(pkg_name, dict):
@@ -118,6 +131,10 @@ def fetch(pkg_name, dict):
         return False
 
 
+""" Checks for the checksums and dependecies for a particular python package
+    on the basis of package_name and package_version """
+
+
 def fetch_url(pkg_name, pkg_version, checksum=False, deps=False):
     values = client.release_urls(pkg_name, pkg_version)
     if checksum:
@@ -127,6 +144,10 @@ def fetch_url(pkg_name, pkg_version, checksum=False, deps=False):
     else:
         for value in values:
             return fetch(pkg_name, value)
+
+
+""" Finds dependencies for a particular package on the basis of
+    package_name and package_version """
 
 
 def dependencies(pkg_name, pkg_version, deps=False):
@@ -175,6 +196,9 @@ def dependencies(pkg_name, pkg_version, deps=False):
         return False
 
 
+""" Creates a diff file for an existent port """
+
+
 def create_diff(old_file, new_file, diff_file):
     with open(old_file) as f:
         a = f.readlines()
@@ -191,6 +215,9 @@ def create_diff(old_file, new_file, diff_file):
             pass
 
 
+""" Searches for an existent port by its name """
+
+
 def search_port(name):
     try:
         command = "port file name:^py-" + name + "$"
@@ -200,6 +227,10 @@ def search_port(name):
         return existing_portfile
     except Exception, e:
         return False
+
+
+""" Generates checksums for a package on the basis of the distfile fetched by
+    its package_name and package_version """
 
 
 def checksums(pkg_name, pkg_version):
@@ -237,6 +268,9 @@ def checksums(pkg_name, pkg_version):
             return
 
 
+""" Searches if the distfile listed is present or not """
+
+
 def search_distfile(name, version):
     try:
         url = client.release_urls(name, version)[0]['url']
@@ -247,6 +281,10 @@ def search_distfile(name, version):
         print "No distfile found"
         print "Please set a DISTFILE env var before generating the portfile"
         sys.exit(0)
+
+
+""" Maps the license passed to the already present list of
+    licences available in Macports """
 
 
 def search_license(license):
@@ -266,6 +304,9 @@ def search_license(license):
         match = re.search(patterns[i], license)
         if match:
             return licenses[i]
+
+
+""" Port Testing function for various phase implementations """
 
 
 def port_testing(name, portv='27'):
@@ -292,6 +333,9 @@ def port_testing(name, portv='27'):
             os.execlpe('sudo', *args)
 
 
+""" Fetch phase implementation """
+
+
 def port_fetch(name, portv='27'):
     try:
         command = "sudo port -t fetch dports/python/py-" + \
@@ -301,6 +345,9 @@ def port_fetch(name, portv='27'):
         return True
     except:
         return False
+
+
+""" Checksum phase implementation """
 
 
 def port_checksum(name, portv='27'):
@@ -314,6 +361,9 @@ def port_checksum(name, portv='27'):
         return False
 
 
+""" Checksum phase implementation """
+
+
 def port_extract(name, portv='27'):
     try:
         command = "sudo port -t extract dports/python/py-" + \
@@ -323,6 +373,9 @@ def port_extract(name, portv='27'):
         return True
     except:
         return False
+
+
+""" Patch phase implementation """
 
 
 def port_patch(name, portv='27'):
@@ -336,6 +389,9 @@ def port_patch(name, portv='27'):
         return False
 
 
+""" Configure phase implementation """
+
+
 def port_configure(name, portv='27'):
     try:
         command = "sudo port -t configure dports/python/py-" + \
@@ -345,6 +401,9 @@ def port_configure(name, portv='27'):
         return True
     except:
         return False
+
+
+""" Build phase implementation """
 
 
 def port_build(name, portv='27'):
@@ -358,6 +417,9 @@ def port_build(name, portv='27'):
         return False
 
 
+""" Destroot phase implementation """
+
+
 def port_destroot(name, portv='27'):
     try:
         command = "sudo port -t destroot dports/python/py-" + \
@@ -369,6 +431,9 @@ def port_destroot(name, portv='27'):
         return False
 
 
+""" Clean phase implementation """
+
+
 def port_clean(name, portv='27'):
     try:
         command = "sudo port -t clean dports/python/py-" + \
@@ -378,6 +443,10 @@ def port_clean(name, portv='27'):
         return True
     except:
         return False
+
+
+""" Creates a portfile on the basis of the release_data and release_url fetched
+    on the basis of package_name and package_version """
 
 
 def create_portfile(dict, file_name, dict2):
@@ -546,6 +615,10 @@ def create_portfile(dict, file_name, dict2):
         print "No port found."
 
 
+""" Creates the directories and other commands necessary
+    for a development environment """
+
+
 def print_portfile(pkg_name, pkg_version=None):
     root_dir = os.path.abspath("./dports")
     port_dir = os.path.join(root_dir, 'python')
@@ -555,7 +628,7 @@ def print_portfile(pkg_name, pkg_version=None):
         try:
             command = 'portindex dports/'
             command = command.split()
-            subprocess.call(command,stderr=subprocess.STDOUT)
+            subprocess.call(command, stderr=subprocess.STDOUT)
         except:
             pass
     if not os.path.exists(port_dir):
@@ -579,6 +652,9 @@ def print_portfile(pkg_name, pkg_version=None):
     file_name = os.path.join(home_dir, "Portfile")
     create_portfile(dict, file_name, dict2)
     print "SUCCESS\n"
+
+
+""" Main function - Argument Parser """
 
 
 def main(argv):
