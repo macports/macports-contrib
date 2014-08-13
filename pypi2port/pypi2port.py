@@ -176,8 +176,12 @@ def dependencies(pkg_name, pkg_version, deps=False):
 
 
 def create_diff(old_file, new_file, diff_file):
-    a = open(old_file).readlines()
-    b = open(new_file).readlines()
+    with open(old_file) as f:
+        a = f.readlines()
+#    a = open(old_file).readlines()
+    with open(new_file) as f:
+        b = f.readlines()
+#    b = open(new_file).readlines()
     diff_string = difflib.unified_diff(a, b, "Portfile.orig", "Portfile")
     with open(diff_file, 'w') as d:
         try:
@@ -548,6 +552,12 @@ def print_portfile(pkg_name, pkg_version=None):
     home_dir = os.path.join(port_dir, 'py-'+pkg_name)
     if not os.path.exists(root_dir):
         os.makedirs(root_dir)
+        try:
+            command = 'portindex dports/'
+            command = command.split()
+            subprocess.call(command,stderr=subprocess.STDOUT)
+        except:
+            pass
     if not os.path.exists(port_dir):
         os.makedirs(port_dir)
     if not os.path.exists(home_dir):
