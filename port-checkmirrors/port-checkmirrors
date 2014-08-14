@@ -1,0 +1,138 @@
+#!/usr/bin/env bash
+
+PORT="`which port`"
+CURL="`which curl`"
+OPENSSL="`which openssl`"
+RM="`which rm` -f"
+
+usage() {
+	echo "Usage: $1 port-spec" >&2
+	echo >&2
+	echo "  port-spec can by in any format understood by port(1)" >&2
+}
+
+handle_port() {
+	local PORT="$1"
+	local line=""
+	declare -A checksums
+
+	echo "** $PORT"
+
+	# read checksums
+	local firstrun=1
+	while read line; do
+		local regex='\[(.*)\].*'
+		if [[ $line =~ $regex ]]; then
+			TARGETFILE=${BASH_REMATCH[1]}
+			echo "Processing file ${TARGETFILE}"
+			continue
+		fi
+
+		local regex='(md5|sha1|sha256|rmd160): ([0-9a-fA-F]+)'
+		if [[ $line =~ $regex ]]; then
+			# this is a checksum line
+
+			echo "Found ${BASH_REMATCH[1]} checksum: ${BASH_REMATCH[2]}"
+			checksums["${BASH_REMATCH[1]}"]=${BASH_REMATCH[2]}
+			continue;
+		fi
+
+		URL=${line#  }
+		if [ -z "$line" ]; then
+			continue;
+		fi
+
+		tput hpa 0
+		tput el
+		echo $URL
+
+		# try to get file
+		local CMD="pee"
+		for checksum in "${!checksums[@]}"; do
+			local indirect="OPENSSL_${checksum}[1]"
+			CMD="${CMD} '${OPENSSL} dgst -${checksum} /dev/stdin'"
+		done
+
+		# fork check process
+		coproc CHECK { eval "$CMD"; }
+		# duplicate fd for check so the pipe doesn't get closed when check is over
+		eval "exec 3<&${CHECK[0]}"
+
+		# run the download and pipe output into pee
+		eval "$CURL --connect-timeout 15 -L -f -# '${URL}' >&${CHECK[1]}"
+		local status="$?"
+
+		# remove curl output
+		tput cuu 1
+		tput hpa 0
+		tput el
+		
+		# close the pipe to pee
+		eval "exec ${CHECK[1]}>&-"
+
+		if [[ $status != 0 ]]; then
+			# if it failed, ignore the checksums
+			tput cuu 1
+			echo -e "\tfailed" >&2
+			continue
+		fi
+
+		# otherwise, test the checksums
+		while read -u 3 line; do
+			local regex='(MD5|SHA1|SHA256|RIPEMD160)\(/dev/stdin\)= ([0-9a-fA-F]+)'
+			if [[ $line =~ $regex ]]; then
+				local openssl_index="${BASH_REMATCH[1]}"
+				local index=""
+				case "${openssl_index}" in
+					MD5)
+						index="md5";;
+					SHA1)
+						index="sha1";;
+					SHA256)
+						index="sha256";;
+					RIPEMD160)
+						index="rmd160";;
+					*)
+						echo "Unknown hash type ${openssl_index}" >&2
+						return
+				esac
+				local chash="${BASH_REMATCH[2]}"
+
+				if [ "${chash}" != "${checksums["${index}"]}" ]; then
+					echo -e "\tChecksum mismatch: ${index}" >&2
+					echo -e "\t   Portfile value: ${checksums["${index}"]}" >&2
+					echo -e "\t      Local value: ${chash}" >&2
+				fi
+			else
+				echo "Error parsing openssl output: ${line}" >&2
+			fi
+		done
+	done
+}
+
+if [ -z $1 ]; then
+	usage $0
+	exit 1
+fi
+
+coproc DISTFILELIST { $PORT distfiles $1; }
+eval "exec 4<&${DISTFILELIST[0]}"
+eval "exec ${DISTFILELIST[1]}>&-"
+wait $DISTFILELIST_PID
+if [[ $? != 0 ]]; then
+	echo "port(1) failed, check your arguments" >&2
+	exit 1
+fi
+
+# open list
+while read -u 4 line; do
+	if [ -z "$line" ]; then
+		continue;
+	fi
+	regex='--->  Distfiles for (.*)'
+	if [[ $line =~ $regex ]]; then
+		PORT=${BASH_REMATCH[1]}
+		handle_port $PORT <&4
+	fi
+done
+
