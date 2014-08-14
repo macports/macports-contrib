@@ -110,7 +110,6 @@ def fetch(pkg_name, dict):
             pbar.update(file_size_dl)
 
         pbar.finish()
-        print
 
     checksum_md5_calc = hashlib.md5(open(file_name).read()).hexdigest()
     if str(checksum_md5) == str(checksum_md5_calc):
@@ -259,9 +258,7 @@ def checksums(pkg_name, pkg_version):
             try:
                 if flag:
                     os.rmdir(dir)
-                print
             except OSError as ex:
-                print
             return checksums
         except:
             print "Error\n"
@@ -606,8 +603,8 @@ def create_portfile(dict, file_name, dict2):
         diff_file = './dports/python/py-'+dict['name']+'/patch.Portfile.diff'
         create_diff(old_file, new_file, diff_file)
         print str(os.path.abspath(diff_file))+"\n"
-        with open(diff_file) as diff:
-            print diff.read()
+#        with open(diff_file) as diff:
+#            print diff.read()
         print "\nIf you want to open a new ticket. Please visit"
         print "https://trac.macports.org/auth/login/?next=/newticket"
         print "to open a new ticket after logging in with your credentials."
@@ -679,14 +676,20 @@ def main(argv):
                         help='Tests the portfile for various phase tests')
     options = parser.parse_args()
 
+""" Calls list_all() which lists al available python packages """
+
     if options.list:
         list_all()
         return
+
+""" Calls search with the package_name """
 
     if options.packages_search:
         for pkg_name in options.packages_search:
             search(pkg_name)
         return
+
+""" Calls release_data with package_name and package_version """
 
     if options.packages_data:
         pkg_name = options.packages_data[0]
@@ -700,6 +703,8 @@ def main(argv):
             else:
                 print "No release found\n"
         return
+
+""" Calls fetch_url with the various package_releases """
 
     if options.package_fetch:
         pkg_name = options.package_fetch[0]
@@ -715,6 +720,8 @@ def main(argv):
                 print "No release found\n"
         return
 
+""" Calls print_portfile with the release data available """
+
     if options.package_portfile:
         pkg_name = options.package_portfile[0]
         if len(options.package_portfile) > 1:
@@ -728,6 +735,8 @@ def main(argv):
             else:
                 print "No release found\n"
         return
+
+""" Calls port_testing """
 
     if options.package_test:
         if len(options.package_test) > 0:
