@@ -225,7 +225,7 @@ sub portfile {
     if ( exists $$info{depends} ) {
          if ( my $check =  $$info{checksums} ) {
              my @hashes;
-             foreach my $key (keys %{ $check }) { push @hashes, "$key ".$$check{$key}; }
+             foreach my $key (sort(keys %{ $check })) { push @hashes, "$key ".$$check{$key}; }
              $checksums = 'checksums           '.join(" \\\n".(' 'x20),@hashes);
          }
 
