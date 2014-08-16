@@ -564,16 +564,16 @@ def create_portfile(dict, file_name, dict2):
 
         print "Finding dependencies..."
         file.write('if {${name} ne ${subport}} {\n')
-        file.write('    depends_lib-append \\\n')
+        file.write('    depends_build-append \\\n')
         file.write('                        ' +
-                   'port:py${python.version}-setuptools')
+                   'port:py${python.version}-setuptools\n')
         deps = dependencies(dict['name'], dict['version'], True)
         if deps:
             for i,dep in enumerate(deps):
                 dep = dep.split('>')[0].split('=')[0]
                 dep = dep.replace('[','').replace(']','')
                 deps[i] = dep
-            print deps
+#            print deps
             for dep in deps:
                 if dep in ['setuptools', '', '\n']:
                     while deps.count(dep) > 0:
@@ -587,7 +587,10 @@ def create_portfile(dict, file_name, dict2):
 #                while deps.count(item) > 0:
 #                    deps.remove(item)
             if len(deps) > 0:
-                file.write(" \\\n")
+                file.write('    depends_run-append \\\n')
+#                file.write('                        ' +
+#                           'port:py${python.version}-setuptools')
+#                file.write(" \\\n")
                 for dep in deps[:-1]:
                     file.write('                        ' +
                                'port:py${python.version}-' +
