@@ -259,6 +259,7 @@ def checksums(pkg_name, pkg_version):
                 if flag:
                     os.rmdir(dir)
             except OSError as ex:
+                pass
             return checksums
         except:
             print "Error\n"
