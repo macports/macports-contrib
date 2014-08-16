@@ -569,14 +569,26 @@ def create_portfile(dict, file_name, dict2):
                    'port:py${python.version}-setuptools')
         deps = dependencies(dict['name'], dict['version'], True)
         if deps:
-            for item in ['setuptools', '', '\n']:
-                while deps.count(item) > 0:
-                    deps.remove(item)
+            for i,dep in enumerate(deps):
+                dep = dep.split('>')[0].split('=')[0]
+                dep = dep.replace('[','').replace(']','')
+                deps[i] = dep
+            print deps
+            for dep in deps:
+                if dep in ['setuptools', '', '\n']:
+                    while deps.count(dep) > 0:
+                        deps.remove(dep)
+
+
+#            for dep in deps:
+#                dep = dep.split('>')[0].split('=')[0]
+#                dep = dep.replace('[','').replace(']','')
+#            for item in ['setuptools', '', '\n']:
+#                while deps.count(item) > 0:
+#                    deps.remove(item)
             if len(deps) > 0:
                 file.write(" \\\n")
                 for dep in deps[:-1]:
-                    dep = dep.split('>')[0].split('=')[0]
-                    dep = dep.replace('[', '').replace(']', '')
                     file.write('                        ' +
                                'port:py${python.version}-' +
                                dep + ' \\\n')
