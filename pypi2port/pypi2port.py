@@ -657,40 +657,42 @@ def print_portfile(pkg_name, pkg_version=None):
 
 def main(argv):
     parser = argparse.ArgumentParser(description="Pypi2Port Tester")
+# Calls list_all() which lists al available python packages
     parser.add_argument('-l', '--list', action='store_true', dest='list',
                         default=False, required=False,
                         help='List all packages')
+# Calls search with the package_name
     parser.add_argument('-s', '--search', action='store', type=str,
                         dest='packages_search', nargs='*', required=False,
                         help='Search for a package')
+# Calls release_data with package_name and package_version
     parser.add_argument('-d', '--data', action='store',
                         dest='packages_data', nargs='*', type=str,
                         help='Releases data for a package')
+# Calls fetch_url with the various package_releases
     parser.add_argument('-f', '--fetch', action='store', type=str,
                         dest='package_fetch', nargs='*', required=False,
                         help='Fetches distfiles for a package')
+# Calls print_portfile with the release data available
     parser.add_argument('-p', '--portfile', action='store', type=str,
                         dest='package_portfile', nargs='*', required=False,
                         help='Prints the portfile for a package')
+# Calls port_testing
     parser.add_argument('-t', '--test', action='store', type=str,
                         dest='package_test', nargs='*', required=False,
                         help='Tests the portfile for various phase tests')
     options = parser.parse_args()
 
-""" Calls list_all() which lists al available python packages """
-
     if options.list:
         list_all()
         return
 
-""" Calls search with the package_name """
 
     if options.packages_search:
         for pkg_name in options.packages_search:
             search(pkg_name)
         return
 
-""" Calls release_data with package_name and package_version """
 
     if options.packages_data:
         pkg_name = options.packages_data[0]
@@ -705,7 +707,6 @@ def main(argv):
                 print "No release found\n"
         return
 
-""" Calls fetch_url with the various package_releases """
 
     if options.package_fetch:
         pkg_name = options.package_fetch[0]
@@ -721,7 +722,6 @@ def main(argv):
                 print "No release found\n"
         return
 
-""" Calls print_portfile with the release data available """
 
     if options.package_portfile:
         pkg_name = options.package_portfile[0]
@@ -737,7 +737,6 @@ def main(argv):
                 print "No release found\n"
         return
 
-""" Calls port_testing """
 
     if options.package_test:
         if len(options.package_test) > 0:
