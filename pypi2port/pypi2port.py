@@ -548,9 +548,14 @@ def create_portfile(dict, file_name, dict2):
                     if item['python_version'] == 'source':
                         master_var = item['url']
                         break
-                print master_var
+#                print master_var
                 master_site = '/'.join(master_var.split('/')[0:-1])
-                print master_site
+                ext = master_var.split('/')[-1].split('.')[-1]
+                if ext == 'zip':
+                    zip_set = True
+                else:
+                    zip_set = False
+#                print master_site
         except:
             if dict['release_url']:
                 master_site = dict['release_url']
@@ -564,6 +569,10 @@ def create_portfile(dict, file_name, dict2):
             master_site_exists = True
         else:
             master_site_exists = False
+
+        if zip_set:
+            file.write('use_zip             yes\n')
+
         file.write('distname            {0}-{1}\n\n'.format(
                    dict['name'], dict['version']))
 
