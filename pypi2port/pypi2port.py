@@ -136,6 +136,8 @@ def fetch(pkg_name, dict):
 
 def fetch_url(pkg_name, pkg_version, checksum=False, deps=False):
     values = client.release_urls(pkg_name, pkg_version)
+#    print values
+#    sys.exit(1)
     if checksum:
         for value in values:
             if value['filename'].split('.')[-1] == 'gz':
@@ -530,11 +532,29 @@ def create_portfile(dict, file_name, dict2):
             file.write('homepage            {0}\n'.format(
                        os.getenv('home_page', '')))
 
+#        for item in dict2:
+#            if item['python_version'] == 'source':
+#                master_var = item['url']
+#                break
+#        print master_var
+#        master_site = '/'.join(master_var.split('/')[0:-1])
+#        print master_site
+#        sys.exit(1)
+
         try:
-                master_site = '/'.join(dict2[0]['url'].split('/')[0:-1])
+#                print dict2
+#                print dict2['url']
+                for item in dict2:
+                    if item['python_version'] == 'source':
+                        master_var = item['url']
+                        break
+                print master_var
+                master_site = '/'.join(master_var.split('/')[0:-1])
+                print master_site
         except:
             if dict['release_url']:
                 master_site = dict['release_url']
+#                print master_site
             else:
                 print "No master site found..."
                 print "Looking for master site in environment variables..."
