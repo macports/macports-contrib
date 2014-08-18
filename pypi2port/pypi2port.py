@@ -136,11 +136,10 @@ def fetch(pkg_name, dict):
 
 def fetch_url(pkg_name, pkg_version, checksum=False, deps=False):
     values = client.release_urls(pkg_name, pkg_version)
-#    print values
-#    sys.exit(1)
     if checksum:
+#        print values
         for value in values:
-            if value['filename'].split('.')[-1] == 'gz':
+            if value['filename'].split('.')[-1] == 'gz' or value['filename'].split('.')[-1] == 'zip':
                 return fetch(pkg_name, value)
     else:
         for value in values:
@@ -157,7 +156,7 @@ def dependencies(pkg_name, pkg_version, deps=False):
         return
     values = client.release_urls(pkg_name, pkg_version)
     for value in values:
-        if not value['filename'].split('.')[-1] == 'gz':
+        if not(value['filename'].split('.')[-1] == 'gz' or value['filename'].split('.')[-1] == 'zip'):
             fetch(pkg_name, value)
     try:
         with open('./sources/python/py-'
@@ -171,7 +170,7 @@ def dependencies(pkg_name, pkg_version, deps=False):
                               ignore_errors=True)
                 items = os.listdir('./sources/python/py-' + pkg_name)
                 for item in items[:]:
-                    if not item.split('.')[-1] == 'gz':
+                    if not(item.split('.')[-1] == 'gz' or item.split('.')[-1] == 'zip'):
                         os.remove('./sources/python/py-'
                                   + pkg_name + '/' + item)
                         items.remove(item)
@@ -187,7 +186,7 @@ def dependencies(pkg_name, pkg_version, deps=False):
                               ignore_errors=True)
                 items = os.listdir('./sources/python/py-'+pkg_name)
                 for item in items[:]:
-                    if not item.split('.')[-1] == 'gz':
+                    if not(item.split('.')[-1] == 'gz' or item.split('.')[-1] == 'zip'):
                         os.remove('./sources/python/py-'+pkg_name+'/'+item)
                         items.remove(item)
                 if not items:
