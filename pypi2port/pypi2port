@@ -571,6 +571,7 @@ def create_portfile(dict, file_name, dict2):
 
         if zip_set:
             file.write('use_zip             yes\n')
+            file.write('extract.mkdir       yes\n')
 
         file.write('distname            {0}-{1}\n\n'.format(
                    dict['name'], dict['version']))
