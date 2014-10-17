@@ -150,7 +150,7 @@ proc install_ports {operationList} {
         set variations [lindex $op 1]
         set active [lindex $op 2]
 
-        if {!$active || [rpm-vercomp [macports::version] 1.9.1] < 0} {
+        if {!$active || [vercmp [macports::version] 1.9.1] < 0} {
             set install_target install
         } else {
             set install_target activate
@@ -186,7 +186,7 @@ proc install_ports {operationList} {
         }
         
         # XXX some ports may be reactivated to fulfil dependencies - check again at the end?
-        if {[rpm-vercomp [macports::version] 1.9.1] < 0 && !$active} {
+        if {[vercmp [macports::version] 1.9.1] < 0 && !$active} {
             if {[catch {portimage::deactivate $name "" [list ports_nodepcheck 1]} result]} {
                 global errorInfo
                 ui_debug "$errorInfo"
