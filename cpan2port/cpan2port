@@ -360,7 +360,7 @@ if ( exists $opt{f} ) {
             my $dir = "perl/$$info{port}";
             -d $dir or mkpath $dir;
             my $portfile = "$dir/Portfile";
-            print STDERR "creating $portfile";
+            print STDERR "creating $portfile\n";
             open PORTFILE,'>',$portfile or die "$! while creating $portfile";
             print PORTFILE portfile($info);
         } else { die 'Huggy did not have clue' }
