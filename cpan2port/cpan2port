@@ -65,7 +65,7 @@ use warnings;
 use CPAN;
 use Module::Depends;
 use Module::Depends::Intrusive;
-use List::MoreUtils qw(any);
+use List::MoreUtils qw(any uniq);
 use Module::CoreList;
 
 sub is_corelist {
@@ -91,6 +91,13 @@ sub depends_on {
 sub package_name {
     my ( $name ) = shift;
     $name = lc "p5-$name";
+    $name =~ y/+/x/;
+    return $name;
+}
+
+sub dependency_name {
+    my ( $name ) = shift;
+    $name = lc "p\${perl5.major}-$name";
     $name =~ y/+/x/;
     return $name;
 }
@@ -132,7 +139,7 @@ sub module_depends {
     $info;
 }
 
-sub from_port { (about(shift) or return () )->{port} }
+sub from_port { (about(shift) or return () )->{dependency} }
 
 sub about {
     my ( $module_name, $config ) = @_;
@@ -170,8 +177,9 @@ sub about {
         $info{description}  = $desc;
         MSG::warn $desc;
     }
-    $info{port} = package_name($info{prefix}); 
-    $info{debian} = package_name($info{prefix}); 
+    $info{port} = package_name($info{prefix});
+    $info{dependency} = dependency_name($info{prefix});
+    $info{debian} = package_name($info{prefix});
     $info{dist_dir} = "$$CPAN::Config{build_dir}/$info{prefix}-$info{version}";
     $info{module} = $module;
     \%info;
@@ -219,7 +227,8 @@ sub portfile {
     $$info{maintainers} ||= 'nomaintainer';
     my $checksums = '';
     my $depends = '';
-    my $build_depends = '';
+    my $depends_build = '';
+    my $depends_lib = '';
     my $use_module_build = '';
     
     if ( exists $$info{depends} ) {
@@ -229,24 +238,28 @@ sub portfile {
              $checksums = 'checksums           '.join(" \\\n".(' 'x20),@hashes);
          }
 
-         if ( my $dep_ref = Huggy::depends_on($info) ) {
-             my @depends = map {
-                 MSG::warn "$$info{name} requires $_";
-                 'port:'.Huggy::from_port $_
-             } keys %{ $dep_ref };
-             if (@depends) {
-                 $depends = 'depends_lib-append  '.join(" \\\n".(' 'x20),@depends);
-             }
-         }
          if ( my $dep_ref = Huggy::depends_on($info, during=>"build_requires") ) {
-             my @depends = map {
+             my @depends_build = Huggy::uniq map {
                  MSG::warn "$$info{name} build_requires $_";
                  'port:'.Huggy::from_port $_
-             } keys %{ $dep_ref };
-             if (@depends) {
-                 $build_depends = 'depends_build-append '.join(" \\\n".(' 'x21),@depends);
+             } sort(keys %{ $dep_ref });
+             if (@depends_build) {
+                 unshift(@depends_build, '    depends_build-append');
+                 $depends_build = join(" \\\n".(' 'x20), sort(@depends_build))."\n";
              }
-
+         }
+         if ( my $dep_ref = Huggy::depends_on($info) ) {
+             my @depends_lib = Huggy::uniq map {
+                 MSG::warn "$$info{name} requires $_";
+                 'port:'.Huggy::from_port $_
+             } sort(keys %{ $dep_ref });
+             if (@depends_lib) {
+                 unshift(@depends_lib, '    depends_lib-append');
+                 $depends_lib = join(" \\\n".(' 'x20), sort(@depends_lib))."\n";
+             }
+         }
+         if ($depends_build.$depends_lib ne '') {
+             $depends = "\nif {\${perl5.major} != \"\"} {\n" . $depends_build . $depends_lib . "}\n";
          }
     }
 
@@ -297,9 +310,6 @@ STOP
 
     $portfile .= <<STOP;
 $checksums
-
-$build_depends
-
 $depends
 $use_module_build
 STOP
