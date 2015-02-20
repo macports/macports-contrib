@@ -6,8 +6,8 @@ import sys
 import os
 import hashlib
 import zipfile
-# import progressbar as pb
-# import requests
+import progressbar as pb
+import requests
 try:
 	import xmlrpclib
 except ImportError:
