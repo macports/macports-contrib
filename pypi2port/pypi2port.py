@@ -540,10 +540,10 @@ def create_portfile(dict, file_name, dict2):
 
 		python_vers = dict['requires_python']
 		if python_vers:
-			file.write('python.versions     25 26 27 {0}\n\n'.format(
+			file.write('python.versions     27 {0}\n\n'.format(
 					   dict['requires_python']))
 		else:
-			file.write('python.versions     25 26 27 32 33 34\n\n')
+			file.write('python.versions     27 34\n\n')
 
 		print("Finding dependencies...")
 		file.write('if {${name} ne ${subport}} {\n')
