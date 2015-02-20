@@ -6,10 +6,10 @@ import sys
 import os
 import hashlib
 import zipfile
-import progressbar as pb
-import requests
+# import progressbar as pb
+# import requests
 try:
-	import xmlrpc.client
+	import xmlrpclib
 except ImportError:
 	import xmlrpc.client as xmlrpclib
 import textwrap
@@ -20,7 +20,7 @@ import difflib
 import subprocess
 
 
-client = xmlrpc.client.ServerProxy('http://pypi.python.org/pypi')
+client = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
 
 
 def list_all():
