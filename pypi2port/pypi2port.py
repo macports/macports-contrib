@@ -146,7 +146,7 @@ def fetch(pkg_name, dict):
 		try:
 			os.remove(file_name)
 		except OSError as e:
-			print(("Error: %s - %s." % (e.filename, e.strerror)))
+			print(("Error: {0} - {1}.".format(e.filename, e.strerror)))
 		return False
 
 
