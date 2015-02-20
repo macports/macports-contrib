@@ -124,7 +124,14 @@ def fetch(pkg_name, dict):
 
 			pbar.finish()
 
-	checksum_md5_calc = hashlib.md5(open(file_name).read()).hexdigest()
+	# checksum_md5_calc = hashlib.md5(open(file_name).read()).hexdigest()
+	# print(file_name)
+	command = "openssl md5 "+file_name
+	command = command.split()
+	checksum_md5_calc = str(subprocess.check_output(command, stderr=subprocess.STDOUT)).split('=')[1][1:-3]
+	# print(checksum_md5_calc)
+
+	# print(open(file_name).read())
 	if str(checksum_md5) == str(checksum_md5_calc):
 		print('Successfully fetched')
 		ext = file_name.split('.')[-1]
@@ -241,14 +248,14 @@ def checksums(pkg_name, pkg_version):
 			print("Generating checksums...")
 			command = "openssl rmd160 "+file_name
 			command = command.split()
-			rmd160 = subprocess.check_output(command, stderr=subprocess.STDOUT)
-			rmd160 = rmd160.split('=')[1].strip()
+			rmd160 = str(subprocess.check_output(command, stderr=subprocess.STDOUT))
+			rmd160 = rmd160.split('=')[1][1:-3]
 			checksums.insert(0, rmd160)
 
 			command = "openssl sha256 "+file_name
 			command = command.split()
-			sha256 = subprocess.check_output(command, stderr=subprocess.STDOUT)
-			sha256 = sha256.split('=')[1].strip()
+			sha256 = str(subprocess.check_output(command, stderr=subprocess.STDOUT))
+			sha256 = sha256.split('=')[1][1:-3]
 			checksums.insert(1, sha256)
 
 			dir = '/'.join(file_name.split('/')[0:-1])
@@ -458,8 +465,11 @@ def create_portfile(dict, file_name, dict2):
 			summary = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`\=(--)]+',
 							 ' ', summary)
 			summary = re.sub(r'\s(\s)+', ' ', summary)
-			summary = summary.encode('utf-8')
-			summary = [x for x in summary if x in string.printable]
+			summary = str(summary.encode('utf-8'))
+			# print(summary)
+			# print(type(summary))
+			summary = ''.join([x for x in summary if x in string.printable])
+			# print(type(summary))
 			sum_lines = textwrap.wrap(summary)
 			file.write('description         ')
 			for sum_line in sum_lines:
