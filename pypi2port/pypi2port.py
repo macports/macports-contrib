@@ -124,14 +124,14 @@ def fetch(pkg_name, dict):
 
 			pbar.finish()
 
-	# checksum_md5_calc = hashlib.md5(open(file_name).read()).hexdigest()
+	checksum_md5_calc = hashlib.md5(open(file_name,'rb').read()).hexdigest()
 	# print(file_name)
-	command = "openssl md5 "+file_name
-	command = command.split()
-	checksum_md5_calc = str(subprocess.check_output(command, stderr=subprocess.STDOUT)).split('=')[1][1:-3]
+	# sys.exit(1)
+	# command = "openssl md5 "+file_name
+	# command = command.split()
+	# checksum_md5_calc = str(subprocess.check_output(command, stderr=subprocess.STDOUT)).split('=')[1][1:-3]
 	# print(checksum_md5_calc)
 
-	# print(open(file_name).read())
 	if str(checksum_md5) == str(checksum_md5_calc):
 		print('Successfully fetched')
 		ext = file_name.split('.')[-1]
