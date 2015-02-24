@@ -99,7 +99,9 @@ def fetch(pkg_name, dict):
 	url = dict['url']
 	file_name = src_dir + '/' + dict['filename']
 
+	# print("HERE")
 	r = requests.get(url)
+	
 	if r.status_code == 200	:
 		with open(file_name, 'wb') as f:
 			meta = r.headers['content-length']
@@ -276,7 +278,7 @@ def search_distfile(name, version):
 	""" Searches if the distfile listed is present or not """
 	try:
 		url = client.release_urls(name, version)[0]['url']
-		r = requests.get(url, verify=False)
+		r = requests.get(url)
 		if not r.status_code == 200:
 			raise Exception('No distfile')
 	except:
