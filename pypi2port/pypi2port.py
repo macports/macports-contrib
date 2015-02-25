@@ -6,7 +6,6 @@ import sys
 import os
 import hashlib
 import zipfile
-import progressbar as pb
 import requests
 try:
 	import xmlrpclib
@@ -18,6 +17,7 @@ import shutil
 import re
 import difflib
 import subprocess
+import time
 
 
 client = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
@@ -99,40 +99,36 @@ def fetch(pkg_name, dict):
 	url = dict['url']
 	file_name = src_dir + '/' + dict['filename']
 
-	# print("HERE")
 	r = requests.get(url)
-	
 	if r.status_code == 200	:
 		with open(file_name, 'wb') as f:
 			meta = r.headers['content-length']
 			file_size = int(meta)
 
-			widgets = ['Fetching: ', pb.Percentage(), ' ',
-					   pb.Bar(marker=pb.RotatingMarker(), left='[', right=']'),
-					   ' ', pb.ETA(), ' ', pb.FileTransferSpeed()]
-			pbar = pb.ProgressBar(widgets=widgets, maxval=int(file_size))
-			pbar.start()
-
+			pattern = ["-","\\", "|", "/"]
+			patternIndex = 0
 			file_size_dl = 0
 			block_sz = 1024
-
+			toolbar_width = int(file_size/block_sz)+1
+			sys.stdout.write("["+"-"*int(file_size_dl/block_sz)+pattern[patternIndex]+" "*int((file_size-file_size_dl)/block_sz-1)+"] "+" "+"(%5d Kb of %5d Kb)"% (file_size_dl, file_size))
+			sys.stdout.flush()
+			# sys.stdout.write("\b" * (toolbar_width+1)) # return to start of line, after '['
 			for chunk in r.iter_content(block_sz):
 				if file_size_dl+block_sz > file_size:
 					file_size_dl = file_size
 				else:
 					file_size_dl += block_sz
 				f.write(chunk)
-				pbar.update(file_size_dl)
-
-			pbar.finish()
+				time.sleep(0.1)
+				sys.stdout.write("\b" * (toolbar_width+22+1)) # return to start of line, after '['
+				sys.stdout.write("-"*int(file_size_dl/block_sz)+pattern[patternIndex]+" "*int((file_size-file_size_dl)/block_sz-1)+"] "+" "+"(%5d Kb of %5d Kb)"% (file_size_dl, file_size))
+				sys.stdout.flush()
+				patternIndex = (patternIndex + 1)%4
+				# sys.stdout.write("\b" * (toolbar_width+22+1)) # return to start of line, after '['
+		sys.stdout.write(" OK\n")
+		sys.stdout.flush()
 
 	checksum_md5_calc = hashlib.md5(open(file_name,'rb').read()).hexdigest()
-	# print(file_name)
-	# sys.exit(1)
-	# command = "openssl md5 "+file_name
-	# command = command.split()
-	# checksum_md5_calc = str(subprocess.check_output(command, stderr=subprocess.STDOUT)).split('=')[1][1:-3]
-	# print(checksum_md5_calc)
 
 	if str(checksum_md5) == str(checksum_md5_calc):
 		print('Successfully fetched')
