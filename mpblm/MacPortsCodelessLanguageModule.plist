@@ -130,6 +130,7 @@
         <string>objc_archflags</string>
         <string>only</string>
         <string>open</string>
+        <string>optflags</string>
         <string>package</string>
         <string>patch</string>
         <string>patchfiles-append</string>
@@ -212,6 +213,7 @@
         <string>uplevel</string>
         <string>upvar</string>
         <string>url</string>
+        <string>use_7z</string>
         <string>use_autoconf</string>
         <string>use_automake</string>
         <string>use_autoreconf</string>
