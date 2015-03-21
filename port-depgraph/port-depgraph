@@ -16,8 +16,9 @@ array set portsSeen {}
 
 
 proc printUsage {} {
-    puts "Usage: $::argv0 \[-dhrvV\] \[-p macports-prefix\] port-name \[variants...\]"
+    puts "Usage: $::argv0 \[-hivV\] \[-p macports-prefix\] port-name \[variants...\]"
     puts "  -h    This help"
+    puts "  -i    Specify port-tclsh"
     puts "  -p    Use a different MacPorts prefix"
     puts "        (defaults to /opt/local)"
     puts "  -v    verbose output, includes dependency labels"
