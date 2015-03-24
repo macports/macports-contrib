@@ -81,13 +81,6 @@ proc sort_ports {portList} {
             }
         }
         #ui_msg "variants = $variants"
-        if {[llength [info commands mport_filtervariants]] > 0} {
-            set filtered_variants [mport_filtervariants $variants no]
-        } else {
-            # platform variants don't exist in trunk/1.9
-            set filtered_variants $variants
-        }
-        #ui_msg "filtered_variants = $filtered_variants"
         set active 0
         if {[llength $port] > 2 && [lindex $port 2] == "(active)"} {
             set active 1
@@ -100,10 +93,10 @@ proc sort_ports {portList} {
         } else {
             incr port_in_list($name)
         }
-        if {![info exists port_deps(${name},${filtered_variants})]} {
-            set port_deps(${name},${filtered_variants}) [dependenciesForPort $name $filtered_variants]
+        if {![info exists port_deps(${name},${variants})]} {
+            set port_deps(${name},${variants}) [dependenciesForPort $name $variants]
         }
-        lappend newList [list $active $name $filtered_variants]
+        lappend newList [list $active $name $variants]
     }
 
     set operationList [list]
@@ -150,7 +143,7 @@ proc install_ports {operationList} {
         set variations [lindex $op 1]
         set active [lindex $op 2]
 
-        if {!$active || [vercmp [macports::version] 1.9.1] < 0} {
+        if {!$active} {
             set install_target install
         } else {
             set install_target activate
@@ -186,13 +179,6 @@ proc install_ports {operationList} {
         }
         
         # XXX some ports may be reactivated to fulfil dependencies - check again at the end?
-        if {[vercmp [macports::version] 1.9.1] < 0 && !$active} {
-            if {[catch {portimage::deactivate $name "" [list ports_nodepcheck 1]} result]} {
-                global errorInfo
-                ui_debug "$errorInfo"
-                return -code error "port deactivate failed: $result"
-            }
-        }
     }
 }
 
