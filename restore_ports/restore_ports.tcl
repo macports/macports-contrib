@@ -1,7 +1,7 @@
 #!/bin/sh
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 # \
-if /usr/bin/which -s port-tclsh; then exec port-tclsh "$0" -i `which port-tclsh` "$@"; else exec /usr/bin/tclsh "$0" "$@"; fi
+if /usr/bin/which -s port-tclsh; then exec port-tclsh "$0" -i `which port-tclsh` "$@"; else exec /usr/bin/tclsh "$0" -i /usr/bin/tclsh "$@"; fi
 #
 # Install a list of ports given in the form produced by 'port installed', in
 # correct dependency order so as to preserve the selected variants.
@@ -32,7 +32,7 @@ proc dependenciesForPort {portName variantInfo} {
    array set portInfo [lindex $portSearchResult 1]
    if {[catch {set mport [mportopen $portInfo(porturl) [list subport $portInfo(name)] $variantInfo]} result]} {
       global errorInfo
-      puts "$errorInfo"
+      puts stderr "$errorInfo"
       return -code error "Unable to open port '$portName': $result"
    }
    array unset portInfo
@@ -173,7 +173,7 @@ proc install_ports {operationList} {
         
         if {[catch {set workername [mportopen $porturl [list subport $portinfo(name)] $variations]} result]} {
             global errorInfo
-            puts "$errorInfo"
+            puts stderr "$errorInfo"
             return -code error "Unable to open port '$name': $result"
         }
         if {[catch {set result [mportexec $workername $install_target]} result]} {
@@ -229,7 +229,7 @@ while {[string index [lindex $::argv 0] 0] == "-" } {
       }
       p {
          if {[llength $::argv] < 2} {
-            puts "-p needs a path"
+            puts stderr "-p needs a path"
             printUsage
             exit 1
          }
@@ -241,7 +241,7 @@ while {[string index [lindex $::argv 0] 0] == "-" } {
          set showVersion 1
       }
       default {
-         puts "Unknown option [lindex $::argv 0]"
+         puts stderr "Unknown option [lindex $::argv 0]"
          printUsage
          exit 1
       }
@@ -256,18 +256,21 @@ if {![info exists userPrefix] && ![file isdirectory $macportsPrefix]} {
 
 if {[info exists interp_path]} {
     set prefixFromInterp [file dirname [file dirname $interp_path]]
-    # make sure we're running in the port-tclsh associated with the correct prefix
-    if {$prefixFromInterp ne $macportsPrefix} {
-        if {[file executable ${macportsPrefix}/bin/port-tclsh]} {
-            exec ${macportsPrefix}/bin/port-tclsh $argv0 -i ${macportsPrefix}/bin/port-tclsh {*}[lrange $origArgv 2 end] <@stdin >@stdout 2>@stderr
-        } else {
-            exec /usr/bin/tclsh $argv0 {*}[lrange $origArgv 2 end] <@stdin >@stdout 2>@stderr
-        }
-        exit 0
-    }
 } else {
-    # older base version
-    source ${macportsPrefix}/share/macports/Tcl/macports1.0/macports_fastload.tcl
+    # presumably the user ran '/some/prefix/bin/port-tclsh restore_ports.tcl'
+    set prefixFromInterp ""
+    if {[info exists userPrefix]} {
+        error "the -p option cannot be used when running with an explicit interpreter (e.g. 'port-tclsh restore_ports.tcl') - run just './restore_ports.tcl' instead."
+    }
+}
+# make sure we're running in the port-tclsh associated with the correct prefix
+if {$prefixFromInterp ne "" && $prefixFromInterp ne $macportsPrefix} {
+    if {[file executable ${macportsPrefix}/bin/port-tclsh]} {
+        exec ${macportsPrefix}/bin/port-tclsh $argv0 -i ${macportsPrefix}/bin/port-tclsh {*}[lrange $origArgv 2 end] <@stdin >@stdout 2>@stderr
+        exit 0
+    } else {
+        error "prefix '$macportsPrefix' does not appear to have a working port-tclsh"
+    }
 }
 
 package require macports
