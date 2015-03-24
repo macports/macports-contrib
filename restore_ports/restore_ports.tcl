@@ -215,6 +215,7 @@ proc read_portlist {filename} {
 
 set macportsPrefix /opt/local
 set showVersion 0
+array set ui_options {}
 
 set origArgv $::argv
 while {[string index [lindex $::argv 0] 0] == "-" } {
@@ -239,6 +240,9 @@ while {[string index [lindex $::argv 0] 0] == "-" } {
       }
       V {
          set showVersion 1
+      }
+      v {
+        set ui_options(ports_verbose) yes
       }
       default {
          puts stderr "Unknown option [lindex $::argv 0]"
@@ -276,7 +280,7 @@ if {$prefixFromInterp ne "" && $prefixFromInterp ne $macportsPrefix} {
 package require macports
 package require Pextlib 1.0
 umask 022
-mportinit
+mportinit ui_options
 
 if {$showVersion} {
    puts "Version $MY_VERSION"
