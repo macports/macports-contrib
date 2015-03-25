@@ -128,22 +128,45 @@ def fetch(pkg_name, dict):
 			patternIndex = 0
 			file_size_dl = 0
 			block_sz = 1024
-			toolbar_width = int(file_size/block_sz)+1
-			sys.stdout.write("["+"-"*int(file_size_dl/block_sz)+pattern[patternIndex]+" "*int((file_size-file_size_dl)/block_sz-1)+"] "+" "+"(%5d Kb of %5d Kb)"% (file_size_dl, file_size))
+			# toolbar_width = int(file_size/block_sz)+1
+			toolbar_width = 30
+			# sys.stdout.write("["+"-"*int(file_size_dl/block_sz)+pattern[patternIndex]+" "*int((file_size-file_size_dl)/block_sz-1)+"] "+" "+"(%5d Kb of %5d Kb)"% (file_size_dl, file_size))
+			print file_size
+			incr = int(file_size/50)
+			print incr
+			count = 0
+			left = 49
+			sys.stdout.write("["+"-"*int(count)+pattern[patternIndex]+" "*int(left)+"]"+"(%5d Kb of %5d Kb)"% (file_size_dl, file_size))
 			sys.stdout.flush()
-			# sys.stdout.write("\b" * (toolbar_width+1)) # return to start of line, after '['
+			buff = 0
 			for chunk in r.iter_content(block_sz):
 				if file_size_dl+block_sz > file_size:
 					file_size_dl = file_size
+					count += 1
+					left -= 1						
+					sys.stdout.write("\r")
+					sys.stdout.write("["+"-"*int(count+1)+"]"+"(%5d Kb of %5d Kb)"% (file_size_dl, file_size))
+					time.sleep(0.1)
+					sys.stdout.flush()
+					buff = 0
+					patternIndex = (patternIndex + 1)%4
 				else:
 					file_size_dl += block_sz
-				f.write(chunk)
-				time.sleep(0.1)
-				sys.stdout.write("\b" * (toolbar_width+22+1)) # return to start of line, after '['
-				sys.stdout.write("-"*int(file_size_dl/block_sz)+pattern[patternIndex]+" "*int((file_size-file_size_dl)/block_sz-1)+"] "+" "+"(%5d Kb of %5d Kb)"% (file_size_dl, file_size))
-				sys.stdout.flush()
+				buff += block_sz
+				if(buff >= incr):
+					count += 1
+					left -= 1						
+					sys.stdout.write("\r")
+					time.sleep(0.1)
+					sys.stdout.flush()
+					buff = 0
+					patternIndex = (patternIndex + 1)%4
 				patternIndex = (patternIndex + 1)%4
-				# sys.stdout.write("\b" * (toolbar_width+22+1)) # return to start of line, after '['
+				sys.stdout.write("\r")
+				if(file_size_dl+block_sz >= file_size):
+						sys.stdout.write("["+"-"*int(count+1)+"]"+"(%5d Kb of %5d Kb)"% (file_size_dl, file_size))
+				else:
+					sys.stdout.write("["+"-"*int(count)+pattern[patternIndex]+" "*int(left)+"]"+"(%5d Kb of %5d Kb)"% (file_size_dl, file_size))
 		sys.stdout.write(" OK\n")
 		sys.stdout.flush()
 
