@@ -323,7 +323,7 @@ sub fmt {
         use YAML; print Dump $info;
         return;
     }
-    $format =~ s/#{(\w+)}/$$info{$1}/g;
+    $format =~ s/#\{(\w+)\}/$$info{$1}/g;
     $format;
 }
 
