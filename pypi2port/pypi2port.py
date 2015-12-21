@@ -182,7 +182,7 @@ def fetch(pkg_name, dict):
 					zip.extract(name, src_dir)
 		return file_name
 	else:
-		print('Aborting due to inconsistency on checksums\n')
+		print('Aborting due to inconsistency on checksums (expected {0} != downloaded {1})\n'.format(checksum_md5, checksum_md5_calc))
 		try:
 			os.remove(file_name)
 		except OSError as e:
