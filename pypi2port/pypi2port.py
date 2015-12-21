@@ -555,6 +555,7 @@ def create_portfile(dict, file_name, dict2):
 				zip_set = False
 
 		if master_site:
+			master_site = re.sub('^https?://pypi.python.org/packages/source/', 'pypi:', master_site)
 			file.write('master_sites        {0}\n'.format(master_site))
 			master_site_exists = True
 		else:
