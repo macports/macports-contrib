@@ -118,58 +118,59 @@ def fetch(pkg_name, dict):
 	url = dict['url']
 	file_name = src_dir + '/' + dict['filename']
 
-	r = requests.get(url)
-	if r.status_code == 200	:
-		with open(file_name, 'wb') as f:
-			meta = r.headers['content-length']
-			file_size = int(meta)
+	if not os.path.exists(file_name):
+            r = requests.get(url)
+            if r.status_code == 200	:
+                    with open(file_name, 'wb') as f:
+                            meta = r.headers['content-length']
+                            file_size = int(meta)
 
-			pattern = ["-","\\", "|", "/"]
-			patternIndex = 0
-			file_size_dl = 0
-			block_sz = 1024
-			# toolbar_width = int(file_size/block_sz)+1
-			toolbar_width = 30
-			# sys.stdout.write("["+"-"*int(file_size_dl/block_sz)+pattern[patternIndex]+" "*int((file_size-file_size_dl)/block_sz-1)+"] "+" "+"(%5d Kb of %5d Kb)"% (file_size_dl, file_size))
-			print file_size
-			incr = int(file_size/50)
-			print incr
-			count = 0
-			left = 49
-			sys.stdout.write("["+"-"*int(count)+pattern[patternIndex]+" "*int(left)+"]"+"(%5d Kb of %5d Kb)"% (file_size_dl, file_size))
-			sys.stdout.flush()
-			buff = 0
-			for chunk in r.iter_content(block_sz):
-				f.write(chunk)
-				if file_size_dl+block_sz > file_size:
-					file_size_dl = file_size
-					count += 1
-					left -= 1						
-					sys.stdout.write("\r")
-					sys.stdout.write("["+"-"*int(count+1)+"]"+"(%5d Kb of %5d Kb)"% (file_size_dl, file_size))
-					time.sleep(0.1)
-					sys.stdout.flush()
-					buff = 0
-					patternIndex = (patternIndex + 1)%4
-				else:
-					file_size_dl += block_sz
-				buff += block_sz
-				if(buff >= incr):
-					count += 1
-					left -= 1						
-					sys.stdout.write("\r")
-					time.sleep(0.1)
-					sys.stdout.flush()
-					buff = 0
-					patternIndex = (patternIndex + 1)%4
-				patternIndex = (patternIndex + 1)%4
-				sys.stdout.write("\r")
-				if(file_size_dl+block_sz >= file_size):
-						sys.stdout.write("["+"-"*int(count+1)+"]"+"(%5d Kb of %5d Kb)"% (file_size_dl, file_size))
-				else:
-					sys.stdout.write("["+"-"*int(count)+pattern[patternIndex]+" "*int(left)+"]"+"(%5d Kb of %5d Kb)"% (file_size_dl, file_size))
-		sys.stdout.write(" OK\n")
-		sys.stdout.flush()
+                            pattern = ["-","\\", "|", "/"]
+                            patternIndex = 0
+                            file_size_dl = 0
+                            block_sz = 1024
+                            # toolbar_width = int(file_size/block_sz)+1
+                            toolbar_width = 30
+                            # sys.stdout.write("["+"-"*int(file_size_dl/block_sz)+pattern[patternIndex]+" "*int((file_size-file_size_dl)/block_sz-1)+"] "+" "+"(%5d Kb of %5d Kb)"% (file_size_dl, file_size))
+                            print file_size
+                            incr = int(file_size/50)
+                            print incr
+                            count = 0
+                            left = 49
+                            sys.stdout.write("["+"-"*int(count)+pattern[patternIndex]+" "*int(left)+"]"+"(%5d Kb of %5d Kb)"% (file_size_dl, file_size))
+                            sys.stdout.flush()
+                            buff = 0
+                            for chunk in r.iter_content(block_sz):
+                                    f.write(chunk)
+                                    if file_size_dl+block_sz > file_size:
+                                            file_size_dl = file_size
+                                            count += 1
+                                            left -= 1						
+                                            sys.stdout.write("\r")
+                                            sys.stdout.write("["+"-"*int(count+1)+"]"+"(%5d Kb of %5d Kb)"% (file_size_dl, file_size))
+                                            time.sleep(0.1)
+                                            sys.stdout.flush()
+                                            buff = 0
+                                            patternIndex = (patternIndex + 1)%4
+                                    else:
+                                            file_size_dl += block_sz
+                                    buff += block_sz
+                                    if(buff >= incr):
+                                            count += 1
+                                            left -= 1						
+                                            sys.stdout.write("\r")
+                                            time.sleep(0.1)
+                                            sys.stdout.flush()
+                                            buff = 0
+                                            patternIndex = (patternIndex + 1)%4
+                                    patternIndex = (patternIndex + 1)%4
+                                    sys.stdout.write("\r")
+                                    if(file_size_dl+block_sz >= file_size):
+                                                    sys.stdout.write("["+"-"*int(count+1)+"]"+"(%5d Kb of %5d Kb)"% (file_size_dl, file_size))
+                                    else:
+                                            sys.stdout.write("["+"-"*int(count)+pattern[patternIndex]+" "*int(left)+"]"+"(%5d Kb of %5d Kb)"% (file_size_dl, file_size))
+                    sys.stdout.write(" OK\n")
+                    sys.stdout.flush()
 
 	checksum_md5_calc = hashlib.md5(open(file_name,'rb').read()).hexdigest()
 
