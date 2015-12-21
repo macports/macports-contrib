@@ -567,8 +567,7 @@ def create_portfile(dict, file_name, dict2):
 			file.write('use_zip             yes\n')
 			file.write('extract.mkdir       yes\n')
 
-		file.write('distname            {0}-{1}\n\n'.format(
-				   dict['name'], dict['version']))
+		file.write('distname            {0}-${{version}}\n\n'.format(dict['name']))
 
 		print(("Attempting to generate checksums for " + dict['name'] + "..."))
 		checksums_values = checksums(dict['name'], dict['version'])
