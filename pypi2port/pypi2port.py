@@ -140,6 +140,7 @@ def fetch(pkg_name, dict):
 			sys.stdout.flush()
 			buff = 0
 			for chunk in r.iter_content(block_sz):
+				f.write(chunk)
 				if file_size_dl+block_sz > file_size:
 					file_size_dl = file_size
 					count += 1
