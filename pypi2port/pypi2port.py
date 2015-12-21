@@ -572,10 +572,12 @@ def create_portfile(dict, file_name, dict2):
 		print(("Attempting to generate checksums for " + dict['name'] + "..."))
 		checksums_values = checksums(dict['name'], dict['version'])
 		if checksums_values:
-			file.write('checksums           rmd160  {0} \\\n'.format(
-					   checksums_values[0]))
-			file.write('                    sha256  {0}\n\n'.format(
-					   checksums_values[1]))
+			file.write('checksums           rmd160  {0} \\\n'.format(checksums_values[0]))
+			file.write('                    sha256  {0}\n\n'.format(checksums_values[1]))
+		else:
+			file.write('checksums           rmd160  XXX \\\n')
+			file.write('                    sha256  XXX\n\n')
+
 
 		python_vers = dict['requires_python']
 		if python_vers:
