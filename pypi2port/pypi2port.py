@@ -284,20 +284,16 @@ def checksums(pkg_name, pkg_version):
 	print("Attempting to fetch distfiles...")
 	file_name = fetch_url(pkg_name, pkg_version, True)
 	if file_name:
-		checksums = []
+		checksums = {}
 		try:
 			print("Generating checksums...")
-			command = "openssl rmd160 "+file_name
-			command = command.split()
-			rmd160 = str(subprocess.check_output(command, stderr=subprocess.STDOUT))
-			rmd160 = rmd160.split('=')[1][1:-3]
-			checksums.insert(0, rmd160)
 
-			command = "openssl sha256 "+file_name
-			command = command.split()
-			sha256 = str(subprocess.check_output(command, stderr=subprocess.STDOUT))
-			sha256 = sha256.split('=')[1][1:-3]
-			checksums.insert(1, sha256)
+			for chk in ['md5', 'rmd160', 'sha256']:
+				command = "openssl " + chk + " " + file_name
+				command = command.split()
+				val = str(subprocess.check_output(command, stderr=subprocess.STDOUT))
+				val = val.split('=')[1][1:-3]
+				checksums[chk] = val
 
 			dir = '/'.join(file_name.split('/')[0:-1])
 			if flag:
@@ -573,10 +569,19 @@ def create_portfile(dict, file_name, dict2):
 		print(("Attempting to generate checksums for " + dict['name'] + "..."))
 		checksums_values = checksums(dict['name'], dict['version'])
 		if checksums_values:
-			file.write('checksums           rmd160  {0} \\\n'.format(checksums_values[0]))
-			file.write('                    sha256  {0}\n\n'.format(checksums_values[1]))
+			first=True
+			for chk in sorted(checksums_values.keys()):
+				if first:
+					file.write('checksums           ')
+					first=False
+				else:
+					file.write(' \\\n')
+					file.write('                    ') 
+				file.write('{0: <6}  {1}'.format(chk, checksums_values[chk]))
+			file.write('\n\n')
 		else:
-			file.write('checksums           rmd160  XXX \\\n')
+			file.write('checksums           md5     XXX \\\n')
+			file.write('                    rmd160  XXX \\\n')
 			file.write('                    sha256  XXX\n\n')
 
 
