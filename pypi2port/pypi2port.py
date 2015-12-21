@@ -626,8 +626,7 @@ def create_portfile(dict, file_name, dict2):
 		file.write('    livecheck.type      none\n')
 		if master_site_exists:
 			file.write('} else {\n')
-			file.write('    livecheck.type      regex\n')
-			file.write('    livecheck.url       ${master_sites}\n')
+			file.write('    livecheck.type      pypi\n')
 			file.write('}\n')
 		else:
 			file.write('}\n')
