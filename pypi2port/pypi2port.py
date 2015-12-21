@@ -292,7 +292,7 @@ def checksums(pkg_name, pkg_version):
 				command = "openssl " + chk + " " + file_name
 				command = command.split()
 				val = str(subprocess.check_output(command, stderr=subprocess.STDOUT))
-				val = val.split('=')[1][1:-3]
+				val = val.split('=')[1][1:-1]
 				checksums[chk] = val
 
 			dir = '/'.join(file_name.split('/')[0:-1])
