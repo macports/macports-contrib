@@ -10,8 +10,7 @@
 
 set MY_VERSION 0.2
 
-set supportedGroups [list perl5 php python ruby]
-
+set supportedGroups [list perl5 php python ruby github]
 
 proc printUsage {{channel stderr}} {
    puts $channel "Usage: $::argv0 \[-h\] \[-g portgroup\] <portname> <portversion>"
@@ -20,7 +19,7 @@ proc printUsage {{channel stderr}} {
    puts $channel ""
    puts $channel "portname      name to use for the port; for group-based ports, don't"
    puts $channel "              use the prefix (py-, p5-, etc) as this will add that"
-   puts $channel "              for you when needed"
+   puts $channel "              for you when needed. For github, use githubuser/reponame."
    puts $channel "portversion   version to use for the port"
 }
 
@@ -64,6 +63,12 @@ if {[llength $::argv] != 2} {
 set portname [lindex $::argv 0]
 set portversion [lindex $::argv 1]
 
+if {$groupCode eq "github"} {
+    set verlist [split $portname /]
+    set github.user [lindex ${verlist} 0]
+    set portname    [lindex ${verlist} 1]
+}
+
 puts "# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4"
 puts "# \$Id\$"
 puts ""
@@ -95,6 +100,11 @@ switch ${groupCode} {
       puts ""
       puts "ruby.setup          ${portname} ${portversion}"
       puts "categories-append   replaceme"
+   }
+   github {
+       puts "PortGroup           github 1.0"
+       puts ""
+       puts "github.setup        ${github.user} ${portname} ${portversion}"
    }
    default {
       puts ""
@@ -129,6 +139,8 @@ switch ${groupCode} {
       puts {distname            ${portname}-${version}}
    }
    ruby {
+   }
+   github {
    }
    default {
       puts ""
