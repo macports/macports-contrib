@@ -39,6 +39,7 @@
         <string>checksums-append</string>
         <string>choose</string>
         <string>close</string>
+        <string>cmake</string>
         <string>cmd</string>
         <string>compiler</string>
         <string>compilers</string>
@@ -131,6 +132,7 @@
         <string>only</string>
         <string>open</string>
         <string>optflags</string>
+        <string>out_of_source</string>
         <string>package</string>
         <string>patch</string>
         <string>patchfiles-append</string>
@@ -182,6 +184,7 @@
         <string>scan</string>
         <string>scancontext</string>
         <string>seek</string>
+        <string>select</string>
         <string>set</string>
         <string>setup</string>
         <string>source</string>
