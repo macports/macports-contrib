@@ -39,7 +39,7 @@ import subprocess
 import time
 
 
-client = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
+client = xmlrpclib.ServerProxy('https://pypi.python.org/pypi')
 
 
 def list_all():
