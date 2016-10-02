@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+
+# Download a list of mirrors in HTML format, extract the URLs of FTP and
+# HTTP(S) mirrors, and print them to standard output, terminated by
+# a single slash and a newline.
+# -----
+
+msg() (unset IFS; printf '%s: %s\n' "$0" "$*" >&2)
+err() { msg error: "$@"; }
+warn() { msg warning: "$@"; }
+
+usage() {
+    cat >&2 <<EOF
+usage: $script [-a] [-K <curl config>] [--] <source>
+
+Available sources:
+    ctan / tex / tex_ctan
+    gentoo
+    gnu
+    xorg
+
+See the mirror-utils README for more details.
+EOF
+}
+
+# Avoid $0 (http://mywiki.wooledge.org/BashFAQ/028).
+script=$(basename "$BASH_SOURCE")
+parent=$(dirname "$BASH_SOURCE")
+cd "$parent" || {
+    err "cannot cd(1) into '$parent'"
+    exit 1
+}
+
+# Parse options. Remember to update the mirror-utils README, usage
+# message, and argument validation after changing these.
+unset all_urls curl_config
+while getopts aK: opt; do
+    case $opt in
+        a) all_urls=1 ;;
+        K) curl_config=$OPTARG ;;
+        '?') usage; exit 2 ;;
+    esac
+done
+shift $((OPTIND - 1))
+readonly all_urls curl_config
+
+# Validate arguments.
+if (( $# < 1 )); then
+    err 'source was not specified'
+    false
+elif [[ -z ${curl_config-_} ]]; then
+    err 'path to curl config cannot be empty'
+    false
+fi || { usage; exit 2; }
+
+# Keep these URLs synced with those in the XSLT stylesheet.
+case $1 in
+    ctan|tex|tex_ctan) url=https://ctan.org/mirrors ;;
+    gentoo) url=https://gentoo.org/downloads/mirrors ;;
+    gnu)    url=https://gnu.org/prep/ftp.html ;;
+    xorg)   url=https://x.org/wiki/Releases/Download ;;
+    *)
+        err "invalid source '$1'"
+        usage
+        exit 2
+        ;;
+esac
+readonly url
+
+if (( $# > 1 )); then
+    warn "using source '$1'; ignoring extra arguments"
+fi
+
+# The real work.
+#
+# - Only pass --config to curl if -K was specified for this script
+#   (http://mywiki.wooledge.org/BashFAQ/050). Do not modify the eval
+#   command unless you know what you're doing.
+# - The XSLT stylesheet expects the "url" parameter to be a URL sans
+#   protocol.
+# - The awk script treats "all_urls" as a Boolean.
+eval curl --compressed --location --silent --show-error \
+        "${curl_config+'--config' \"\$curl_config\"}" -- '"$url"' \
+    | xsltproc --html --stringparam url "${url#*://}" "$script.xslt" - \
+    | awk -F '/+' -v all_urls="$all_urls" '
+            /^(ftp|https?):/ {
+                # Terminate with exactly one slash.
+                sub("/*$", "/")
+
+                # If all_urls is false, allow only one URL per FQDN,
+                # favoring HTTPS over HTTP over FTP.
+                key = all_urls ? $0 : $2
+                if ($1 == "ftp:" && urls[key] ~ /^https?:/)
+                    next
+                if ($1 == "http:" && urls[key] ~ /^https:/)
+                    next
+                urls[key] = $0
+                order[key] = count++
+            }
+
+            END {
+                # There should always be *some* input.
+                if (!NR)
+                    exit 1
+
+                # Respect the ordering of the original list.
+                for (key in order)
+                    orderedurls[order[key]] = urls[key]
+                for (i = 0; i < count; ++i)
+                    if (i in orderedurls)
+                        printf "    %s\n", orderedurls[i]
+            }'
