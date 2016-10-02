@@ -24,8 +24,8 @@ EOF
 }
 
 # Avoid $0 (http://mywiki.wooledge.org/BashFAQ/028).
-script=$(basename "$BASH_SOURCE")
-parent=$(dirname "$BASH_SOURCE")
+script=$(basename "${BASH_SOURCE[0]}")
+parent=$(dirname "${BASH_SOURCE[0]}")
 cd "$parent" || {
     err "cannot cd(1) into '$parent'"
     exit 1
