@@ -241,6 +241,12 @@
     <string>MacPorts</string>
     <key>BBLMScansFunctions</key>
     <true/>
+    
+    <key>BBLMFileNamesToMatch</key>
+        <array>
+            <string>Portfile</string>
+        </array>
+
     <key>Language Features</key>
     <dict>
         <key>Close Block Comments</key>
