@@ -14,7 +14,7 @@ set supportedGroups [list perl5 php python ruby github]
 
 proc printUsage {{channel stderr}} {
    puts $channel "Usage: $::argv0 \[-h\] \[-g portgroup\] <portname> <portversion>"
-   puts $channel "   -g   Specify a port group to use (perl5, python, etc)"
+   puts $channel "   -g   Specify a port group to use (perl5, python, github, etc)"
    puts $channel "   -h   This help"
    puts $channel ""
    puts $channel "portname      name to use for the port; for group-based ports, don't"
@@ -67,6 +67,10 @@ if {$groupCode eq "github"} {
     set verlist [split $portname /]
     set github.user [lindex ${verlist} 0]
     set portname    [lindex ${verlist} 1]
+    if {[regexp {^v([0-9]+.[0-9.-]+)} $portversion -> version]} {
+        set portversion $version
+        set github.tag_prefix "v"
+    }
 }
 
 puts "# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4"
@@ -101,9 +105,14 @@ switch ${groupCode} {
       puts "categories-append   replaceme"
    }
    github {
-       puts "PortGroup           github 1.0"
-       puts ""
-       puts "github.setup        ${github.user} ${portname} ${portversion}"
+      puts "PortGroup           github 1.0"
+      puts ""
+      if {[info exists github.tag_prefix]} {
+          set tag_prefix " ${github.tag_prefix}"
+      } else {
+          set tag_prefix ""
+      }
+      puts "github.setup        ${github.user} ${portname} ${portversion}${tag_prefix}"
    }
    default {
       puts ""
