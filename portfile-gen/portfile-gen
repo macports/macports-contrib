@@ -12,19 +12,43 @@ set MY_VERSION 0.2
 
 set supportedGroups [list perl5 php python ruby github]
 
-proc printUsage {{channel stderr}} {
+proc printUsage {{portgroup ""} {channel stderr}} {
+   global supportedGroups
    puts $channel "Usage: $::argv0 \[-h\] \[-g portgroup\] <portname> <portversion>"
-   puts $channel "   -g   Specify a port group to use (perl5, python, github, etc)"
+   puts $channel "   -g   Specify a port group to use"
    puts $channel "   -h   This help"
    puts $channel ""
-   puts $channel "portname      name to use for the port; for group-based ports, don't"
-   puts $channel "              use the prefix (py-, p5-, etc) as this will add that"
-   puts $channel "              for you when needed. For github, use githubuser/reponame."
+   puts $channel "portname      name to use for the port; see also port groups usage"
    puts $channel "portversion   version to use for the port"
+   puts $channel ""
+   if {$portgroup eq ""} {
+      puts $channel "To see usage for a specific port group: $::argv0 -h -g portgroup"
+      puts $channel "Supported port groups: ${supportedGroups}"
+   } else {
+      puts $channel "Usage for port group $portgroup:"
+      if {$portgroup eq "perl5"} {
+         puts $channel "Do not use the prefix 'p5-' in the portname as it will be added when needed."
+      } elseif {$portgroup eq "php"} {
+         puts $channel "Do not use the prefix 'php-' in the portname as it will be added when needed."
+      } elseif {$portgroup eq "python"} {
+         puts $channel "Do not use the prefix 'py-' in the portname as it will be added when needed."
+      } elseif {$portgroup eq "ruby"} {
+         puts $channel "Do not use the prefix 'rb-' in the portname as it will be added when needed."
+      } elseif {$portgroup eq "github"} {
+         puts $channel "Usage: $::argv0 -g github username/repository tag"
+         puts $channel ""
+         puts $channel "GitHub username and repository have to be specifed as one argument,"
+         puts $channel "but will be split automatically. The tag is the version number,"
+         puts $channel "often in the format of 'vX.Y.Z'."
+      } else {
+         puts $channel "No special parameters for '$portgroup'."
+      }
+   }
 }
 
 
 set groupCode ""
+set usage false
 while {[string index [lindex $::argv 0] 0] eq "-"} {
    switch [string range [lindex $::argv 0] 1 end] {
       g {
@@ -42,8 +66,7 @@ while {[string index [lindex $::argv 0] 0] eq "-"} {
          set ::argv [lrange $::argv 1 end]
       }
       h {
-         printUsage stdout
-         exit 0
+        set usage true
       }
       default {
          puts stderr "Unknown option [lindex $::argv 0]"
@@ -52,6 +75,11 @@ while {[string index [lindex $::argv 0] 0] eq "-"} {
       }
    }
    set ::argv [lrange $::argv 1 end]
+}
+
+if {$usage} {
+    printUsage $groupCode stdout
+    exit 0
 }
 
 if {[llength $::argv] != 2} {
