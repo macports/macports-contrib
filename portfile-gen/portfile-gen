@@ -141,6 +141,7 @@ switch ${groupCode} {
           set tag_prefix ""
       }
       puts "github.setup        ${github.user} ${portname} ${portversion}${tag_prefix}"
+      puts "categories          replaceme"
    }
    default {
       puts ""
