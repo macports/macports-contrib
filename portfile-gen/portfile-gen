@@ -171,9 +171,9 @@ switch ${groupCode} {
    }
    python {
       puts ""
-      puts "homepage            replaceme"
-      puts "master_sites        replaceme"
-      puts {distname            ${portname}-${version}}
+      puts "homepage            https://pypi.python.org/pypi/${portname}/"
+      puts "master_sites        pypi:[string index ${portname} 0]/${portname}"
+      puts "distname            \${python.rootname}-\${version}"
    }
    ruby {
    }
