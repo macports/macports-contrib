@@ -286,7 +286,7 @@ sub portfile {
 PortSystem          1.0
 PortGroup           perl5 1.0
 
-perl5.branches      5.22 5.24
+perl5.branches      5.24
 perl5.setup         $$info{prefix} $$info{version}
 #perl5.setup         $$info{prefix} $$info{version} ../by-authors/id/$$info{cpan_path}
 
