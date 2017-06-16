@@ -153,4 +153,13 @@ if {[llength [split $log "\n"]] == 0} {
 }
 
 puts "The following changes have been committed for $portname since you installed version ${version_selected}_$revision_selected$variant_selected on [clock format $installedDate -format {%Y-%m-%d at %H:%M:%S}]:"
-puts [join $log \n]
+# This is still a hack - need better logic/display
+foreach messageline [lrange $log 0 end] {
+    # each git message should have a blank line after first line/summary
+    set list_x [split [string map [list {\n\n} "\x00"] $messageline] "\x00"]
+    puts [lindex $list_x 0]
+    if {$verbose} {
+        puts -nonewline "  "
+        puts [lindex $list_x 1]
+    }
+}
