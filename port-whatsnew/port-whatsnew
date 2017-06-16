@@ -7,8 +7,6 @@ set MY_VERSION 0.2
 proc printUsage {} {
     puts "Usage: $::argv0 \[-hvV\] \[-t macports-tcl-path\] port-name"
     puts "  -h    This help"
-    puts "  -t    Give a different location for the base MacPorts Tcl"
-    puts "        file (defaults to /Library/Tcl)"
     puts "  -v    verbose output"
     puts "  -V    show version and MacPorts version being used"
     puts ""
@@ -18,7 +16,6 @@ proc printUsage {} {
 
 # Begin
 
-set macportsTclPath /Library/Tcl
 set verbose 0
 set showVersion 0
 
@@ -27,15 +24,6 @@ while {[string index [lindex $::argv 0] 0] == "-" } {
         h {
             printUsage
             exit 0
-        }
-        t {
-            if {[llength $::argv] < 2} {
-                puts "-t needs a path"
-                printUsage
-                exit 1
-            }
-            set macportsTclPath [lindex $::argv 1]
-            set ::argv [lrange $::argv 1 end]
         }
         v {
              set verbose 1
