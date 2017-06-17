@@ -145,9 +145,13 @@ puts "The following changes have been committed for $portname since you installe
 foreach messageline [lrange $log 0 end] {
     # each git message should have a blank line after first line/summary
     set list_x [split [string map [list {\n\n} "\x00"] $messageline] "\x00"]
-    puts [lindex $list_x 0]
-    if {$verbose && ([llength $list_x] > 1)} {
-        puts -nonewline "  "
-        puts [lrange $list_x 1 end]
+    foreach x $list_x first 1 {
+        if {$first == 1} {
+            puts $x
+        } else {
+            puts -nonewline "  "
+            puts [string map {\\n "  "} $x]
+        }
+        if !{$verbose} break;
     }
 }
