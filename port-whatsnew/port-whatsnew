@@ -5,7 +5,7 @@
 set MY_VERSION 0.2
 
 proc printUsage {} {
-    puts "Usage: $::argv0 \[-hvV\] \[-t macports-tcl-path\] port-name"
+    puts "Usage: $::argv0 \[-hvV\] port-name"
     puts "  -h    This help"
     puts "  -v    verbose output"
     puts "  -V    show version and MacPorts version being used"
