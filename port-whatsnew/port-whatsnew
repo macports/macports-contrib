@@ -146,8 +146,8 @@ foreach messageline [lrange $log 0 end] {
     # each git message should have a blank line after first line/summary
     set list_x [split [string map [list {\n\n} "\x00"] $messageline] "\x00"]
     puts [lindex $list_x 0]
-    if {$verbose} {
+    if {$verbose && ([llength $list_x] > 1)} {
         puts -nonewline "  "
-        puts [lindex $list_x 1]
+        puts [lrange $list_x 1 end]
     }
 }
