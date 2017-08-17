@@ -473,7 +473,7 @@ def create_portfile(dict, file_name, dict2):
 		file.write('# -*- coding: utf-8; mode: tcl; tab-width: 4; ')
 		file.write('indent-tabs-mode: nil; c-basic-offset: 4 ')
 		file.write('-*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4\n')
-		file.write('# $Id$\n\n')
+		file.write('\n')
 		file.write('PortSystem          1.0\n')
 		file.write('PortGroup           python 1.0\n\n')
 
