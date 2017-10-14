@@ -643,8 +643,8 @@ def create_portfile(dict, file_name, dict2):
 		create_diff(old_file, new_file, diff_file)
 		print((str(os.path.abspath(diff_file))+"\n"))
 		print("\nIf you want to open a new ticket. Please visit")
-		print("https://trac.macports.org/auth/login/?next=/newticket")
-		print("to open a new ticket after logging in with your credentials.")
+		print("https://trac.macports.org/newticket")
+		print("to open a new ticket after logging in with your GitHub account.")
 	else:
 		print("No port found.")
 
