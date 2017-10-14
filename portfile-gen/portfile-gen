@@ -108,7 +108,7 @@ switch ${groupCode} {
    perl5 {
       puts "PortGroup           perl5 1.0"
       puts ""
-      puts "perl5.branches      5.8 5.10 5.12 5.14 5.16"
+      puts "perl5.branches      5.24 5.26"
       puts "perl5.setup         ${portname} ${portversion}"
       puts "categories-append   replaceme"
    }
