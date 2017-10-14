@@ -295,6 +295,7 @@ def checksums(pkg_name, pkg_version):
 				val = str(subprocess.check_output(command, stderr=subprocess.STDOUT))
 				val = val.split('=')[1][1:-1]
 				checksums[chk] = val
+			checksums['size'] = os.path.getsize(file_name)
 
 			dir = '/'.join(file_name.split('/')[0:-1])
 			if flag:
@@ -586,7 +587,8 @@ def create_portfile(dict, file_name, dict2):
 		else:
 			file.write('checksums           md5     XXX \\\n')
 			file.write('                    rmd160  XXX \\\n')
-			file.write('                    sha256  XXX\n\n')
+			file.write('                    sha256  XXX \\\n')
+			file.write('                    size    XXX\n\n')
 
 
 		python_vers = dict['requires_python']
