@@ -37,7 +37,7 @@ proc printUsage {{portgroup ""} {channel stderr}} {
       } elseif {$portgroup eq "github"} {
          puts $channel "Usage: $::argv0 -g github username/repository tag"
          puts $channel ""
-         puts $channel "GitHub username and repository have to be specifed as one argument,"
+         puts $channel "GitHub username and repository have to be specified as one argument,"
          puts $channel "but will be split automatically. The tag is the version number,"
          puts $channel "often in the format of 'vX.Y.Z'."
       } else {
