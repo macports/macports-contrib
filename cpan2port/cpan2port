@@ -193,6 +193,7 @@ sub checksums {
         my ($v)   = $sum =~ / (.*)/;
         $check{$k} = $v;
     }
+    $check{size} = -s $tarball;
     $$info{checksums} = \%check;
     if ( DEBUG::DEBUG ) {
         use YAML;
