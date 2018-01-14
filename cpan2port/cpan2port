@@ -473,6 +473,42 @@ Add perl version support to have a better dependencies grabbing
 
 Marc Chantreux
 
+=head1 CONTRIBUTORS
+
+=for stopwords Dan Ports David B. Evans Frank Schima Kurt Hindenburg Larry Gilbert Mojca Miklavec Ryan Schmidt
+
+=over 4
+
+=item *
+
+Dan Ports <dports@macports.org>
+
+=item *
+
+David B. Evans <devans@macports.org>
+
+=item *
+
+Frank Schima <mf2k@macports.org>
+
+=item *
+
+Kurt Hindenburg <khindenburg@macports.org>
+
+=item *
+
+Larry Gilbert <l2g@macports.org>
+
+=item *
+
+Mojca Miklavec <mojca@macports.org>
+
+=item *
+
+Ryan Schmidt <ryandesign@macports.org>
+
+=back
+
 =head1 COPYRIGHT AND LICENSE
 
 This software is copyright (c) 2009 by BibLibre.
