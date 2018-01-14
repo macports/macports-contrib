@@ -387,6 +387,10 @@ __END__
 
 cpan2port - A tool to generate MacPorts Portfiles from CPAN distributions
 
+=head1 VERSION
+
+version 0.001000
+
 =head1 USAGE
 
 cpan2port uses at least one flag and a list of module names. Module names can
