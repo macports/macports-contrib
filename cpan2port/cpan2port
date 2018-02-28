@@ -286,7 +286,7 @@ sub portfile {
 PortSystem          1.0
 PortGroup           perl5 1.0
 
-perl5.branches      5.24
+perl5.branches      5.26
 perl5.setup         $$info{prefix} $$info{version}
 #perl5.setup         $$info{prefix} $$info{version} ../by-authors/id/$$info{cpan_path}
 
@@ -389,7 +389,7 @@ cpan2port - A tool to generate MacPorts Portfiles from CPAN distributions
 
 =head1 VERSION
 
-version 0.001000
+version 0.001001
 
 =head1 USAGE
 
