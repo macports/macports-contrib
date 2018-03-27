@@ -42,18 +42,33 @@ proc dequote {str} {
     return [string trim $str "\""]
 }
 
+proc usage {code} {
+    puts stderr "Usage: [file tail $::argv0] \[--align=maxlen\] <path/to/Cargo.lock>"
+    exit $code
+}
+
 # main
 
-if {$argc != 1} {
-    puts stderr "Usage: [file tail $argv0] <path/to/Cargo.lock>"
-    exit 1
+if {$argc == 0} {
+    usage 0
+} elseif {$argc == 1} {
+    set maxlenmode no
+    set cargolock [lindex $argv 0]
+} elseif {$argc == 2} {
+    if {[lindex $argv 0] ne "--align=maxlen"} {
+        usage 1
+    }
+    set maxlenmode yes
+    set cargolock [lindex $argv 1]
+} else {
+    usage 1
 }
 
 set crates {}
 set maxlen_name 0
 set maxlen_version 0
 
-set fd [ini::open [lindex $argv 0] "r"]
+set fd [ini::open $cargolock "r"]
 set metadata [ini::get $fd metadata]
 ini::close $fd
 
@@ -79,7 +94,11 @@ foreach crate $crates {
     set name [lindex $crate 0]
     set version [lindex $crate 1]
     set checksum [lindex $crate 2]
-    puts -nonewline [format "    %-*s  %-*s  %s" $maxlen_name $name $maxlen_version $version $checksum]
+    if {$maxlenmode} {
+        puts -nonewline [format "    %-*s  %-*s  %s" $maxlen_name $name $maxlen_version $version $checksum]
+    } else {
+        puts -nonewline [format "    %s  %s  %s" $name $version $checksum]
+    }
 }
 puts ""
 
