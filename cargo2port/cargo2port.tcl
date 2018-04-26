@@ -97,7 +97,7 @@ foreach crate $crates {
     if {$maxlenmode} {
         puts -nonewline [format "    %-*s  %-*s  %s" $maxlen_name $name $maxlen_version $version $checksum]
     } else {
-        puts -nonewline [format "    %-20s  %8s  %s" $name $version $checksum]
+        puts -nonewline [format "    %-28s  %8s  %s" $name $version $checksum]
     }
 }
 puts ""
