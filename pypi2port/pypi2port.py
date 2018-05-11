@@ -39,7 +39,7 @@ import subprocess
 import time
 
 
-client = xmlrpclib.ServerProxy('https://pypi.python.org/pypi')
+client = xmlrpclib.ServerProxy('https://pypi.org/pypi')
 
 
 def list_all():
@@ -104,7 +104,7 @@ def release_data(pkg_name, pkg_version):
 def fetch(pkg_name, dict):
 	""" Fetches the distfile for a particular package name and release_url """
 	print("Fetching distfiles...")
-	checksum_md5 = dict['md5_digest']
+	checksum_sha256 = dict['sha256_digest']
 	parent_dir = './sources'
 	home_dir = parent_dir + '/' + 'python'
 	src_dir = home_dir + '/py-' + pkg_name
@@ -172,9 +172,9 @@ def fetch(pkg_name, dict):
                     sys.stdout.write(" OK\n")
                     sys.stdout.flush()
 
-	checksum_md5_calc = hashlib.md5(open(file_name,'rb').read()).hexdigest()
+	checksum_sha256_calc = hashlib.sha256(open(file_name,'rb').read()).hexdigest()
 
-	if str(checksum_md5) == str(checksum_md5_calc):
+	if str(checksum_sha256) == str(checksum_sha256_calc):
 		print('Successfully fetched')
 		ext = file_name.split('.')[-1]
 		if ext == 'egg':
@@ -184,7 +184,7 @@ def fetch(pkg_name, dict):
 					zip.extract(name, src_dir)
 		return file_name
 	else:
-		print('Aborting due to inconsistency on checksums (expected {0} != downloaded {1})\n'.format(checksum_md5, checksum_md5_calc))
+		print('Aborting due to inconsistency on checksums (expected {0} != downloaded {1})\n'.format(checksum_sha256, checksum_sha256_calc))
 		try:
 			os.remove(file_name)
 		except OSError as e:
@@ -289,7 +289,7 @@ def checksums(pkg_name, pkg_version):
 		try:
 			print("Generating checksums...")
 
-			for chk in ['md5', 'rmd160', 'sha256']:
+			for chk in ['rmd160', 'sha256']:
 				command = "openssl " + chk + " " + file_name
 				command = command.split()
 				val = str(subprocess.check_output(command, stderr=subprocess.STDOUT))
@@ -585,8 +585,7 @@ def create_portfile(dict, file_name, dict2):
 				file.write('{0: <6}  {1}'.format(chk, checksums_values[chk]))
 			file.write('\n\n')
 		else:
-			file.write('checksums           md5     XXX \\\n')
-			file.write('                    rmd160  XXX \\\n')
+			file.write('checksums           rmd160  XXX \\\n')
 			file.write('                    sha256  XXX \\\n')
 			file.write('                    size    XXX\n\n')
 
