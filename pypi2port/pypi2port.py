@@ -557,7 +557,7 @@ def create_portfile(dict, file_name, dict2):
 				zip_set = False
 
 		if master_site:
-                        if re.match('^https?://pypi.python.org/packages/', master_site):
+                        if re.match('^https?://files\.pythonhosted\.org/packages/', master_site):
                             file.write('master_sites        pypi:{0}/{1}\n'.format(dict['name'][0], dict['name']))
                         else:
                             file.write('master_sites        {0}\n'.format(master_site))
