@@ -9,14 +9,14 @@ Redistribution and use in source and binary forms, with or without modification,
 
 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
 
-2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer 
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer
 in the documentation and/or other materials provided with the distribution.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT 
-NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL 
-THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
-HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT
+NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
@@ -132,9 +132,9 @@ def fetch(pkg_name, dict):
                             # toolbar_width = int(file_size/block_sz)+1
                             toolbar_width = 30
                             # sys.stdout.write("["+"-"*int(file_size_dl/block_sz)+pattern[patternIndex]+" "*int((file_size-file_size_dl)/block_sz-1)+"] "+" "+"(%5d Kb of %5d Kb)"% (file_size_dl, file_size))
-                            print file_size
+                            print(file_size)
                             incr = int(file_size/50)
-                            print incr
+                            print(incr)
                             count = 0
                             left = 49
                             sys.stdout.write("["+"-"*int(count)+pattern[patternIndex]+" "*int(left)+"]"+"(%5d Kb of %5d Kb)"% (file_size_dl, file_size))
@@ -581,7 +581,7 @@ def create_portfile(dict, file_name, dict2):
 					first=False
 				else:
 					file.write(' \\\n')
-					file.write('                    ') 
+					file.write('                    ')
 				file.write('{0: <6}  {1}'.format(chk, checksums_values[chk]))
 			file.write('\n\n')
 		else:
