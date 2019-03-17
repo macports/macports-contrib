@@ -24,7 +24,11 @@ while {[gets $fd line] >= 0} {
     array set portinfo $line
     array unset json_portinfo
     foreach key [array names portinfo] {
-        set json_portinfo($key) [::json::write string $portinfo($key)]
+        if { $key == "categories"} {
+            set json_portinfo($key) [::json::write array {*}$portinfo($key)]
+        } else {
+            set json_portinfo($key) [::json::write string $portinfo($key)]
+        }
     }
     lappend objects [::json::write object {*}[array get json_portinfo]]
 }
