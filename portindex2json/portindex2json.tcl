@@ -12,6 +12,58 @@
 
 package require json::write
 
+proc tcl2json_list {tcl_list} {
+    set new_tcl_list {}
+    foreach element $tcl_list {
+        lappend new_tcl_list [::json::write string $element]
+    }
+    return [::json::write array {*}$new_tcl_list]
+}
+
+proc get_maintainer_array {maintainer} {
+    foreach entry $maintainer {
+        if {[string first @ $entry] != -1} {
+            set maintainer_array(github) [::json::write string [string trimleft $entry @]]
+        } else {
+            if {[string first : $entry] != -1} {
+                set email_list [split $entry :]
+                set email(name) [::json::write string [lindex $email_list 1]]
+                set email(domain) [::json::write string [lindex $email_list 0]]
+            } else {
+                set email(name) [::json::write string $entry]
+                set email(domain) [::json::write string "macports.org"]
+            }
+            set email_subobject [::json::write object {*}[array get email]]
+            set maintainer_array(email) $email_subobject
+        }
+    }
+    return [array get maintainer_array]
+}
+
+proc parse_maintainers {maintainers} {
+    set maintainer_subobjects {}
+    foreach maintainer $maintainers {
+        if {$maintainer != "openmaintainer" && $maintainer != "nomaintainer"} {
+            lappend maintainer_subobjects [::json::write object {*}[get_maintainer_array $maintainer]]
+        }
+    }
+    set maintainers_list [::json::write array {*}$maintainer_subobjects]
+    return $maintainers_list
+}
+
+proc is_closedmaintainer {maintainers} {
+    foreach maintainer $maintainers {
+        if {$maintainer == "openmaintainer" || $maintainer == "nomaintainer"} {
+            return false
+        }
+    }
+    return true
+}
+
+proc remove_extra_braces {text} {
+    return [regsub -all {[\{\}]} $text ""]
+}
+
 set fd [open [lindex $argv 0] r]
 chan configure $fd -encoding utf-8
 while {[gets $fd line] >= 0} {
@@ -24,8 +76,13 @@ while {[gets $fd line] >= 0} {
     array set portinfo $line
     array unset json_portinfo
     foreach key [array names portinfo] {
-        if { $key == "categories"} {
-            set json_portinfo($key) [::json::write array {*}$portinfo($key)]
+        if {$key == "categories" || $key == "variants" || [string match "depends_*" $key]} {
+            set json_portinfo($key) [tcl2json_list $portinfo($key)]
+        } elseif {$key == "maintainers"} {
+            set json_portinfo($key) [parse_maintainers $portinfo($key)]
+            set json_portinfo(closedmaintainer) [is_closedmaintainer $portinfo($key)]
+        } elseif {$key == "long_description"} {
+            set json_portinfo($key) [::json::write string [remove_extra_braces $portinfo($key)]]
         } else {
             set json_portinfo($key) [::json::write string $portinfo($key)]
         }
