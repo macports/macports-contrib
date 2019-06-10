@@ -48,7 +48,7 @@ syn match PortfileOptional      "\<depends_skip_archcheck\%(-append\|-delete\)\?
 
 syn match PortfileOptional      "\<checksums\%(-append\|-delete\)\?\>" nextgroup=PortfileChecksums skipwhite
 syn region PortfileChecksums    matchgroup=Normal start="" skip="\\$" end="$" contained contains=PortfileChecksumsType
-syn keyword PortfileChecksumsType md5 sha1 rmd160 sha256 contained
+syn keyword PortfileChecksumsType md5 sha1 rmd160 sha256 size contained
 
 syn match PortfilePhases        "\<\%(pre-\|post-\)\?\%(fetch\|checksum\|extract\|patch\|configure\|build\|test\|destroot\|archive\|install\|activate\|deactivate\)\>" contains=PortfilePrePost
 
