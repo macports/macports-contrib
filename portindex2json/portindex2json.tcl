@@ -2,8 +2,11 @@
 # a list of JSON objects.
 # Written by Joshua Root <jmr@macports.org>, 2017
 # Requires: tclsh with the tcllib 'json' package.
-# Usage: tclsh portindex2json.tcl path/to/PortIndex
-
+#
+# Usage:
+#     tclsh portindex2json.tcl path/to/PortIndex [--info <key>=<value>]
+#     tclsh portindex2json.tcl --help
+#
 # To the extent possible under law, the author(s) have dedicated all
 # copyright and related and neighboring rights to this software to the
 # public domain worldwide. This software is distributed without any
@@ -64,7 +67,65 @@ proc remove_extra_braces {text} {
     return [regsub -all {[\{\}]} $text ""]
 }
 
-set fd [open [lindex $argv 0] r]
+proc print_usage {} {
+    puts stdout ""
+    puts stdout "Usage:"
+    puts stdout "    /path/to/tclsh portindex2json.tcl \[--info <key>=<value>\] <path/to/PortIndex>"
+    puts stdout "    /path/to/tclsh portindex2json.tcl --help"
+    puts stdout ""
+    puts stdout "Each '--info <key>=<value>' combinaton adds one key-value pair to the JSON output inside the parent key: \"info\""
+    puts stdout "You may provide any number of '--info <key>=<value>' combinations."
+    puts stdout ""
+}
+
+proc parse_options {} {
+    global argc argv fd json_info
+    for {set i 0} {$i < $argc} {incr i} {
+        set arg [lindex $argv $i]
+        switch -regex -- $arg {
+            {^-.+} {
+                if {$arg eq "--info"} {
+                    incr i
+                    set argument [split [lindex $argv $i] =]
+                    if {[lindex $argument 1] eq ""} {
+                        puts stderr "\nERROR: No value provided for the key: '[lindex $argument 0]'. The correct syntax is '--info <key>=<value>'.\n"
+                        exit 1
+                    } else {
+                        set json_info([lindex $argument 0]) [::json::write string [lindex $argument 1]]
+                    }
+                } elseif {$arg eq "-help" || $arg eq "-h" || $arg eq "--help" } {
+                    print_usage
+                    exit 0
+                } else {
+                    puts stderr "\nERROR: '$arg' is an invalid argument (expecting '--help' or '--info').\n"
+                    print_usage
+                    exit 1
+                }
+            }
+            default {
+                if {[info exists fd]} {
+                    puts stderr "\nERROR: No support for more than one argument for path to the PortIndex file.\n"
+                    print_usage
+                    exit 1
+                } else {
+                    if {[catch {set fd [open [lindex $argv $i] r]} fid]} {
+                        puts stderr "\nERROR: Could not open file '[lindex $argv $i]'. Make sure the path to the PortIndex file is correct.\n"
+                        exit 1
+                    }
+                }
+            }
+        }
+    }
+
+    if {![info exists fd]} {
+        puts stderr "\nERROR: Path to the PortIndex file missing.\n"
+        print_usage
+        exit 1
+    }
+}
+
+parse_options
+
 chan configure $fd -encoding utf-8
 while {[gets $fd line] >= 0} {
     if {[llength $line] != 2} {
@@ -90,5 +151,11 @@ while {[gets $fd line] >= 0} {
     lappend objects [::json::write object {*}[array get json_portinfo]]
 }
 
+if {[array exists json_info]} {
+    set json_output(info) [::json::write object {*}[array get json_info]]
+}
+
+set json_output(ports) [::json::write array {*}$objects]
+
 chan configure stdout -encoding utf-8
-puts [::json::write array {*}$objects]
+puts [::json::write object {*}[array get json_output]]
