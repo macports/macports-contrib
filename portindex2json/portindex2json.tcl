@@ -151,11 +151,12 @@ while {[gets $fd line] >= 0} {
     lappend objects [::json::write object {*}[array get json_portinfo]]
 }
 
+set json_output [list]
 if {[array exists json_info]} {
-    set json_output(info) [::json::write object {*}[array get json_info]]
+    lappend json_output info [::json::write object {*}[array get json_info]]
 }
 
-set json_output(ports) [::json::write array {*}$objects]
+lappend json_output ports [::json::write array {*}$objects]
 
 chan configure stdout -encoding utf-8
-puts [::json::write object {*}[array get json_output]]
+puts [::json::write object {*}$json_output]
