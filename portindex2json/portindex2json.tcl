@@ -72,10 +72,6 @@ proc is_closedmaintainer {maintainers} {
     return true
 }
 
-proc remove_extra_braces {text} {
-    return [regsub -all {[\{\}]} $text ""]
-}
-
 proc print_usage {} {
     puts stdout ""
     puts stdout "Usage:"
@@ -151,8 +147,8 @@ while {[gets $fd line] >= 0} {
         } elseif {$key eq "maintainers"} {
             set json_portinfo($key) [parse_maintainers $portinfo($key)]
             set json_portinfo(closedmaintainer) [is_closedmaintainer $portinfo($key)]
-        } elseif {$key eq "long_description"} {
-            set json_portinfo($key) [::json::write string [remove_extra_braces $portinfo($key)]]
+        } elseif {$key eq "description" || $key eq "long_description"} {
+            set json_portinfo($key) [::json::write string [join $portinfo($key)]]
         } else {
             set json_portinfo($key) [::json::write string $portinfo($key)]
         }
