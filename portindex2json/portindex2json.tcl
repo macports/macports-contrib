@@ -25,9 +25,17 @@ proc tcl2json_list {tcl_list} {
 
 proc get_maintainer_array {maintainer} {
     foreach entry $maintainer {
-        if {[string first @ $entry] != -1} {
+        set first_at [string first @ $entry]
+        if {$first_at == 0} {
+            # @foo = github handle 'foo'
             set maintainer_array(github) [::json::write string [string trimleft $entry @]]
+        } elseif {$first_at != -1} {
+            # unobfuscated email address
+            set email_list [split $entry @]
+            set email(name) [::json::write string [lindex $email_list 0]]
+            set email(domain) [::json::write string [lindex $email_list 1]]
         } else {
+            # obfuscated email address
             if {[string first : $entry] != -1} {
                 set email_list [split $entry :]
                 set email(name) [::json::write string [lindex $email_list 1]]
@@ -36,9 +44,10 @@ proc get_maintainer_array {maintainer} {
                 set email(name) [::json::write string $entry]
                 set email(domain) [::json::write string "macports.org"]
             }
-            set email_subobject [::json::write object {*}[array get email]]
-            set maintainer_array(email) $email_subobject
         }
+    }
+    if {[array exists email]} {
+        set maintainer_array(email) [::json::write object {*}[array get email]]
     }
     return [array get maintainer_array]
 }
