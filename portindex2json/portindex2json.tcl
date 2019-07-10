@@ -55,7 +55,7 @@ proc get_maintainer_array {maintainer} {
 proc parse_maintainers {maintainers} {
     set maintainer_subobjects {}
     foreach maintainer $maintainers {
-        if {$maintainer != "openmaintainer" && $maintainer != "nomaintainer"} {
+        if {$maintainer ne "openmaintainer" && $maintainer ne "nomaintainer"} {
             lappend maintainer_subobjects [::json::write object {*}[get_maintainer_array $maintainer]]
         }
     }
@@ -65,7 +65,7 @@ proc parse_maintainers {maintainers} {
 
 proc is_closedmaintainer {maintainers} {
     foreach maintainer $maintainers {
-        if {$maintainer == "openmaintainer" || $maintainer == "nomaintainer"} {
+        if {$maintainer eq "openmaintainer" || $maintainer eq "nomaintainer"} {
             return false
         }
     }
@@ -146,12 +146,12 @@ while {[gets $fd line] >= 0} {
     array set portinfo $line
     array unset json_portinfo
     foreach key [array names portinfo] {
-        if {$key == "categories" || $key == "variants" || [string match "depends_*" $key]} {
+        if {$key eq "categories" || $key eq "variants" || [string match "depends_*" $key]} {
             set json_portinfo($key) [tcl2json_list $portinfo($key)]
-        } elseif {$key == "maintainers"} {
+        } elseif {$key eq "maintainers"} {
             set json_portinfo($key) [parse_maintainers $portinfo($key)]
             set json_portinfo(closedmaintainer) [is_closedmaintainer $portinfo($key)]
-        } elseif {$key == "long_description"} {
+        } elseif {$key eq "long_description"} {
             set json_portinfo($key) [::json::write string [remove_extra_braces $portinfo($key)]]
         } else {
             set json_portinfo($key) [::json::write string $portinfo($key)]
