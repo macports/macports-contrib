@@ -46,6 +46,8 @@ syn keyword PortfileOptional    distname dist_subdir worksrcdir
 syn keyword PortfileOptional    installs_libs nextgroup=PortfileYesNo skipwhite
 syn match PortfileOptional      "\<depends_skip_archcheck\%(-append\|-delete\)\?\>"
 
+syn keyword PortfileOptional    use_xcode nextgroup=PortfileYesNo skipwhite
+
 syn match PortfileOptional      "\<checksums\%(-append\|-delete\)\?\>" nextgroup=PortfileChecksums skipwhite
 syn region PortfileChecksums    matchgroup=Normal start="" skip="\\$" end="$" contained contains=PortfileChecksumsType
 syn keyword PortfileChecksumsType md5 sha1 rmd160 sha256 size contained
