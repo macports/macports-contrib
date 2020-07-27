@@ -68,6 +68,45 @@ proc parse_maintainers {maintainers} {
     return $maintainers_list
 }
 
+proc parse_vinfo {vinfo variants} {
+    set vinfo_subobjects {}
+    array set vinfo_array $vinfo
+    foreach v $variants {
+        if {[info exists vinfo_array($v)]} {
+            array unset variant
+            array set variant $vinfo_array($v)
+
+            array unset variant_subobject
+
+            set variant_subobject(variant) [::json::write string $v]
+
+            if {[info exists variant(description)]} {
+                set variant_subobject(description) [::json::write string $variant(description)]
+            }
+
+            if {[info exists variant(requires)]} {
+                set variant_subobject(requires) [::json::write string $variant(requires)]
+            }
+
+            if {[info exists variant(conflicts)]} {
+                set variant_subobject(conflicts) [::json::write string $variant(conflicts)]
+            }
+
+            if {[info exists variant(is_default)]} {
+                set variant_subobject(is_default) true
+            }
+
+            if {[array exists variant_subobject]} {
+                lappend vinfo_subobjects [::json::write object {*}[array get variant_subobject]]
+            }
+        }
+    }
+
+    set vinfo_list [::json::write array {*}$vinfo_subobjects]
+
+    return $vinfo_list
+}
+
 proc is_closedmaintainer {maintainers} {
     foreach maintainer $maintainers {
         if {$maintainer eq "openmaintainer" || $maintainer eq "nomaintainer"} {
@@ -154,6 +193,10 @@ while {[gets $fd line] >= 0} {
             set json_portinfo(closedmaintainer) [is_closedmaintainer $portinfo($key)]
         } elseif {$key eq "description" || $key eq "long_description"} {
             set json_portinfo($key) [::json::write string [join $portinfo($key)]]
+        } elseif {$key eq "vinfo" && [info exists portinfo(variants)]} {
+            array unset vinfo
+            array set vinfo $portinfo($key)
+            set json_portinfo($key) [parse_vinfo [array get vinfo] $portinfo(variants)]
         } else {
             set json_portinfo($key) [::json::write string $portinfo($key)]
         }
