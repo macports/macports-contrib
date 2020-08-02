@@ -191,7 +191,7 @@ while {[gets $fd line] >= 0} {
         } elseif {$key eq "maintainers"} {
             set json_portinfo($key) [parse_maintainers $portinfo($key)]
             set json_portinfo(closedmaintainer) [is_closedmaintainer $portinfo($key)]
-        } elseif {$key eq "description" || $key eq "long_description"} {
+        } elseif {$key in [list description long_description notes]} {
             set json_portinfo($key) [::json::write string [join $portinfo($key)]]
         } elseif {$key eq "vinfo" && [info exists portinfo(variants)]} {
             array unset vinfo
