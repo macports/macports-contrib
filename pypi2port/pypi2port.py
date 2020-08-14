@@ -600,7 +600,7 @@ def create_portfile(dict, file_name, dict2):
 		print("Finding dependencies...")
 		file.write('if {${name} ne ${subport}} {\n')
 		file.write('    depends_build-append \\\n')
-		file.write('                        ' +
+		file.write('                    ' +
 				   'port:py${python.version}-setuptools\n')
 		deps = dependencies(dict['name'], dict['version'], True)
 		if deps:
