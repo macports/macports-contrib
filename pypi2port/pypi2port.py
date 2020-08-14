@@ -345,7 +345,7 @@ def search_license(license):
 			return licenses[i]
 
 
-def port_testing(name, portv='27'):
+def port_testing(name, portv='38'):
 	""" Port Testing function for various phase implementations """
 	euid = os.geteuid()
 	if euid:
@@ -370,7 +370,7 @@ def port_testing(name, portv='27'):
 			os.execlpe('sudo', *args)
 
 
-def port_fetch(name, portv='27'):
+def port_fetch(name, portv='38'):
 	""" Fetch phase implementation """
 	try:
 		command = "sudo port -t fetch dports/python/py-" + \
@@ -382,7 +382,7 @@ def port_fetch(name, portv='27'):
 		return False
 
 
-def port_checksum(name, portv='27'):
+def port_checksum(name, portv='38'):
 	""" Checksum phase implementation """
 	try:
 		command = "sudo port -t checksum dports/python/py-" + \
@@ -394,7 +394,7 @@ def port_checksum(name, portv='27'):
 		return False
 
 
-def port_extract(name, portv='27'):
+def port_extract(name, portv='38'):
 	""" Checksum phase implementation """
 	try:
 		command = "sudo port -t extract dports/python/py-" + \
@@ -406,7 +406,7 @@ def port_extract(name, portv='27'):
 		return False
 
 
-def port_patch(name, portv='27'):
+def port_patch(name, portv='38'):
 	""" Patch phase implementation """
 	try:
 		command = "sudo port -t patch dports/python/py-" + \
@@ -418,7 +418,7 @@ def port_patch(name, portv='27'):
 		return False
 
 
-def port_configure(name, portv='27'):
+def port_configure(name, portv='38'):
 	""" Configure phase implementation """
 	try:
 		command = "sudo port -t configure dports/python/py-" + \
@@ -430,7 +430,7 @@ def port_configure(name, portv='27'):
 		return False
 
 
-def port_build(name, portv='27'):
+def port_build(name, portv='38'):
 	""" Build phase implementation """
 	try:
 		command = "sudo port -t build dports/python/py-" + \
@@ -442,7 +442,7 @@ def port_build(name, portv='27'):
 		return False
 
 
-def port_destroot(name, portv='27'):
+def port_destroot(name, portv='38'):
 	""" Destroot phase implementation """
 	try:
 		command = "sudo port -t destroot dports/python/py-" + \
@@ -454,7 +454,7 @@ def port_destroot(name, portv='27'):
 		return False
 
 
-def port_clean(name, portv='27'):
+def port_clean(name, portv='38'):
 	""" Clean phase implementation """
 	try:
 		command = "sudo port -t clean dports/python/py-" + \
@@ -592,10 +592,10 @@ def create_portfile(dict, file_name, dict2):
 
 		python_vers = dict['requires_python']
 		if python_vers:
-			file.write('python.versions     27 {0}\n\n'.format(
+			file.write('python.versions     38 {0}\n\n'.format(
 					   dict['requires_python']))
 		else:
-			file.write('python.versions     27 38\n\n')
+			file.write('python.versions     38\n\n')
 
 		print("Finding dependencies...")
 		file.write('if {${name} ne ${subport}} {\n')
