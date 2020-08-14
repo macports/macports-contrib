@@ -522,7 +522,7 @@ def create_portfile(dict, file_name, dict2):
 		else:
 			file.write('description         None\n\n')
 
-		file.write('long_description    ${description}\n\n')
+		file.write('long_description    {*}${description}\n\n')
 		home_page = dict['home_page']
 
 		if home_page and not home_page == 'UNKNOWN':
