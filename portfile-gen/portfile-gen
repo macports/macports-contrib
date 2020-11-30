@@ -172,8 +172,6 @@ switch ${groupCode} {
    python {
       puts ""
       puts "homepage            https://pypi.python.org/pypi/${portname}/"
-      puts "master_sites        pypi:[string index ${portname} 0]/${portname}"
-      puts "distname            \${python.rootname}-\${version}"
    }
    ruby {
    }
@@ -200,7 +198,7 @@ switch ${groupCode} {
    }
    python {
       puts ""
-      puts "python.versions     27 36"
+      puts "python.versions     37 38 39"
       puts ""
       puts "if {\$subport ne \$name} {"
       puts "    post-destroot {"
