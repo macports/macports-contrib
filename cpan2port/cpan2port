@@ -260,7 +260,7 @@ sub portfile {
              }
          }
          if ($depends_build.$depends_lib ne '') {
-             $depends = "\nif {\${perl5.major} != \"\"} {\n" . $depends_build . $depends_lib . "}\n";
+             $depends = qq[\nif {\${perl5.major} ne ""} {\n] . $depends_build . $depends_lib . "}\n";
          }
     }
 
