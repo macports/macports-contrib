@@ -75,9 +75,9 @@ proc sort_ports {portList} {
                 if {$next == -1} {
                     break
                 }
-                set v [string range $variantstr [expr $next + 1] end]
+                set v [string range $variantstr ${next}+1 end]
                 lappend variants $v $sign
-                set variantstr [string range $variantstr 0 [expr $next - 1]]
+                set variantstr [string range $variantstr 0 ${next}-1]
             }
         }
         #ui_msg "variants = $variants"
