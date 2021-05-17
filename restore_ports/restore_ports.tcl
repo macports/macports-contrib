@@ -38,7 +38,7 @@ proc dependenciesForPort {portName variantInfo} {
    array unset portInfo
    array set portInfo [mportinfo $mport]
    mportclose $mport
-   foreach dependencyType {depends_fetch depends_extract depends_build depends_lib depends_run} {
+   foreach dependencyType {depends_fetch depends_extract depends_patch depends_build depends_lib depends_run} {
       if {[info exists portInfo($dependencyType)] && [string length $portInfo($dependencyType)] > 0} {
          foreach dependency $portInfo($dependencyType) {
             lappend dependencyList [lindex [split $dependency :] end]
