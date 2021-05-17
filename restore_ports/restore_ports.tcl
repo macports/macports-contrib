@@ -93,7 +93,7 @@ proc sort_ports {portList} {
         }
         #ui_msg "variants = $variants"
         set active 0
-        if {[llength $remaining] > 0 && [lindex $remaining 0] == "(active)"} {
+        if {[llength $remaining] > 0 && [lindex $remaining 0] eq "(active)"} {
             set active 1
         }
         #ui_msg "active = $active"
@@ -195,7 +195,7 @@ proc install_ports {operationList} {
 }
 
 proc read_portlist {filename} {
-    if {$filename == "-"} {
+    if {$filename eq "-"} {
         set infile stdin
     } else {
         set infile [open $filename r]
@@ -203,7 +203,7 @@ proc read_portlist {filename} {
     set data [read -nonewline $infile]
     set portList [split $data \n]
     close $infile
-    if {[lindex $portList 0] == "The following ports are currently installed:"} {
+    if {[lindex $portList 0] eq "The following ports are currently installed:"} {
         set portList [lrange $portList 1 end]
     }
     return $portList
@@ -216,7 +216,7 @@ set showVersion 0
 array set ui_options {}
 
 set origArgv $::argv
-while {[string index [lindex $::argv 0] 0] == "-" } {
+while {[string index [lindex $::argv 0] 0] eq "-"} {
    switch [string range [lindex $::argv 0] 1 end] {
       h {
          printUsage
