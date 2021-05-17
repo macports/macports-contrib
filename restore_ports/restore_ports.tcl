@@ -121,7 +121,7 @@ proc sort_ports {portList} {
             if {$installable} {
                 lappend operationList [list $name $variants $active]
                 incr port_installed($name)
-                set index [lsearch $newList [list $active $name $variants]]
+                set index [lsearch -exact $newList [list $active $name $variants]]
                 #ui_msg "deleting \"[list $active $name $variants]\" from list"
                 #ui_msg "list with element: $newList"
                 set newList [lreplace $newList $index $index]
