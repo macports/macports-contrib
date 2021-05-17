@@ -55,13 +55,24 @@ proc sort_ports {portList} {
     array set port_in_list {}
 
     set newList [list]
+    set search_str requested_variants='
+    set search_str_len [string length $search_str]
     foreach port $portList {
         set name [lindex $port 0]
         #ui_msg "name = $name"
         set version [lindex $port 1]
+        set remaining [lrange $port 2 end]
         set variants ""
 
-        if {[regexp {^@([^+]+?)(_(\d+)(([-+][^-+]+)*))?$} $version - - - - variantstr] && [info exists variantstr]} {
+        set match 0
+        set index [lsearch $remaining ${search_str}*]
+        if {$index >= 0} {
+            set variantstr [string range [lindex $remaining $index] $search_str_len end-1]
+            set match 1
+        } else {
+            set match [regexp {^@([^+]+?)(_(\d+)(([-+][^-+]+)*))?$} $version - - - - variantstr]
+        }
+        if {$match && [info exists variantstr]} {
             while 1 {
                 set nextplus [string last + $variantstr]
                 set nextminus [string last - $variantstr]
@@ -82,7 +93,7 @@ proc sort_ports {portList} {
         }
         #ui_msg "variants = $variants"
         set active 0
-        if {[llength $port] > 2 && [lindex $port 2] == "(active)"} {
+        if {[llength $remaining] > 0 && [lindex $remaining 0] == "(active)"} {
             set active 1
         }
         #ui_msg "active = $active"
