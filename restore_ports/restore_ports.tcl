@@ -129,7 +129,8 @@ proc sort_ports {portList} {
             }
         }
         if {[llength $newList] == $oldLen} {
-            ui_error "we appear to be stuck, exiting..."
+            ui_error "All remaining ports have unsatisfied dependencies (circular dependency?):"
+            ui_error $newList
             return -code error "infinite loop"
         }
     }
