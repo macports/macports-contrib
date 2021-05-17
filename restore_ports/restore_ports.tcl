@@ -134,7 +134,9 @@ proc sort_ports {portList} {
             ui_debug "newList length is now [llength $newList]"
         }
         if {[llength $newList] == $oldLen} {
-            ui_error "we appear to be stuck (newList is same length as old one: $oldLen); exiting..."
+            ui_debug "we appear to be stuck (newList is same length as old one: $oldLen)"
+            ui_error "All remaining ports have unsatisfied dependencies (circular dependency?):"
+            ui_error $newList
             return -code error "infinite loop"
         }
     }
