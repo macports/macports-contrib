@@ -53,7 +53,7 @@ proc sort_ports {portList} {
     array set port_installed {}
     array set port_deps {}
     array set port_in_list {}
-    
+
     set newList [list]
     foreach port $portList {
         set name [lindex $port 0]
@@ -134,7 +134,7 @@ proc sort_ports {portList} {
             return -code error "infinite loop"
         }
     }
-    
+
     return $operationList
 }
 
@@ -162,9 +162,9 @@ proc install_ports {operationList} {
         array unset portinfo
         array set portinfo [lindex $res 1]
         set porturl $portinfo(porturl)
-        
+
         # XXX should explicitly turn off default variants that don't appear in the list
-        
+
         if {[catch {set workername [mportopen $porturl [list subport $portinfo(name)] $variations]} result]} {
             global errorInfo
             puts stderr "$errorInfo"
@@ -178,7 +178,7 @@ proc install_ports {operationList} {
         } else {
             mportclose $workername
         }
-        
+
         # XXX some ports may be reactivated to fulfil dependencies - check again at the end?
     }
 }
