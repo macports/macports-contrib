@@ -150,7 +150,6 @@ switch ${groupCode} {
       puts "categories          replaceme"
    }
 }
-puts "platforms           darwin"
 puts "maintainers         replaceme"
 puts "license             replaceme"
 switch ${groupCode} {
