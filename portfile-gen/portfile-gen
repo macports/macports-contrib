@@ -208,6 +208,7 @@ switch ${groupCode} {
       puts "        xinstall -m 644 -W $\{worksrcpath\} replaceme \\"
       puts {           ${destroot}${docdir}}
       puts "    }"
+      puts "    livecheck.type  none"
       puts "}"
    }
 }
