@@ -198,7 +198,9 @@ switch ${groupCode} {
    }
    python {
       puts ""
-      puts "python.versions     37 38 39"
+      puts "python.versions     39 310"
+      puts ""
+      puts "python.pep517       yes"
       puts ""
       puts "if {\$subport ne \$name} {"
       puts "    post-destroot {"
