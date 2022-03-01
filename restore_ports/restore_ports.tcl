@@ -40,7 +40,7 @@ proc dependenciesForPort {portName variantInfo} {
    array unset portInfo
    array set portInfo [mportinfo $mport]
    mportclose $mport
-   foreach dependencyType {depends_fetch depends_extract depends_build depends_lib depends_run} {
+   foreach dependencyType {depends_fetch depends_extract depends_patch depends_build depends_lib depends_run} {
       if {[info exists portInfo($dependencyType)] && [string length $portInfo($dependencyType)] > 0} {
          foreach dependency $portInfo($dependencyType) {
             lappend dependencyList [lindex [split $dependency :] end]
@@ -55,15 +55,26 @@ proc sort_ports {portList} {
     array set port_installed {}
     array set port_deps {}
     array set port_in_list {}
-    
+
     set newList [list]
+    set search_str requested_variants='
+    set search_str_len [string length $search_str]
     foreach port $portList {
         set name [lindex $port 0]
         ui_debug "name = \"$name\""
         set version [lindex $port 1]
+        set remaining [lrange $port 2 end]
         set variants ""
 
-        if {[regexp {^@([^+]+?)(_(\d+)(([-+][^-+]+)*))?$} $version - - - - variantstr] && [info exists variantstr]} {
+        set match 0
+        set index [lsearch $remaining ${search_str}*]
+        if {$index >= 0} {
+            set variantstr [string range [lindex $remaining $index] $search_str_len end-1]
+            set match 1
+        } else {
+            set match [regexp {^@([^+]+?)(_(\d+)(([-+][^-+]+)*))?$} $version - - - - variantstr]
+        }
+        if {$match && [info exists variantstr]} {
             while 1 {
                 set nextplus [string last + $variantstr]
                 set nextminus [string last - $variantstr]
@@ -77,14 +88,14 @@ proc sort_ports {portList} {
                 if {$next == -1} {
                     break
                 }
-                set v [string range $variantstr [expr $next + 1] end]
+                set v [string range $variantstr ${next}+1 end]
                 lappend variants $v $sign
-                set variantstr [string range $variantstr 0 [expr $next - 1]]
+                set variantstr [string range $variantstr 0 ${next}-1]
             }
         }
         ui_debug "variants = \"$variants\""
         set active 0
-        if {[llength $port] > 2 && [lindex $port 2] == "(active)"} {
+        if {[llength $remaining] > 0 && [lindex $remaining 0] eq "(active)"} {
             set active 1
         }
         ui_debug "active = \"$active\""
@@ -123,7 +134,7 @@ proc sort_ports {portList} {
             if {$installable} {
                 lappend operationList [list $name $variants $active]
                 incr port_installed($name)
-                set index [lsearch $newList [list $active $name $variants]]
+                set index [lsearch -exact $newList [list $active $name $variants]]
                 ui_debug "deleting \"[list $active $name $variants]\" from list"
                 ui_debug "list with element: \"$newList\""
                 set newList [lreplace $newList $index $index]
@@ -140,7 +151,7 @@ proc sort_ports {portList} {
             return -code error "infinite loop"
         }
     }
-    
+
     return $operationList
 }
 
@@ -168,9 +179,9 @@ proc install_ports {operationList} {
         array unset portinfo
         array set portinfo [lindex $res 1]
         set porturl $portinfo(porturl)
-        
+
         # XXX should explicitly turn off default variants that don't appear in the list
-        
+
         if {[catch {set workername [mportopen $porturl [list subport $portinfo(name)] $variations]} result]} {
             global errorInfo
             puts stderr "$errorInfo"
@@ -184,13 +195,13 @@ proc install_ports {operationList} {
         } else {
             mportclose $workername
         }
-        
+
         # XXX some ports may be reactivated to fulfil dependencies - check again at the end?
     }
 }
 
 proc read_portlist {filename} {
-    if {$filename == "-"} {
+    if {$filename eq "-"} {
         set infile stdin
     } else {
         set infile [open $filename r]
@@ -198,7 +209,7 @@ proc read_portlist {filename} {
     set data [read -nonewline $infile]
     set portList [split $data \n]
     close $infile
-    if {[lindex $portList 0] == "The following ports are currently installed:"} {
+    if {[lindex $portList 0] eq "The following ports are currently installed:"} {
         set portList [lrange $portList 1 end]
     }
     return $portList
@@ -211,7 +222,7 @@ set showVersion 0
 array set ui_options {}
 
 set origArgv $::argv
-while {[string index [lindex $::argv 0] 0] == "-" } {
+while {[string index [lindex $::argv 0] 0] eq "-"} {
    switch [string range [lindex $::argv 0] 1 end] {
       h {
          printUsage
