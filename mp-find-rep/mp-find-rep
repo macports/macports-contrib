@@ -1,0 +1,499 @@
+#!/usr/bin/env python
+#
+#     name: mp-find-rep - print out the macports' repository the given port(s) belongs to
+#  version: 1.0
+#     date: 20220301
+#   author: ferdy@github
+#
+#    usage: mp-find-rep [-h] [-V] [-p PREFIX] [-e ETCPREFIX] [-c CONFIG] [-o {r,pr,pvr}] [-s] [-v] [-d] port [port ...]
+#
+#  options: port can be [1] one or more port(s), [2] all "installed" ports, [3] "all" macports ports
+#           -p / --prefix - the macports' ${prefix} directory
+#           -e / --etcprefix - the marcports' configuration directory where sources.conf can be found
+#           -c / --config - the configuration filename
+#           -o / --output - the output format (p = portfile, v = version, r = repository)
+#           -s / --status - add the installed / not found / active / inactive status of the port
+#           -v / --verbose - enable verbose output
+#           -d / --debug - enable debugging output
+#
+# synopsis: a tool findind which repository (defined in /opt/local/etc/macports/sources.conf) a given port belongs too.
+#
+# Copyright (c) 2022, Giuseppe 'ferdy' Miceli <ferdy@github>
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. Neither the name of Apple Inc., The MacPorts Project nor the
+#    names of its contributors may be used to endorse or promote products
+#    derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+# OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+# SUCH DAMAGE.
+
+PROGNAME = "mp-find-rep"
+VERSION = "1.0"
+AUTHOR = "ferdy@github"
+DATE = "20220301"
+
+from subprocess import PIPE, run
+from re import sub, search
+from os import environ
+import argparse
+
+
+def info(*message, end=""):
+    """
+    print info messages to stdout
+    """
+
+    if args.verbose:
+        print("[INFO] " + " ".join([str(i) for i in message]), end)
+
+    return
+
+
+def debug(*message, end=""):
+    """
+    print debug messages to stdout
+    """
+
+    if args.debug:
+        print("[DEBUG] " + " ".join([str(i) for i in message]), end)
+
+    return
+
+
+def parse_command_line():
+    """
+    set argv parsing parameters
+    """
+
+    parser = argparse.ArgumentParser(prog=PROGNAME)
+
+    parser.add_argument(
+        "port",
+        nargs="+",
+        help="port ('installed' means 'all installed ports', 'all' means 'all available ports')",
+    )
+    parser.add_argument(
+        "-V",
+        "--version",
+        action="version",
+        version=PROGNAME + " v." + VERSION + " by " + AUTHOR,
+    )
+    parser.add_argument(
+        "-p",
+        "--prefix",
+        default="/opt/local/",
+        help="macports' {prefix} (default to /opt/local/)",
+    )
+    parser.add_argument(
+        "-e",
+        "--etcprefix",
+        default="/opt/local/etc/macports/",
+        help="macports' {prefix} (default to /opt/local/etc/macports/)",
+    )
+    parser.add_argument(
+        "-c",
+        "--config",
+        default="sources.conf",
+        help="macports' sources.conf (default to /opt/local/etc/macports/sources.conf)",
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        choices=["r", "pr", "pvr"],
+        default="r",
+        help="format of the output: r = repository, p = portname, v = version",
+    )
+    parser.add_argument(
+        "-s",
+        "--status",
+        action="store_true",
+        help="print the status of the port (active, inactive, installed)",
+    )
+    parser.add_argument(
+        "-v", "--verbose", action="store_true", help="set verbose output level on"
+    )
+    parser.add_argument(
+        "-d", "--debug", action="store_true", help="set debug output level on"
+    )
+
+    args = parser.parse_args()
+
+    return args
+
+
+def read_sources_file(sources_conf):
+    """
+    read configuration file and return the list of repositories defined there
+    """
+
+    debug("entering read_sources_file")
+
+    repositories = []
+
+    with open(sources_conf) as f:
+        for line in f:
+            if search("^file:///", line):
+                repositories.append(line)
+    f.close()
+
+    debug(repositories, end=" ")
+
+    return repositories
+
+
+def repository_clean(repositories):
+    """
+    cleansing repositories list
+    """
+
+    debug("entering repository_clean")
+
+    repository_list = []
+
+    for index in range(len(repositories)):
+        repositories[index] = sub(r"file:.*macports", "macports", repositories[index])
+        repositories[index] = sub(r"\[default\]\n", "", repositories[index])
+        repositories[index] = sub(r"\n", "", repositories[index])
+        repositories[index] = sub(r"/opt/mp/macports/", "", repositories[index])
+        repositories[index] = sub(r"/ports$", "", repositories[index])
+        repositories[index] = sub(r" $", "", repositories[index])
+        repository_list.append(repositories[index])
+
+    debug(repository_list, end=" ")
+
+    return repository_list
+
+
+def identify_repository(repository_list, portname):
+    """
+    find out which repository the port belongs to
+    """
+
+    debug("entering identify_repository")
+
+    debug("repository_list is: ", repository_list)
+    debug("portname is: ", portname)
+    repository = ""
+    command = "port dir " + portname
+    result = run(
+        command, stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True
+    )
+    port_dir_output = result.stdout
+
+    for index in range(len(repository_list)):
+        if search(repository_list[index], port_dir_output):
+            repository = repository_list[index]
+
+    debug("repositry is = ", repository)
+
+    return repository
+
+
+def port_version(portname):
+    """
+    retun the version of the given port
+    """
+
+    debug("entering port_version")
+
+    command = "port info " + portname + "| head -1 | cut -d" " -f2"
+    result = run(
+        command, stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True
+    )
+    version = sub(r"\n", "", result.stdout)
+
+    return version
+
+
+def port_status(portname):
+    """
+    return the status of the port (active, inactive, installed)
+    """
+
+    debug("entering port_status")
+
+    status = ""
+
+    command = "port installed " + portname
+    result = run(
+        command, stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True
+    )
+
+    if len(result.stdout.split()) == 7:
+        status = "not_installed"
+    elif len(result.stdout.split()) == 8:
+        status = "inactive"
+    else:
+        status = "active"
+
+    debug(status, "")
+
+    return status
+
+
+def printout(portname, version, repository, status, output):
+    """
+    print to stdout the information requested with required output format
+    """
+
+    debug("entering printout")
+
+    message = ""
+    if output == "pvr":
+        message = portname + " " + version + " " + repository
+    elif output == "pr":
+        message = portname + " " + repository
+    else:
+        message = repository
+
+    if args.status:
+        message = message + " (" + status + ")"
+
+    print(message)
+
+    return
+
+
+def set_prefix():
+    """
+    set the right macports prefix following an order of preferences
+    (preference order: [1]cli, [2]env, [3]which port output, [4]/usr/local/)
+    """
+
+    debug("entering set_prefix()")
+
+    envprefix = environ.get("MP_PREFIX")
+
+    command = "which port"
+    result = run(
+        command, stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True
+    )
+    portprefix = sub(r"bin/port$", " ", result.stdout)
+
+    debug("args.prefix =", args.prefix)
+    debug('environ.get("MP_PREFIX") = ', envprefix)
+    debug("portprefix = ", portprefix)
+
+    if args.prefix != "/opt/local/" and args.prefix != "/opt/local":
+        prefix = args.prefix
+    elif envprefix:
+        prefix = envprefix
+    elif portprefix:
+        prefix = portprefix
+    else:
+        prefix = args.prefix
+
+    if prefix[(len(prefix) - 1)] != "/":
+        prefix = prefix + "/"
+
+    debug("prefix is = ", prefix)
+
+    return prefix
+
+
+def set_etcprefix(prefix):
+    """
+    set the right macports prefix following an order of preferences
+    (preference order: [1] cli, [2]env [3]$prefix/etc/macports, [4]/usr/local/etc/maports)
+    """
+
+    debug("entering set_etcprefix()")
+
+    envetcprefix = environ.get("MP_ETCPREFIX")
+
+    debug("args.etcprefix =", args.etcprefix)
+    debug('environ.get("MP_ETCPREFIX") = ', envetcprefix)
+    debug("prefix = ", prefix)
+
+    if (
+        args.etcprefix != "/opt/local/etc/macports/"
+        and args.etcprefix != "/opt/local/etc/macports"
+    ):
+        etcprefix = args.etcprefix
+    elif envetcprefix:
+        etcprefix = envetcprefix
+    elif prefix:
+        etcprefix = prefix + "etc/macports/"
+    else:
+        etcprefix = args.etcprefix
+
+    if etcprefix[(len(etcprefix) - 1)] != "/":
+        etcprefix = etcprefix + "/"
+
+    debug("etcprefix = ", etcprefix)
+
+    return etcprefix
+
+
+def set_sources_conf(etcprefix):
+    """
+    set the right sources.conf configuration filename following an order of preferences.
+    preference order: [1] cli, [2]env, [3] sources.conf (default)s/sources.conf).
+    return full path as etcprefix + config file.
+    """
+
+    debug("entering set_sources_conf()")
+
+    envsourcesconf = environ.get("MP_SOURCES_CONF")
+
+    debug("args.config =", args.config)
+    debug('environ.get("MP_SOURCES_CONF") = ', envsourcesconf)
+    debug("etcprefix = ", etcprefix)
+
+    if args.config != "sources.conf":
+        sources_conf = args.sources_conf
+    elif envsourcesconf:
+        sources_conf = envsourcesconf
+    else:
+        sources_conf = args.config
+
+    sources_conf = etcprefix + sources_conf
+
+    debug("config file = ", sources_conf)
+
+    return sources_conf
+
+
+def set_output_format(portname):
+    """
+    set the preferred output format depending on cli provided port (or port family) and options
+    """
+
+    debug("entering set_output_format()")
+
+    if portname == "all" or portname == "installed":
+        if args.output == "pvr":
+            output = "pvr"
+        elif args.output == "pr":
+            output = "pr"
+        else:
+            output = "pr"
+    else:
+        if args.output == "pvr":
+            output = "pvr"
+        elif args.output == "pr":
+            output = "pr"
+        elif len(portname) != 1:
+            output = "pr"
+        else:
+            output = "p"
+
+    return output
+
+
+if __name__ == "__main__":
+
+    args = parse_command_line()
+    debug("args are: ", args, end=" ")
+
+    # set verbose and debug flags ("debug on" --> "verbose on")
+    if args.debug:
+        args.verbose = True
+    info("debug is: ", args.debug, " ")
+    info("verbose is: ", args.verbose, " ")
+    # set portname on the basis of the cli argument
+    if "installed" in args.port:
+        portname = "installed"
+    elif "all" in args.port:
+        portname = "all"
+    else:
+        portname = args.port
+    # set relevant variables
+    prefix = set_prefix()
+    etcprefix = set_etcprefix(prefix)
+    sources_conf = set_sources_conf(etcprefix)
+    output = set_output_format(portname)
+    # get repositories's line from configuration file
+    repositories = read_sources_file(sources_conf)
+    # cleansing repositories' list
+    repository_list = repository_clean(repositories)
+
+    # informative output with verbose mode on
+    info("portfile is: ", portname, end=" ")
+    info("macports prefix is: ", prefix, end=" ")
+    info("macports etcprefix is: ", etcprefix, end=" ")
+    info("sources.conf is: ", args.config, end=" ")
+    info("configuration file is: ", sources_conf, end=" ")
+    info("status is ", args.status, end=" ")
+    info("output is: ", output, end=" ")
+    info("repository list is: ", end="")
+    for index in range(len(repository_list)):
+        info(" [" + str(index) + "] " + repository_list[index], end=" ")
+
+    # main loop
+    if portname == "all":
+        command = "port echo all"
+        result = run(
+            command, stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True
+        )
+        selected = result.stdout.split()
+        index = 0
+        while index < len(selected):
+            portname = selected[index]
+            version = port_version(portname)
+            status = port_status(portname)
+            command = "port dir " + portname
+            result = run(
+                command, stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True
+            )
+            port_dir_output = result.stdout
+            repository = identify_repository(repository_list, port_dir_output)
+            printout(portname, version, repository, status, output)
+            index += 1
+    elif portname == "installed":
+        command = "port echo installed"
+        result = run(
+            command, stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True
+        )
+        selected = result.stdout.split()
+        index = 0
+        while index < len(selected):
+            portname = selected[index]
+            version = selected[index + 1]
+            status = port_status(portname)
+            command = "port dir " + portname
+            result = run(
+                command, stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True
+            )
+            port_dir_output = result.stdout
+            repository = identify_repository(repository_list, port_dir_output)
+            printout(portname, version, repository, status, output)
+            index += 2
+    else:
+        for portname in args.port:
+            # check if port is available
+            command = "port info " + portname
+            result = run(
+                command, stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True
+            )
+            selected = result.stdout.split()
+            # port is not available (not found)
+            if selected == []:
+                printout(portname, "", "not found", "non_available", output)
+            # port is available
+            else:
+                version = port_version(portname)
+                status = port_status(portname)
+                repository = identify_repository(repository_list, portname)
+                status = port_status(portname)
+                printout(portname, version, repository, status, output)
+
+    exit()
