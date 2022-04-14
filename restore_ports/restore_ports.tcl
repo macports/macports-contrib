@@ -153,6 +153,7 @@ proc install_ports {operationList} {
     foreach op $operationList {
         set name [string trim [lindex $op 0]]
         set variations [lindex $op 1]
+        ui_msg "Working on port: $name $variations..."
         set active [lindex $op 2]
 
         if {!$active} {
