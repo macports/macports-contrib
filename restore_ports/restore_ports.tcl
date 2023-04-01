@@ -59,7 +59,6 @@ proc sort_ports {portList} {
     set search_str_len [string length $search_str]
     foreach port $portList {
         set name [lindex $port 0]
-        #ui_msg "name = $name"
         set version [lindex $port 1]
         set remaining [lrange $port 2 end]
         set variants ""
@@ -91,12 +90,11 @@ proc sort_ports {portList} {
                 set variantstr [string range $variantstr 0 ${next}-1]
             }
         }
-        #ui_msg "variants = $variants"
+
         set active 0
         if {[llength $remaining] > 0 && [lindex $remaining 0] eq "(active)"} {
             set active 1
         }
-        #ui_msg "active = $active"
 
         if {![info exists port_in_list($name)]} {
             set port_in_list($name) 1
@@ -133,10 +131,7 @@ proc sort_ports {portList} {
                 lappend operationList [list $name $variants $active]
                 incr port_installed($name)
                 set index [lsearch -exact $newList [list $active $name $variants]]
-                #ui_msg "deleting \"[list $active $name $variants]\" from list"
-                #ui_msg "list with element: $newList"
                 set newList [lreplace $newList $index $index]
-                #ui_msg "list without element: $newList"
             }
         }
         if {[llength $newList] == $oldLen} {
@@ -296,7 +291,6 @@ if {[llength $::argv] == 0} {
     set filename [lindex $::argv 0]
 }
 set portList [read_portlist $filename]
-#ui_msg "portlist = $portList"
 
 set operationList [sort_ports $portList]
 
