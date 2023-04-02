@@ -224,6 +224,10 @@ array set ui_options {}
 set origArgv $::argv
 while {[string index [lindex $::argv 0] 0] eq "-"} {
    switch [string range [lindex $::argv 0] 1 end] {
+      d {
+        set ui_options(ports_debug) yes
+        set ui_options(ports_verbose) yes
+      }
       h {
          printUsage
          exit 0
