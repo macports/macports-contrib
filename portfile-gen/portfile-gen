@@ -109,7 +109,7 @@ switch ${groupCode} {
    perl5 {
       puts "PortGroup           perl5 1.0"
       puts ""
-      puts "perl5.branches      5.24 5.26"
+      puts "perl5.branches      5.34 5.36"
       puts "perl5.setup         ${portname} ${portversion}"
       puts "categories-append   replaceme"
    }
@@ -156,7 +156,7 @@ puts "license             replaceme"
 switch ${groupCode} {
     php {
         puts ""
-        puts {php.branches        5.3 5.4 5.5 5.6 7.0 7.1}
+        puts {php.branches        7.4 8.0 8.1 8.2}
         puts {php.pecl            yes}
     }
 }
@@ -198,7 +198,7 @@ switch ${groupCode} {
    }
    python {
       puts ""
-      puts "python.versions     39 310"
+      puts "python.versions     310 311"
       puts ""
       puts "python.pep517       yes"
       puts ""
