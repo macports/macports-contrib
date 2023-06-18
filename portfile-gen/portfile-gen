@@ -151,6 +151,10 @@ switch ${groupCode} {
       puts "categories          replaceme"
    }
 }
+puts "#uncomment if installed files are identical on all OS versions:"
+puts "#platforms           {darwin any}"
+puts "#uncomment if no CPU-specific files are installed:"
+puts "#supported_archs     noarch"
 puts "maintainers         replaceme"
 puts "license             replaceme"
 switch ${groupCode} {
