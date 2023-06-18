@@ -10,7 +10,8 @@
 
 set MY_VERSION 0.2
 
-set supportedGroups [list perl5 php python ruby github]
+# keep sorted
+set supportedGroups [list github perl5 php python ruby]
 
 proc printUsage {{portgroup ""} {channel stderr}} {
    global supportedGroups
@@ -58,7 +59,7 @@ while {[string index [lindex $::argv 0] 0] eq "-"} {
             exit 1
          }
          set groupCode [lindex $::argv 1]
-         if {[lsearch ${supportedGroups} ${groupCode}] == -1} {
+         if {[lsearch -exact -sorted ${supportedGroups} ${groupCode}] == -1} {
             puts "Sorry, port group ${groupCode} is currently not supported"
             puts "Supported: [join ${supportedGroups}]"
             exit 1
