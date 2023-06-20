@@ -518,7 +518,6 @@ def create_portfile(dict, file_name, dict2):
 			summary = re.sub(r'[\[\]\{\}\;\:\$\t\"\'\`\=(--)]+',
 							 ' ', summary)
 			summary = re.sub(r'\s(\s)+', ' ', summary)
-			summary = str(summary.encode('utf-8'))
 			# print(summary)
 			# print(type(summary))
 			summary = ''.join([x for x in summary if x in string.printable])
