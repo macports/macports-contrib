@@ -571,9 +571,7 @@ def create_portfile(dict, file_name, dict2):
 				zip_set = False
 
 		if master_site:
-                        if re.match(r'^https?://files\.pythonhosted\.org/packages/', master_site):
-                            file.write('master_sites        pypi:{0}/{1}\n'.format(dict['name'][0], dict['name']))
-                        else:
+                        if not re.match(r'^https?://files\.pythonhosted\.org/packages/', master_site):
                             file.write('master_sites        {0}\n'.format(master_site))
                         master_site_exists = True
 		else:
@@ -582,8 +580,6 @@ def create_portfile(dict, file_name, dict2):
 		if zip_set:
 			file.write('use_zip             yes\n')
 			file.write('extract.mkdir       yes\n')
-
-		file.write('distname            {0}-${{version}}\n\n'.format(dict['name']))
 
 		print(("Attempting to generate checksums for " + dict['name'] + "..."))
 		checksums_values = checksums(dict['name'], dict['version'])
@@ -642,12 +638,7 @@ def create_portfile(dict, file_name, dict2):
 				file.write("\n")
 		file.write('\n')
 		file.write('    livecheck.type      none\n')
-		if master_site_exists:
-			file.write('} else {\n')
-			file.write('    livecheck.type      pypi\n')
-			file.write('}\n')
-		else:
-			file.write('}\n')
+		file.write('}\n')
 	print("Searching for existent port...")
 	port_exists = search_port(dict['name'])
 	if port_exists:
