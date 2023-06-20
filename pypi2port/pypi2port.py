@@ -25,11 +25,7 @@ import sys
 import os
 import hashlib
 import zipfile
-import requests
-try:
-	import xmlrpclib
-except ImportError:
-	import xmlrpc.client as xmlrpclib
+import json
 import textwrap
 import string
 import shutil
@@ -38,35 +34,36 @@ import difflib
 import subprocess
 import time
 
+import requests
 
-client = xmlrpclib.ServerProxy('https://pypi.org/pypi')
+simple_baseurl = 'https://pypi.org/simple/'
+json_baseurl = 'https://pypi.org/pypi/'
+package_data = {}
 
+def fetch_as_json(url):
+    headers = {'Accept': 'application/vnd.pypi.simple.v1+json'}
+    r = requests.get(url, headers=headers)
+    r.raise_for_status()
+    return r.json()
+
+def populate_package_data(pkgname, pkgvers=None):
+    if pkgname not in package_data:
+        package_data[pkgname] = {}
+    if pkgvers not in package_data[pkgname]:
+        if pkgvers:
+            package_data[pkgname][pkgvers] = fetch_as_json(json_baseurl+pkgname+'/'+pkgvers+'/json')
+        else:
+            package_data[pkgname][pkgvers] = fetch_as_json(json_baseurl+pkgname+'/json')
+
+def get_release_urls(pkgname, pkgvers):
+    populate_package_data(pkgname, pkgvers)
+    return package_data[pkgname][pkgvers]['urls']
 
 def list_all():
 	""" Lists all packages available in pypi database """
-	list_packages = client.list_packages()
-	for package in list_packages:
-		print(package)
+	for package in fetch_as_json(simple_baseurl)['projects']:
+		print(package['name'])
 
-
-class Package_Search:
-	def __init__(self, name, summary, version):
-		self.name = name
-		self.version = version
-		self.summary = ""
-		for i in range(0, len(summary), 62):
-			self.summary += summary[i:62+i] + '\n\t\t'
-
-	def __str__(self):
-		return "Name\t\t" + self.name + "\nVersion\t\t" + self.version + "\nSummary\t\t" + self.summary + "\n"
-		
-
-def search(pkg_name):
-	""" Searches for a particular package by the name classifier """
-	values = client.search({'name': pkg_name})
-	for value in values:
-		package = Package_Search(value['name'], value['summary'], value['version'])
-		print(package)
 
 class Package_release_data:
 	def __init__(self, attributes):
@@ -91,7 +88,8 @@ class Package_release_data:
 def release_data(pkg_name, pkg_version):
 	""" Fetches the release data for a paticular package based on
 	the package_name and package_version """
-	values = client.release_data(pkg_name, pkg_version)
+	populate_package_data(pkg_name, pkg_version)
+	values = package_data[pkg_name][pkg_version]['info']
 	if values:
 		package = Package_release_data(values)
 		print(package)
@@ -104,7 +102,7 @@ def release_data(pkg_name, pkg_version):
 def fetch(pkg_name, dict):
 	""" Fetches the distfile for a particular package name and release_url """
 	print("Fetching distfiles...")
-	checksum_sha256 = dict['sha256_digest']
+	checksum_sha256 = dict['digests']['sha256']
 	parent_dir = './sources'
 	home_dir = parent_dir + '/' + 'python'
 	src_dir = home_dir + '/py-' + pkg_name
@@ -195,13 +193,13 @@ def fetch(pkg_name, dict):
 def fetch_url(pkg_name, pkg_version, checksum=False, deps=False):
 	""" Checks for the checksums and dependecies for a particular python package
 	on the basis of package_name and package_version """
-	values = client.release_urls(pkg_name, pkg_version)
+	urls = get_release_urls(pkg_name, pkg_version)
 	if checksum:
-		for value in values:
-			if value['filename'].split('.')[-1] in ('gz', 'zip'):
+		for value in urls:
+			if value['packagetype'] == 'sdist':
 				return fetch(pkg_name, value)
 	else:
-		for value in values:
+		for value in urls:
 			return fetch(pkg_name, value)
 
 
@@ -211,9 +209,9 @@ def dependencies(pkg_name, pkg_version, deps=False):
 	flag = False
 	if not deps:
 		return
-	values = client.release_urls(pkg_name, pkg_version)
-	for value in values:
-		if value['filename'].split('.')[-1] in ('gz', 'zip'):
+	urls = get_release_urls(pkg_name, pkg_version)
+	for value in urls:
+		if value['packagetype'] == 'sdist':
 			fetch(pkg_name, value)
 	try:
 		with open('./sources/python/py-'
@@ -314,7 +312,7 @@ def checksums(pkg_name, pkg_version):
 def search_distfile(name, version):
 	""" Searches if the distfile listed is present or not """
 	try:
-		url = client.release_urls(name, version)[0]['url']
+		url = get_release_urls(name, version)[0]['url']
 		r = requests.get(url)
 		if not r.status_code == 200:
 			raise Exception('No distfile')
@@ -557,7 +555,7 @@ def create_portfile(dict, file_name, dict2):
 				zip_set = False
 
 		if master_site:
-                        if re.match('^https?://files\.pythonhosted\.org/packages/', master_site):
+                        if re.match(r'^https?://files\.pythonhosted\.org/packages/', master_site):
                             file.write('master_sites        pypi:{0}/{1}\n'.format(dict['name'][0], dict['name']))
                         else:
                             file.write('master_sites        {0}\n'.format(master_site))
@@ -671,8 +669,9 @@ def print_portfile(pkg_name, pkg_version=None):
 
 	print("Attempting to fetch data from pypi...")
 
-	dict = client.release_data(pkg_name, pkg_version)
-	dict2 = client.release_urls(pkg_name, pkg_version)
+	populate_package_data(pkg_name, pkg_version)
+	dict = package_data[pkg_name][pkg_version]['info']
+	dict2 = get_release_urls(pkg_name, pkg_version)
 	if dict and dict2:
 		print("Data fetched successfully.")
 	elif dict:
@@ -694,10 +693,6 @@ def main(argv):
 	parser.add_argument('-l', '--list', action='store_true', dest='list',
 						default=False, required=False,
 						help='List all packages')
-# Calls search with the package_name
-	parser.add_argument('-s', '--search', action='store', type=str,
-						dest='packages_search', nargs='*', required=False,
-						help='Search for a package')
 # Calls release_data with package_name and package_version
 	parser.add_argument('-d', '--data', action='store',
 						dest='packages_data', nargs='*', type=str,
@@ -720,19 +715,15 @@ def main(argv):
 		list_all()
 		return
 
-	if options.packages_search:
-		for pkg_name in options.packages_search:
-			search(pkg_name)
-		return
-
 	if options.packages_data:
 		pkg_name = options.packages_data[0]
 		if len(options.packages_data) > 1:
 			pkg_version = options.packages_data[1]
 			release_data(pkg_name, pkg_version)
 		else:
-			if client.package_releases(pkg_name):
-				pkg_version = client.package_releases(pkg_name)[0]
+			populate_package_data(pkg_name)
+			if package_data[pkg_name][None]['releases']:
+				pkg_version = package_data[pkg_name][None]['info']['version']
 				release_data(pkg_name, pkg_version)
 			else:
 				print("No release found\n")
@@ -744,9 +735,10 @@ def main(argv):
 			pkg_version = options.package_fetch[1]
 			fetch_url(pkg_name, pkg_version)
 		else:
-			releases = client.package_releases(pkg_name)
+			populate_package_data(pkg_name)
+			releases = package_data[pkg_name][None]['releases']
 			if releases:
-				pkg_version = releases[0]
+				pkg_version = package_data[pkg_name][None]['info']['version']
 				fetch_url(pkg_name, pkg_version)
 			else:
 				print("No release found\n")
@@ -758,9 +750,10 @@ def main(argv):
 			pkg_version = options.package_portfile[1]
 			print_portfile(pkg_name, pkg_version)
 		else:
-			vers = client.package_releases(pkg_name)
+			populate_package_data(pkg_name)
+			vers = package_data[pkg_name][None]['releases']
 			if vers:
-				pkg_version = vers[0]
+				pkg_version = package_data[pkg_name][None]['info']['version']
 				print_portfile(pkg_name, pkg_version)
 			else:
 				print("No release found\n")
