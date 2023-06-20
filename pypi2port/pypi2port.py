@@ -342,6 +342,20 @@ def search_license(license):
 		if match:
 			return licenses[i]
 
+def is_purepython(pkg_name, pkg_version):
+    """
+    Return True if the specified package is pure Python, or False if it
+    contains native code.
+    """
+    urls = get_release_urls(pkg_name, pkg_version)
+    for url in urls:
+        if url['packagetype'] == 'bdist_wheel':
+            if url['filename'].endswith('-none-any.whl'):
+                return True
+            else:
+                return False
+    return False
+
 
 def port_testing(name, portv='38'):
 	""" Port Testing function for various phase implementations """
@@ -479,7 +493,9 @@ def create_portfile(dict, file_name, dict2):
 		file.write('name                py-{0}\n'.format(dict['name']))
 		file.write('version             {0}\n'.format(dict['version']))
 
-		file.write('platforms           darwin\n')
+		if is_purepython(dict['name'], dict['version']):
+			file.write('platforms           {darwin any}\n')
+			file.write('supported_archs     noarch\n')
 		license = dict['license']
 		license = search_license(license)
 		file.write('license             {0}\n'.format(license))
