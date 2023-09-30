@@ -28,6 +28,8 @@ proc dependenciesForPort {portName variantInfo} {
    if {[llength $portSearchResult] < 2} {
       ui_warn "Skipping $portName (not in the ports tree)"
       return $dependencyList
+   } else {
+       ui_debug "Continuing with $portName"
    }
    array set portInfo [lindex $portSearchResult 1]
    if {[catch {set mport [mportopen $portInfo(porturl) [list subport $portInfo(name)] $variantInfo]} result]} {
@@ -59,6 +61,7 @@ proc sort_ports {portList} {
     set search_str_len [string length $search_str]
     foreach port $portList {
         set name [lindex $port 0]
+        ui_debug "name = \"$name\""
         set version [lindex $port 1]
         set remaining [lrange $port 2 end]
         set variants ""
@@ -90,11 +93,12 @@ proc sort_ports {portList} {
                 set variantstr [string range $variantstr 0 ${next}-1]
             }
         }
-
+        ui_debug "variants = \"$variants\""
         set active 0
         if {[llength $remaining] > 0 && [lindex $remaining 0] eq "(active)"} {
             set active 1
         }
+        ui_debug "active = \"$active\""
 
         if {![info exists port_in_list($name)]} {
             set port_in_list($name) 1
@@ -131,10 +135,17 @@ proc sort_ports {portList} {
                 lappend operationList [list $name $variants $active]
                 incr port_installed($name)
                 set index [lsearch -exact $newList [list $active $name $variants]]
+                ui_debug "deleting \"[list $active $name $variants]\" from list"
+                ui_debug "list with element: \"$newList\""
                 set newList [lreplace $newList $index $index]
+                ui_debug "list without element: \"$newList\""
+            } else {
+                ui_debug "uninstallable(?) port: \"$name\""
             }
+            ui_debug "newList length is now [llength $newList]"
         }
         if {[llength $newList] == $oldLen} {
+            ui_debug "we appear to be stuck (newList is same length as old one: $oldLen)"
             ui_error "All remaining ports have unsatisfied dependencies (circular dependency?):"
             ui_error $newList
             return -code error "infinite loop"
@@ -159,7 +170,7 @@ proc install_ports {operationList} {
         if {[catch {set res [mportlookup $name]} result]} {
             global errorInfo
             ui_debug "$errorInfo"
-            return -code error "lookup of portname $name failed: $result"
+            return -code error "lookup of portname $name failed: \"$result\""
         }
         if {[llength $res] < 2} {
             # not in the index, but we already warned about that earlier
@@ -241,6 +252,9 @@ while {[string index [lindex $::argv 0] 0] eq "-"} {
       v {
         set ui_options(ports_verbose) yes
       }
+      d {
+        set ui_options(ports_debug) yes
+      }
       default {
          puts stderr "Unknown option [lindex $::argv 0]"
          printUsage
@@ -291,6 +305,7 @@ if {[llength $::argv] == 0} {
     set filename [lindex $::argv 0]
 }
 set portList [read_portlist $filename]
+ui_debug "portlist = \"$portList\""
 
 set operationList [sort_ports $portList]
 
