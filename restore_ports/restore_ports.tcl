@@ -252,9 +252,6 @@ while {[string index [lindex $::argv 0] 0] eq "-"} {
       v {
         set ui_options(ports_verbose) yes
       }
-      d {
-        set ui_options(ports_debug) yes
-      }
       default {
          puts stderr "Unknown option [lindex $::argv 0]"
          printUsage
