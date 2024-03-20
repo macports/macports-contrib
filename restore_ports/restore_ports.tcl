@@ -301,6 +301,7 @@ if {[llength $::argv] == 0} {
 } else {
     set filename [lindex $::argv 0]
 }
+ui_msg "Reading and sorting port list from $filename ..."
 set portList [read_portlist $filename]
 ui_debug "portlist = \"$portList\""
 
