@@ -68,7 +68,7 @@ proc print_dependencies {dependencyArray portName verbose} {
         set aPort [lindex $aList 2]
 
         set color "black"
-        if {$aType == "lus"} {
+        if {$aType == "run"} {
             set color "#666666"
         } elseif {$aType == "fetch"} {
             set color "#ff00007f"
