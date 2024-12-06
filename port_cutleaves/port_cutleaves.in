@@ -9,7 +9,7 @@ set prefix "@prefix@"
 # - Procedures ---------------------------------------------------------------
 
 proc composite_version {port} {
-    return [version $port]_[revision $port][variants $port]
+    return [$port version]_[$port revision][$port variants]
 }
 
 proc cut_leaves {{processed_leaves {}}} {
@@ -23,10 +23,10 @@ proc cut_leaves {{processed_leaves {}}} {
     set to_process {}
     foreach leaf $leaves {
         set full_name [full_name $leaf]
-        if {[lsearch -exact $processed_leaves $full_name] != -1} {
+        if {[dict exists $processed_leaves $full_name]} {
             continue
         }
-        lappend processed_leaves    $full_name
+        dict set processed_leaves $full_name 1
         lappend to_process          $leaf
     }
 
@@ -41,9 +41,7 @@ proc cut_leaves {{processed_leaves {}}} {
     set to_uninstall    {}
 
     foreach leaf $to_process {
-        set composite_version   [composite_version $leaf]
         set full_name           [full_name $leaf]
-        set name                [name $leaf]
 
         set status active
         if {![is_active $leaf]} {
@@ -144,18 +142,17 @@ proc exclusions {file} {
 }
 
 proc full_name {port} {
-    return "[name $port] @[composite_version $port]"
+    return "[$port name] @[composite_version $port]"
 }
 
 proc is_active {port} {
-    return [lindex $port 4]
+    return [expr {[$port state] eq "installed"}]
 }
 
-proc collect_build_deps {installedvar} {
-    upvar $installedvar installed
+proc collect_build_deps {installed} {
     global build_deps
     foreach i $installed {
-        set iname [name $i]
+        set iname [$i name]
         if {[catch {set res [mportlookup $iname]} result]} {
             puts stderr "lookup of portname $iname failed: $result"
             exit 1
@@ -177,9 +174,8 @@ proc collect_build_deps {installedvar} {
 
 proc leaves {} {
     global option build_deps
-    registry::open_dep_map
 
-    if {[catch {set installed [registry::installed]} result]} {
+    if {[catch {set installed [registry::entry imaged]} result]} {
         return -code error $result
     } elseif {[catch {set exclusions [exclusions $option(F)]} result]} {
         if {![regexp {does not exist} $result]} {
@@ -188,20 +184,15 @@ proc leaves {} {
         set exclusions {}
     }
     if {$option(b)} {
-        collect_build_deps installed
+        collect_build_deps $installed
     }
 
     set leaves {}
     foreach port $installed {
-        if {${macports::registry.format} eq "receipt_sqlite"} {
-            set regref [registry::open_entry [name $port] [version $port] [revision $port] [variants $port] [epoch $port]]
-        } else {
-            set regref [registry::open_entry [name $port] [version $port] [revision $port] [variants $port]]
-        }
-        if {![registry::property_retrieve $regref requested]
-            && [registry::list_dependents [name $port]] eq ""
+        if {![$port requested]
+            && [$port dependents] eq {}
             && ![should_be_excluded $port $exclusions]
-            && (!$option(b) || ![dict exists $build_deps [name $port]])} {
+            && (!$option(b) || ![dict exists $build_deps [$port name]])} {
             lappend leaves $port
         }
     }
@@ -220,18 +211,6 @@ proc list_leaves {} {
     return 0
 }
 
-proc epoch {port} {
-    return [lindex $port 5]
-}
-
-proc name {port} {
-    return [lindex $port 0]
-}
-
-proc revision {port} {
-    return [lindex $port 2]
-}
-
 proc should_be_excluded {port exclusions} {
     foreach exclusion $exclusions {
         set full_name [full_name $port]
@@ -247,46 +226,20 @@ proc uninstall {ports} {
 
     set uninstalled {}
     foreach port $ports {
-        if {${macports::registry.format} eq "receipt_sqlite"} {
-            set regref [registry::open_entry [name $port] [version $port] [revision $port] [variants $port] [epoch $port]]
-            if {[registry::run_target $regref uninstall {}]} {
-                lappend uninstalled [full_name $port]
-                continue
-            }
+        set fullname [full_name $port]
+        if {[registry::run_target $port uninstall {}]} {
+            lappend uninstalled $fullname
+            continue
         }
-        if {[llength [info commands "registry_uninstall::uninstall"]] == 1} {
-            if {[llength [info commands "registry_uninstall::uninstall_composite"]] == 1} {
-                if {[catch {registry_uninstall::uninstall [name $port] [version $port] [revision $port] [variants $port] {}} \
-                            result]} {
-                    set exit_status 1
-                    puts stderr "Error: $result"
-                    continue
-                }
-            } else {
-                if {[catch {registry_uninstall::uninstall [name $port] [composite_version $port] {}} \
-                            result]} {
-                    set exit_status 1
-                    puts stderr "Error: $result"
-                    continue
-                }
-            }
-        } elseif {[catch {portuninstall::uninstall [name $port] [composite_version $port] {}} \
-                         result]} {
-                set exit_status 1
-                puts stderr "Error: $result"
-                continue
+        if {[catch {registry_uninstall::uninstall [$port name] [$port version] [$port revision] [$port variants] {}} \
+                    result]} {
+            set exit_status 1
+            puts stderr "Error: $result"
+            continue
         }
-        lappend uninstalled [full_name $port]
+        lappend uninstalled $fullname
     }
     return $uninstalled
-}
-
-proc variants {port} {
-    return [lindex $port 3]
-}
-
-proc version {port} {
-    return [lindex $port 1]
 }
 
 # - Main ---------------------------------------------------------------------
@@ -303,13 +256,6 @@ set usage "\[-b] \[-F value] \[-l] \[-t value] \[-V] \[-help] \[-?]\n\nOptions:"
 if {[catch {array set option [::cmdline::getoptions argv $options]}]} {
     puts [::cmdline::usage $options $usage]
     exit 1
-}
-
-if {![file exists ${prefix}/bin/port-tclsh]} {
-    if {[catch {source ${prefix}/share/macports/Tcl/macports1.0/macports_fastload.tcl} result]} {
-        puts stderr "Error: $result"
-        exit 1
-    }
 }
 
 package require macports
