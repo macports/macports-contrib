@@ -168,7 +168,7 @@ proc collect_build_deps {installedvar} {
             array unset portinfo
             array set portinfo [lindex $res 1]
         }
-        foreach type {depends_fetch depends_extract depends_build} {
+        foreach type {depends_fetch depends_extract depends_patch depends_build} {
             if {[info exists portinfo($type)]} {
                 foreach d $portinfo($type) {
                     set build_deps([lindex [split $d :] end]) 1
