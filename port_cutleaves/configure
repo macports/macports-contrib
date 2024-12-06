@@ -1,5 +1,4 @@
 #!/bin/sh
-# $Id$
 
 prefix=/opt/local
 bindir=${prefix}/bin
